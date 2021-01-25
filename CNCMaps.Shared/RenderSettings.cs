@@ -38,6 +38,8 @@ namespace CNCMaps.Shared {
 		public bool CompressTiles { get; set; }
 		public bool TunnelPaths { get; set; }
 		public bool TunnelPosition { get; set; }
+		public bool RandomMapGenerator { get; set; }
+		public Generator.Settings GeneratorSettings { get; set; }
 
 		public RenderSettings() {
 			PNGQuality = 6;
@@ -67,6 +69,7 @@ namespace CNCMaps.Shared {
 			TunnelPosition = false;
 			MarkStartPos = false;
 			MarkerStartSize = 4.0;
+			GeneratorSettings = new Generator.Settings();
 		}
 
 		public void ConfigureFromArgs(string[] args) {
@@ -143,6 +146,8 @@ namespace CNCMaps.Shared {
 				{"cmprs-tiles", "Compress and update IsoMapPack5 in map", v => CompressTiles = true},
 				{"tunnels", "Show tunnels path lines", v => TunnelPaths = true},
 				{"tunnelpos", "Adjust position of tunnel path lines", v => TunnelPaths = true},
+				// Todo: Test all 
+				{"mapgen", "Generate a random map", v => RandomMapGenerator = true}
 			};
 
 			return _options;

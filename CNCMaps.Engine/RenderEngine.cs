@@ -40,6 +40,11 @@ namespace CNCMaps.Engine {
 
 		public EngineResult Execute() {
 			try {
+				if (_settings.RandomMapGenerator) {
+					_logger.Info("Random map generator activated");
+					var mapGen = new Generator.RandomMapGenerator(_settings.GeneratorSettings);
+				}
+				
 				_logger.Info("Initializing virtual filesystem");
 
 				var mapStream = File.Open(_settings.InputFile, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
@@ -339,6 +344,7 @@ namespace CNCMaps.Engine {
 				_logger.Error("Specified output directory does not exist.");
 				return false;
 			}
+			// todo: Add validation for mandatory parameters for mapgen (mapsize and such)
 			return true;
 		}
 
