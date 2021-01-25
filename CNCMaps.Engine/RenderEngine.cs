@@ -43,6 +43,7 @@ namespace CNCMaps.Engine {
 				if (_settings.RandomMapGenerator) {
 					_logger.Info("Random map generator activated");
 					var mapGen = new Generator.RandomMapGenerator(_settings.GeneratorSettings);
+					mapGen.GenerateMap();
 				}
 				
 				_logger.Info("Initializing virtual filesystem");

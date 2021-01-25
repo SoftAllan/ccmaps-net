@@ -6,6 +6,7 @@ using System.Text;
 namespace CNCMaps.Shared.Generator {
 	
 	public class Settings {
-		MapSize MapSize { get; set; }
+		
+		public MapSize MapSize { get; set; }
 	}
 }

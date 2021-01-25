@@ -69,7 +69,9 @@ namespace CNCMaps.Shared {
 			TunnelPosition = false;
 			MarkStartPos = false;
 			MarkerStartSize = 4.0;
-			GeneratorSettings = new Generator.Settings();
+			GeneratorSettings = new Generator.Settings {
+				MapSize = Generator.MapSize.Small
+			};
 		}
 
 		public void ConfigureFromArgs(string[] args) {
@@ -147,7 +149,11 @@ namespace CNCMaps.Shared {
 				{"tunnels", "Show tunnels path lines", v => TunnelPaths = true},
 				{"tunnelpos", "Adjust position of tunnel path lines", v => TunnelPaths = true},
 				// Todo: Test all 
-				{"mapgen", "Generate a random map", v => RandomMapGenerator = true}
+				{"mapgen", "Generate a random map", v => RandomMapGenerator = true},
+				{"mapgen-mapsize-small", "Map size for the random map generator is small", v => GeneratorSettings.MapSize = Generator.MapSize.Small },
+				{"mapgen-mapsize-medium", "Map size for the random map generator is medium", v => GeneratorSettings.MapSize = Generator.MapSize.Medium },
+				{"mapgen-mapsize-large", "Map size for the random map generator is large", v => GeneratorSettings.MapSize = Generator.MapSize.Large },
+				{"mapgen-mapsize-vlarge", "Map size for the random map generator is very large", v => GeneratorSettings.MapSize = Generator.MapSize.VeryLarge }
 			};
 
 			return _options;
