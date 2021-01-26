@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 
 namespace CNCMaps.Shared.Generator {
-	
+
 	public enum MapSize {
 		Small,
 		Medium,

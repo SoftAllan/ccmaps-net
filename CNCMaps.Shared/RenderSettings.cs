@@ -70,7 +70,8 @@ namespace CNCMaps.Shared {
 			MarkStartPos = false;
 			MarkerStartSize = 4.0;
 			GeneratorSettings = new Generator.Settings {
-				MapSize = Generator.MapSize.Small
+				MapSize = Generator.MapSize.Small,
+				OutputFile = ""
 			};
 		}
 
@@ -148,12 +149,12 @@ namespace CNCMaps.Shared {
 				{"cmprs-tiles", "Compress and update IsoMapPack5 in map", v => CompressTiles = true},
 				{"tunnels", "Show tunnels path lines", v => TunnelPaths = true},
 				{"tunnelpos", "Adjust position of tunnel path lines", v => TunnelPaths = true},
-				// Todo: Test all 
 				{"mapgen", "Generate a random map", v => RandomMapGenerator = true},
 				{"mapgen-mapsize-small", "Map size for the random map generator is small", v => GeneratorSettings.MapSize = Generator.MapSize.Small },
 				{"mapgen-mapsize-medium", "Map size for the random map generator is medium", v => GeneratorSettings.MapSize = Generator.MapSize.Medium },
 				{"mapgen-mapsize-large", "Map size for the random map generator is large", v => GeneratorSettings.MapSize = Generator.MapSize.Large },
-				{"mapgen-mapsize-vlarge", "Map size for the random map generator is very large", v => GeneratorSettings.MapSize = Generator.MapSize.VeryLarge }
+				{"mapgen-mapsize-vlarge", "Map size for the random map generator is very large", v => GeneratorSettings.MapSize = Generator.MapSize.VeryLarge },
+				{"mapgen-outputfile=", "Output file for the random generated map", v => GeneratorSettings.OutputFile = v },
 			};
 
 			return _options;

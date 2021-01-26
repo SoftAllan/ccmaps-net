@@ -41,11 +41,17 @@ namespace CNCMaps.Engine {
 		public EngineResult Execute() {
 			try {
 				if (_settings.RandomMapGenerator) {
-					_logger.Info("Random map generator activated");
-					var mapGen = new Generator.RandomMapGenerator(_settings.GeneratorSettings);
-					mapGen.GenerateMap();
+					_logger.Info("Random map generator activated.");
+					var mapGen = new Generator.RandomMapGenerator(_settings.GeneratorSettings, _settings.Engine);
+					if (!mapGen.GenerateMap() || !File.Exists(_settings.GeneratorSettings.OutputFile)) {
+						_logger.Error("Random map could not be generated.");
+						return EngineResult.RandomMapGenerationFailed;
+					}
+					_settings.InputFile = _settings.GeneratorSettings.OutputFile;
+					_settings.GeneratePreviewPack = true;
+					_settings.Backup=false;
 				}
-				
+
 				_logger.Info("Initializing virtual filesystem");
 
 				var mapStream = File.Open(_settings.InputFile, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
@@ -331,21 +337,22 @@ namespace CNCMaps.Engine {
 				ShowHelp();
 				return false; // not really false :/
 			}
-			else if (!File.Exists(_settings.InputFile)) {
-				_logger.Error("Specified input file does not exist");
+			else if (!_settings.RandomMapGenerator && !File.Exists(_settings.InputFile)) {
+				// todo: Test that this still works where the random map generator is false and the input file is missing.
+				_logger.Error("Specified input file does not exist.");
 				return false;
 			}
 			else if (!_settings.SaveJPEG && !_settings.SavePNG && !_settings.SavePNGThumbnails  &&
 				!_settings.GeneratePreviewPack && !_settings.FixupTiles && !_settings.FixOverlays && !_settings.CompressTiles &&
-				!_settings.DiagnosticWindow) {
-				_logger.Error("No action to perform. Either generate PNG/JPEG/Thumbnail or modify map or use preview window.");
+				!_settings.DiagnosticWindow && !_settings.RandomMapGenerator) {
+				// todo: Test if this works with only the random map generator.
+				_logger.Error("No action to perform. Either generate PNG/JPEG/Thumbnail, modify map, generate random map or use preview window.");
 				return false;
 			}
 			else if (_settings.OutputDir != "" && !Directory.Exists(_settings.OutputDir)) {
 				_logger.Error("Specified output directory does not exist.");
 				return false;
 			}
-			// todo: Add validation for mandatory parameters for mapgen (mapsize and such)
 			return true;
 		}
 

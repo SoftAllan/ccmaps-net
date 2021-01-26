@@ -8,5 +8,6 @@ namespace CNCMaps.Shared.Generator {
 	public class Settings {
 		
 		public MapSize MapSize { get; set; }
+		public string OutputFile { get; set; }
 	}
 }
