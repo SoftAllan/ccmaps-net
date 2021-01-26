@@ -22,6 +22,10 @@ namespace CNCMaps.Engine.Generator {
 		internal bool GenerateMap() {
 			DumpPropertiesToLog();
 			if (!ValidateParameters()) return false;
+			IGeneratorEngine generatorEngine = CreateGeneratorEngine();
+			if (generatorEngine == null) return false;
+			if (!generatorEngine.GenerateMap()) return false;
+			if (!generatorEngine.SaveMap()) return false;
 			return true;
 		}
 
@@ -40,6 +44,32 @@ namespace CNCMaps.Engine.Generator {
 		private void DumpPropertiesToLog() {
 			_logger.Debug($"Random map generator map size: {Settings.MapSize}");
 			_logger.Debug($"Engine: {Engine}");
+		}
+
+		
+		private IGeneratorEngine CreateGeneratorEngine() {
+			IGeneratorEngine newEngine = null;
+			switch (Engine) {
+				case EngineType.TiberianSun:
+					// todo: Test
+					_logger.Error("Random generator engine for Tiberian Sun not implemented.");
+					break;
+				case EngineType.Firestorm:
+					// todo: Test
+					_logger.Error("Random generator engine for Firestorm not implemented.");
+					break;
+				case EngineType.RedAlert2:
+					// todo: Test
+					_logger.Error("Random generator engine for Red Alert 2 not implemented.");
+					break;
+				case EngineType.YurisRevenge:
+					// todo: Test
+					newEngine = new GeneratorEngineYR(Settings);
+					break;
+				default:
+					throw new ArgumentException($"Unknown engine type: {Engine}");
+			}
+			return newEngine;
 		}
 	}
 }

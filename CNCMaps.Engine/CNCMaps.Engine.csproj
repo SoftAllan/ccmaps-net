@@ -76,7 +76,9 @@
     <Compile Include="..\CNCMaps.Shared\Properties\AssemblyInfoGlobal.cs">
       <Link>Properties\AssemblyInfoGlobal.cs</Link>
     </Compile>
+    <Compile Include="Generator\IGeneratorEngine.cs" />
     <Compile Include="Generator\RandomMapGenerator.cs" />
+    <Compile Include="Generator\GeneratorEngineYR.cs" />
     <Compile Include="RenderEngine.cs" />
     <Compile Include="Game\Defaults.cs" />
     <Compile Include="Game\FrameDeciders.cs" />
