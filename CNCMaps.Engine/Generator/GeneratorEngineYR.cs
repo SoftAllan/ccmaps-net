@@ -77,16 +77,26 @@ namespace CNCMaps.Engine.Generator {
 
 		// todo: Possible move to an abstract class (GeneratorEngine) as this might be the same for the other generator engines.
 		public bool SaveMap() {
-
 			IniFile iniFile;
 			using (var mapStream = File.Create(Settings.OutputFile)) {
 				iniFile = new IniFile(mapStream, Settings.OutputFile, 0, 0);
 			}
-			var mapSection = iniFile.GetOrCreateSection("IsoMapPack5");
-			_tileLayer.SerializeIsoMapPack5(mapSection);
+			AddIsoMapPack5Section(iniFile);
+			AddMapSection(iniFile);
 			iniFile.Save(Settings.OutputFile);
-
 			return true;
+		}
+
+		private void AddIsoMapPack5Section(IniFile iniFile) {
+			var isoMapPack5 = iniFile.GetOrCreateSection("IsoMapPack5");
+			_tileLayer.SerializeIsoMapPack5(isoMapPack5);
+		}
+
+		private void AddMapSection(IniFile iniFile) {
+			var map = iniFile.GetOrCreateSection("Map");
+			map.SetValue("Size", $"0,0,{Width},{Height}");
+			map.SetValue("Theater", "TEMPERATE");   // todo: Temporary value
+			map.SetValue("LocalSize", $"2,4,{Width - 4},{Height - 6}"); // todo: Test with medium, large and vlarge values.
 		}
 	}
 }
