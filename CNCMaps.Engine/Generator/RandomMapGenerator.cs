@@ -46,7 +46,6 @@ namespace CNCMaps.Engine.Generator {
 			_logger.Debug($"Engine: {Engine}");
 		}
 
-		
 		private IGeneratorEngine CreateGeneratorEngine() {
 			IGeneratorEngine newEngine = null;
 			switch (Engine) {

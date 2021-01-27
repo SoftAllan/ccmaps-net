@@ -3,7 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using CNCMaps.Shared.Generator;
+using CNCMaps.Shared;
 using NLog;
+using CNCMaps.FileFormats.Map;
+using CNCMaps.FileFormats.VirtualFileSystem;
+using System.IO;
+using CNCMaps.FileFormats;
 
 namespace CNCMaps.Engine.Generator {
 	internal class GeneratorEngineYR : IGeneratorEngine {
@@ -14,14 +19,74 @@ namespace CNCMaps.Engine.Generator {
 		}
 
 		private Settings Settings { get; }
+		private TileLayer _tileLayer;
+		private ushort Height;
+		private ushort Width;
 
 		public bool GenerateMap() {
 			_logger.Info("Starting Yuri's Revenge Map Generator.");
-			return false;
+
+			ParseMapSize(Settings.MapSize);
+
+			// testing
+			_tileLayer = new TileLayer(Width, Height);
+
+			// Fill level 0 clear tiles for all array values
+			// (Code from MapFile.cs)
+			// Todo: Maybe move the code in both to a common file/class or something.
+			for (ushort y = 0; y < Height; y++) {
+				for (ushort x = 0; x <= Width * 2 - 2; x++) {
+					ushort dx = (ushort)(x);
+					ushort dy = (ushort)(y * 2 + x % 2);
+					ushort rx = (ushort)((dx + dy) / 2 + 1);
+					ushort ry = (ushort)(dy - rx + Width + 1);
+					_tileLayer[x, y] = new IsoTile(dx, dy, rx, ry, 0, 0, 0, 0);
+				}
+			}
+
+			// todo: Maybe use the MapFile to wrap the tilelayer into.
+			// todo: MapFile can also save.
+			// var mapFile = new MapFile()
+
+			return true;
 		}
 
+		private void ParseMapSize(MapSize mapSize) {
+			switch (mapSize) {
+				case MapSize.Small:
+					Height= 50;
+					Width = 50;
+					break;
+				case MapSize.Medium:
+					Height = 100;
+					Width = 100;
+					break;
+				case MapSize.Large:
+					Height = 150;
+					Width = 150;
+					break;
+				case MapSize.VeryLarge:
+					Height = 300;
+					Width = 300;
+					break;
+				default:
+					break;
+			}
+			_logger.Debug($"Map width={Width} and hight={Height}.");
+		}
+
+		// todo: Possible move to an abstract class (GeneratorEngine) as this might be the same for the other generator engines.
 		public bool SaveMap() {
-			throw new NotImplementedException();
+
+			IniFile iniFile;
+			using (var mapStream = File.Create(Settings.OutputFile)) {
+				iniFile = new IniFile(mapStream, Settings.OutputFile, 0, 0);
+			}
+			var mapSection = iniFile.GetOrCreateSection("IsoMapPack5");
+			_tileLayer.SerializeIsoMapPack5(mapSection);
+			iniFile.Save(Settings.OutputFile);
+
+			return true;
 		}
 	}
 }
