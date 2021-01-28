@@ -29,6 +29,7 @@ namespace CNCMaps.Engine.Generator {
 			using (var mapStream = File.Create(Settings.OutputFile)) {
 				iniFile = new IniFile(mapStream, Settings.OutputFile, 0, 0);
 			}
+			AddBasicSection(iniFile);
 			AddIsoMapPack5Section(iniFile);
 			AddMapSection(iniFile);
 			iniFile.Save(Settings.OutputFile);
@@ -96,17 +97,48 @@ namespace CNCMaps.Engine.Generator {
 			}
 		}
 
-		internal void AddIsoMapPack5Section(IniFile iniFile) {
+		private void AddIsoMapPack5Section(IniFile iniFile) {
 			var isoMapPack5 = iniFile.GetOrCreateSection("IsoMapPack5");
 			_tileLayer.SerializeIsoMapPack5(isoMapPack5);
 		}
 
-		internal void AddMapSection(IniFile iniFile) {
+		private void AddMapSection(IniFile iniFile) {
 			var map = iniFile.GetOrCreateSection("Map");
 			map.SetValue("Size", $"0,0,{Width},{Height}");
 			map.SetValue("Theater", TheaterType(Settings.TheaterType).ToUpper());   // todo: Test if uppercase is needed.
 			map.SetValue("LocalSize", $"2,4,{Width - 4},{Height - 6}"); // todo: Test with medium, large and vlarge values.
 		}
 
+		// Todo: Find the relevant values.
+		private void AddBasicSection(IniFile iniFile) {
+			var basic = iniFile.GetOrCreateSection("Basic");
+			basic.SetValue("Name", "RANDOMMAP");    // todo: name should be RANDOMMAP{date and time}
+			basic.SetValue("Percent", "0");			// todo: What is this?
+			basic.SetValue("GameMode", "standard"); // todo: maybe set to Random Map or "randommap"?
+			basic.SetValue("HomeCell", "98");           // todo: What is home cell and how to specify this?
+			basic.SetValue("InitTime", "10000");    // todo: What is this? Allocated cash from start of the game?
+			basic.SetValue("Official", "no");
+			basic.SetValue("EndOfGame", "no");  // todo: What is this?
+			basic.SetValue("FreeRadar", "no");  // todo: Maybe show the whole map from start?
+			basic.SetValue("MaxPlayer", "8");   // todo: Change to parameter
+			basic.SetValue("MinPlayer", "2");   // No scenario.
+			basic.SetValue("SkipScore", "no");
+			basic.SetValue("TrainCrate", "no");
+			basic.SetValue("TruckCrate", "no");
+			basic.SetValue("AltHomeCell", "99");    // todo: what is this?
+			basic.SetValue("OneTimeOnly", "no");
+			basic.SetValue("CarryOverCap", "0");
+			basic.SetValue("NewINIFormat", "4");
+			basic.SetValue("NextScenario", "");
+			basic.SetValue("SkipMapSelect", "no");
+			basic.SetValue("CarryOverMoney", "0.000000");
+			basic.SetValue("AltNextScenario", "");
+			basic.SetValue("MultiplayerOnly", "1");  // No senario.
+			basic.SetValue("IceGrowthEnabled", "yes");
+			basic.SetValue("VeinGrowthEnabled", "yes");
+			basic.SetValue("TiberiumGrowthEnabled", "yes");
+			basic.SetValue("IgnoreGlobalAITriggers", "no");
+			basic.SetValue("TiberiumDeathToVisceroid", "no");
+		}
 	}
 }
