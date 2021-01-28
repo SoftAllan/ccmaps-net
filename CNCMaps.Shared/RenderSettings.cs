@@ -71,7 +71,8 @@ namespace CNCMaps.Shared {
 			MarkerStartSize = 4.0;
 			GeneratorSettings = new Generator.Settings {
 				MapSize = Generator.MapSize.Small,
-				OutputFile = ""
+				OutputFile = "",
+				TheaterType = TheaterType.Temperate
 			};
 		}
 
@@ -155,6 +156,12 @@ namespace CNCMaps.Shared {
 				{"mapgen-mapsize-large", "Map size for the random map generator is large", v => GeneratorSettings.MapSize = Generator.MapSize.Large },
 				{"mapgen-mapsize-vlarge", "Map size for the random map generator is very large", v => GeneratorSettings.MapSize = Generator.MapSize.VeryLarge },
 				{"mapgen-outputfile=", "Output file for the random generated map", v => GeneratorSettings.OutputFile = v },
+				{"mapgen-theater-temperate", "Use temperate theater for the random map generator", v => GeneratorSettings.TheaterType = TheaterType.Temperate },
+				{"mapgen-theater-urban", "Use temperate theater for the random map generator", v => GeneratorSettings.TheaterType = TheaterType.Urban },
+				{"mapgen-theater-snow", "Use temperate theater for the random map generator", v => GeneratorSettings.TheaterType = TheaterType.Snow },
+				{"mapgen-theater-lunar", "Use temperate theater for the random map generator", v => GeneratorSettings.TheaterType = TheaterType.Lunar },
+				{"mapgen-theater-desert", "Use temperate theater for the random map generator", v => GeneratorSettings.TheaterType = TheaterType.Desert },
+				{"mapgen-theater-newurban", "Use temperate theater for the random map generator", v => GeneratorSettings.TheaterType = TheaterType.NewUrban },
 			};
 
 			return _options;

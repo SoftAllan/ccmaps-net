@@ -44,6 +44,7 @@ namespace CNCMaps.Engine.Generator {
 		private void DumpPropertiesToLog() {
 			_logger.Debug($"Random map generator map size: {Settings.MapSize}");
 			_logger.Debug($"Engine: {Engine}");
+			_logger.Debug($"Theater: {Settings.TheaterType}");
 		}
 
 		private IGeneratorEngine CreateGeneratorEngine() {

@@ -9,5 +9,6 @@ namespace CNCMaps.Shared.Generator {
 		
 		public MapSize MapSize { get; set; }
 		public string OutputFile { get; set; }
+		public TheaterType TheaterType { get; set; }
 	}
 }
