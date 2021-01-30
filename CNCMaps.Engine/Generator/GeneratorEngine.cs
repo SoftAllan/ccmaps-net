@@ -29,13 +29,22 @@ namespace CNCMaps.Engine.Generator {
 			using (var mapStream = File.Create(Settings.OutputFile)) {
 				iniFile = new IniFile(mapStream, Settings.OutputFile, 0, 0);
 			}
+			/* todo: Add comments
+			 * ; Map created with Random Map Generator.
+			 * ; Coded by Allan Greis Eriksen.
+			 * ; Time and date for creation.
+			 */ 
+			AddPreviewSection(iniFile);
+			AddPreviewPackSection(iniFile);
 			AddBasicSection(iniFile);
 			AddIsoMapPack5Section(iniFile);
 			AddMapSection(iniFile);
+			AddWaypointsSection(iniFile);
 			iniFile.Save(Settings.OutputFile);
 			return true;
 		}
 
+		// todo: Add a random map size.
 		public virtual void ParseMapSize(MapSize mapSize) {
 			switch (mapSize) {
 				case MapSize.Small:
@@ -113,6 +122,7 @@ namespace CNCMaps.Engine.Generator {
 		private void AddBasicSection(IniFile iniFile) {
 			var basic = iniFile.GetOrCreateSection("Basic");
 			basic.SetValue("Name", "RANDOMMAP");    // todo: name should be RANDOMMAP{date and time}
+			basic.SetValue("Author", "Random Map Generator");
 			basic.SetValue("Percent", "0");			// todo: What is this?
 			basic.SetValue("GameMode", "standard"); // todo: maybe set to Random Map or "randommap"?
 			basic.SetValue("HomeCell", "98");           // todo: What is home cell and how to specify this?
@@ -140,5 +150,26 @@ namespace CNCMaps.Engine.Generator {
 			basic.SetValue("IgnoreGlobalAITriggers", "no");
 			basic.SetValue("TiberiumDeathToVisceroid", "no");
 		}
+
+		private void AddPreviewSection(IniFile iniFile) {
+			var preview = iniFile.GetOrCreateSection("Preview");
+		}
+
+		private void AddPreviewPackSection(IniFile iniFile) {
+			var previewMap = iniFile.GetOrCreateSection("PreviewPack");
+		}
+
+		private void AddWaypointsSection(IniFile iniFile) {
+			var waypoints = iniFile.GetOrCreateSection("Waypoints");
+			waypoints.SetValue("0", "50050");
+			waypoints.SetValue("1", "51050");
+			waypoints.SetValue("2", "52050");
+			waypoints.SetValue("3", "53050");
+			waypoints.SetValue("4", "50051");
+			waypoints.SetValue("5", "51051");
+			waypoints.SetValue("6", "52051");
+			waypoints.SetValue("7", "53051");
+		}
+
 	}
 }
