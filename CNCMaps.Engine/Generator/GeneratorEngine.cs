@@ -70,7 +70,7 @@ namespace CNCMaps.Engine.Generator {
 
 		// Fill level 0 clear tiles for all array values
 		// (Code from MapFile.cs)
-		public void InitialiseMapLayer() {
+		public void InitialiseMapLayer(int tilenumber) {
 			_tileLayer = new TileLayer(Width, Height);
 			for (ushort y = 0; y < Height; y++) {
 				for (ushort x = 0; x <= Width * 2 - 2; x++) {
@@ -78,7 +78,7 @@ namespace CNCMaps.Engine.Generator {
 					ushort dy = (ushort)(y * 2 + x % 2);
 					ushort rx = (ushort)((dx + dy) / 2 + 1);
 					ushort ry = (ushort)(dy - rx + Width + 1);
-					_tileLayer[x, y] = new IsoTile(dx, dy, rx, ry, 0, 0, 0, 0);
+					_tileLayer[x, y] = new IsoTile(dx, dy, rx, ry, 0, tilenumber, 0, 0);
 				}
 			}
 		}

@@ -9,6 +9,7 @@ using CNCMaps.FileFormats.Map;
 using CNCMaps.FileFormats.VirtualFileSystem;
 using System.IO;
 using CNCMaps.FileFormats;
+using CNCMaps.Engine.Game;
 
 namespace CNCMaps.Engine.Generator {
 	internal class GeneratorEngineYR : GeneratorEngine {
@@ -23,11 +24,21 @@ namespace CNCMaps.Engine.Generator {
 			ParseMapSize(Settings.MapSize);
 			_logger.Debug($"Map width={Width} and hight={Height}.");
 
-			InitialiseMapLayer();
+			using (var vfs = new VirtualFileSystem()) {
+				vfs.Add(VirtualFileSystem.RA2InstallDir);
+				vfs.LoadMixes(EngineType.YurisRevenge);
+				var modConfig = ModConfig.GetDefaultConfig(EngineType.YurisRevenge);
+				var theater = new Theater(Settings.TheaterType, modConfig, vfs, vfs.Open<IniFile>("rulesmd.ini"), vfs.Open<IniFile>("artmd.ini"));
+				theater.Initialize();
 
-			// todo: Maybe use the MapFile to wrap the tilelayer into.
-			// todo: MapFile can also save.
-			// var mapFile = new MapFile()
+				InitialiseMapLayer(theater.GetTileCollection().ClearTile);
+
+
+				// todo: Maybe use the MapFile to wrap the tilelayer into.
+				// todo: MapFile can also save.
+				// var mapFile = new MapFile()
+
+			}
 
 			return true;
 		}
