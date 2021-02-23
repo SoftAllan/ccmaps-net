@@ -70,6 +70,7 @@ namespace CNCMaps.Engine.Generator {
 
 		// Fill level 0 clear tiles for all array values
 		// (Code from MapFile.cs)
+		// Todo: Temp use.
 		public void InitialiseMapLayer(int tilenumber) {
 			_tileLayer = new TileLayer(Width, Height);
 			for (ushort y = 0; y < Height; y++) {
@@ -125,11 +126,11 @@ namespace CNCMaps.Engine.Generator {
 			basic.SetValue("Author", "Random Map Generator");
 			basic.SetValue("Percent", "0");			// todo: What is this?
 			basic.SetValue("GameMode", "standard"); // todo: maybe set to Random Map or "randommap"?
-			basic.SetValue("HomeCell", "98");           // todo: What is home cell and how to specify this?
-			basic.SetValue("InitTime", "10000");    // todo: What is this? Allocated cash from start of the game?
+			basic.SetValue("HomeCell", "98");           // todo: What is this?
+			basic.SetValue("InitTime", "10000");    // todo: What is this?
 			basic.SetValue("Official", "no");
 			basic.SetValue("EndOfGame", "no");  // todo: What is this?
-			basic.SetValue("FreeRadar", "no");  // todo: Maybe show the whole map from start?
+			basic.SetValue("FreeRadar", "no");  // Minimap not visible
 			basic.SetValue("MaxPlayer", "8");   // todo: Change to parameter
 			basic.SetValue("MinPlayer", "2");   // No scenario.
 			basic.SetValue("SkipScore", "no");
