@@ -90,6 +90,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
@@ -97,6 +98,12 @@
   <ItemGroup>
     <Compile Include="..\CNCMaps.Shared\Properties\AssemblyInfoGlobal.cs">
       <Link>Properties\AssemblyInfoGlobal.cs</Link>
+    </Compile>
+    <Compile Include="Generator\DebugGeneratorEngine.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Generator\DebugGeneratorEngine.Designer.cs">
+      <DependentUpon>DebugGeneratorEngine.cs</DependentUpon>
     </Compile>
     <Compile Include="Generator\GeneratorEngine.cs" />
     <Compile Include="Generator\IGeneratorEngine.cs" />
@@ -174,6 +181,7 @@
     <Compile Include="Types\XYZ.cs" />
     <Compile Include="Utility\Hexagon.cs" />
     <Compile Include="Utility\HsvColor.cs" />
+    <Compile Include="Utility\PerlinNoise.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="OpenTK.dll.config">
@@ -207,6 +215,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Generator\DebugGeneratorEngine.resx">
+      <DependentUpon>DebugGeneratorEngine.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Rendering\DebugDrawingSurfaceWindow.resx">
       <DependentUpon>DebugDrawingSurfaceWindow.cs</DependentUpon>
     </EmbeddedResource>

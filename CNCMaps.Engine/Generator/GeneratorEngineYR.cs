@@ -10,6 +10,8 @@ using CNCMaps.FileFormats.VirtualFileSystem;
 using System.IO;
 using CNCMaps.FileFormats;
 using CNCMaps.Engine.Game;
+using System.Drawing;
+using CNCMaps.Engine.Utility;
 
 namespace CNCMaps.Engine.Generator {
 	internal class GeneratorEngineYR : GeneratorEngine {
@@ -39,6 +41,38 @@ namespace CNCMaps.Engine.Generator {
 				// var mapFile = new MapFile()
 
 			}
+
+
+			Bitmap bitmap = new Bitmap(200, 200);
+			/* Test of bitmap creation.
+			var rnd = new Random();
+			for (int x = 0; x < 100; x++) {
+				for (int y = 0; y < 100; y++) {
+					bitmap.SetPixel(x, y, Color.FromArgb(rnd.Next(256), rnd.Next(256), rnd.Next(256)));
+				}
+			}
+			*/
+
+			var noise = new PerlinNoise(1234);
+
+			for (int x = 0; x < 200; x++) {
+				for (int y = 0; y < 200; y++) {
+					var dx = (double)x;
+					var dy = (double)y;
+					var n = noise.Noise(dx * 0.05, dy * 0.05, 0);
+					var positive = n + 1;
+					var large = (int)(positive * 128);
+					var c = Color.FromArgb(large, large, large);	// gray scale.
+					bitmap.SetPixel(x, y, c);
+				}
+			}
+
+
+
+			var debugView = new DebugGeneratorEngine();
+			debugView.Canvas.Image = bitmap;
+			debugView.ShowDialog();
+
 
 			return true;
 		}
