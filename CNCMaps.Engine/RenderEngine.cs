@@ -52,6 +52,9 @@ namespace CNCMaps.Engine {
 					_settings.Backup=false;
 				}
 
+				// todo: Remove
+				return EngineResult.RenderedOk;
+
 				_logger.Info("Initializing virtual filesystem");
 
 				var mapStream = File.Open(_settings.InputFile, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);

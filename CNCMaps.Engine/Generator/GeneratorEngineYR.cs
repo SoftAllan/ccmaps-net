@@ -43,31 +43,26 @@ namespace CNCMaps.Engine.Generator {
 			}
 
 
-			Bitmap bitmap = new Bitmap(200, 200);
-			/* Test of bitmap creation.
-			var rnd = new Random();
-			for (int x = 0; x < 100; x++) {
-				for (int y = 0; y < 100; y++) {
-					bitmap.SetPixel(x, y, Color.FromArgb(rnd.Next(256), rnd.Next(256), rnd.Next(256)));
-				}
-			}
-			*/
+			Bitmap bitmap = new Bitmap(300, 300);
 
-			var noise = new PerlinNoise(1234);
+			var noise = new PerlinNoise(222);
+			var c = Color.Empty;
+			var nv = 0d;
+			var h = 0;
 
-			for (int x = 0; x < 200; x++) {
-				for (int y = 0; y < 200; y++) {
-					var dx = (double)x;
-					var dy = (double)y;
-					var n = noise.Noise(dx * 0.05, dy * 0.05, 0);
-					var positive = n + 1;
-					var large = (int)(positive * 128);
-					var c = Color.FromArgb(large, large, large);	// gray scale.
+			for (int x = 0; x < bitmap.Width; x++) {
+				for (int y = 0; y < bitmap.Height; y++) {
+					nv = noise.Noise(x * 0.006d, y * 0.006d, 0d) + 1d;
+					h = (int)(nv * 128);
+					if (h < 100)
+						c = Color.FromArgb(0, 0, h + 80);   // water
+					else if (h < 120)
+						c = Color.FromArgb(300 - h, 300 - h, 0);		// sand
+					else 
+						c = Color.FromArgb(0, h, 0);		// grass.
 					bitmap.SetPixel(x, y, c);
 				}
 			}
-
-
 
 			var debugView = new DebugGeneratorEngine();
 			debugView.Canvas.Image = bitmap;
