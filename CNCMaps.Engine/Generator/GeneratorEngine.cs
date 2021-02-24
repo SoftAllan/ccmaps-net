@@ -1,30 +1,46 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
+using CNCMaps.Engine.Utility;
 using CNCMaps.FileFormats;
 using CNCMaps.FileFormats.Map;
 using CNCMaps.Shared;
 using CNCMaps.Shared.Generator;
+using NLog;
 
 namespace CNCMaps.Engine.Generator {
 	public abstract class GeneratorEngine : IGeneratorEngine {
-		
-		public GeneratorEngine(Settings settings) {
+
+		/* Notes about the generator:
+		 * Regardless of the size of the map the size of lakes, rivers and the like has to be set to the same scale.
+		 * 
+		 */
+
+		public GeneratorEngine(Settings settings, Logger logger) {
 			Settings = settings;
+			Noise = new PerlinNoise(Environment.TickCount);   // todo: set seed to Environment.TickCount
+			_logger = logger;
 		}
 
+		private const double NoiseOffset = 0.04d;
+
 		internal Settings Settings { get; }
-		internal TileLayer _tileLayer;
+		internal TileLayer TileLayer { get ; set ; }
 		internal ushort Height;
 		internal ushort Width;
+		internal PerlinNoise Noise { get; }
+		private int[,] _heightLayout;
+		private Logger _logger { get; }
 
 		public virtual bool GenerateMap() {
 			throw new NotImplementedException();
 		}
 
 		public bool SaveMap() {
+			_logger.Debug("Creating map file.");
 			IniFile iniFile;
 			using (var mapStream = File.Create(Settings.OutputFile)) {
 				iniFile = new IniFile(mapStream, Settings.OutputFile, 0, 0);
@@ -33,19 +49,24 @@ namespace CNCMaps.Engine.Generator {
 			 * ; Map created with Random Map Generator.
 			 * ; Coded by Allan Greis Eriksen.
 			 * ; Time and date for creation.
-			 */ 
+			 */
+			_logger.Debug("Adding sections to map file.");
 			AddPreviewSection(iniFile);
 			AddPreviewPackSection(iniFile);
 			AddBasicSection(iniFile);
 			AddIsoMapPack5Section(iniFile);
 			AddMapSection(iniFile);
 			AddWaypointsSection(iniFile);
+			_logger.Debug("Saving map file.");
 			iniFile.Save(Settings.OutputFile);
+			_logger.Debug("Map file saved.");
 			return true;
 		}
 
 		// todo: Add a random map size.
+		// todo: Define the min, max range for each map size.
 		public virtual void ParseMapSize(MapSize mapSize) {
+			_logger.Debug("Parsing map size.");
 			switch (mapSize) {
 				case MapSize.Small:
 					Height= 50;
@@ -68,20 +89,34 @@ namespace CNCMaps.Engine.Generator {
 			}
 		}
 
-		// Fill level 0 clear tiles for all array values
+		// Crate a new tilelayer, fill tiles for all array values and set coordinates.
 		// (Code from MapFile.cs)
-		// Todo: Temp use.
 		public void InitialiseMapLayer(int tilenumber) {
-			_tileLayer = new TileLayer(Width, Height);
+			_logger.Debug("Initializing map layer.");
+			TileLayer = new TileLayer(Width, Height);
 			for (ushort y = 0; y < Height; y++) {
 				for (ushort x = 0; x <= Width * 2 - 2; x++) {
 					ushort dx = (ushort)(x);
 					ushort dy = (ushort)(y * 2 + x % 2);
 					ushort rx = (ushort)((dx + dy) / 2 + 1);
 					ushort ry = (ushort)(dy - rx + Width + 1);
-					_tileLayer[x, y] = new IsoTile(dx, dy, rx, ry, 0, tilenumber, 0, 0);
+					TileLayer[x, y] = new IsoTile(dx, dy, rx, ry, 0, tilenumber, 0, 0);
 				}
 			}
+		}
+
+		public void GenerateHeightLayout() {
+			_logger.Debug("Generating height layout");
+			_heightLayout = new int[TileLayer.Height, TileLayer.Width];
+			var nv = 0d;
+			var h = 0;
+			for (int y = 0; y < TileLayer.Height; y++) {
+				for (int x = 0; x < TileLayer.Width; x++) {
+					nv = Noise.Noise(x * NoiseOffset, y * NoiseOffset, 0d) + 1d;
+					_heightLayout[y,x] = (int)(nv * 128);
+				}
+			}
+			DebugLayoutHeight();
 		}
 
 		public string TheaterType(TheaterType theaterType) {
@@ -109,7 +144,7 @@ namespace CNCMaps.Engine.Generator {
 
 		private void AddIsoMapPack5Section(IniFile iniFile) {
 			var isoMapPack5 = iniFile.GetOrCreateSection("IsoMapPack5");
-			_tileLayer.SerializeIsoMapPack5(isoMapPack5);
+			TileLayer.SerializeIsoMapPack5(isoMapPack5);
 		}
 
 		private void AddMapSection(IniFile iniFile) {
@@ -172,5 +207,53 @@ namespace CNCMaps.Engine.Generator {
 			waypoints.SetValue("7", "53051");
 		}
 
+		internal void TestPerlin() {
+			Bitmap bitmap = new Bitmap(300, 300);
+
+			var noise = new PerlinNoise(222);
+			var c = Color.Empty;
+			var nv = 0d;
+			var h = 0;
+
+			for (int x = 0; x < bitmap.Width; x++) {
+				for (int y = 0; y < bitmap.Height; y++) {
+					nv = noise.Noise(x * 0.006d, y * 0.006d, 0d) + 1d;
+					h = (int)(nv * 128);
+					if (h < 100)
+						c = Color.FromArgb(0, 0, h + 80);   // water
+					else if (h < 110)
+						c = Color.FromArgb(300 - h, 300 - h, 0);        // sand
+					else
+						c = Color.FromArgb(0, h, 0);        // grass.
+					bitmap.SetPixel(x, y, c);
+				}
+			}
+
+			var debugView = new DebugGeneratorEngine();
+			debugView.Canvas.Image = bitmap;
+			debugView.ShowDialog();
+		}
+
+		internal void DebugLayoutHeight() {
+			Bitmap bitmap = new Bitmap(TileLayer.Width, TileLayer.Height);
+			var c = Color.Empty;
+			var h = 0;
+			for (int y = 0; y < TileLayer.Height; y++) {
+				for (int x = 0; x < TileLayer.Width; x++) {
+					h = _heightLayout[y, x];
+					if (h < 100)
+						c = Color.FromArgb(0, 0, h + 80);   // water
+					else if (h < 110)
+						c = Color.FromArgb(300 - h, 300 - h, 0);        // sand
+					else
+						c = Color.FromArgb(0, h, 0);        // grass.
+					bitmap.SetPixel(x, y, c);
+				}
+			}
+
+			var debugView = new DebugGeneratorEngine();
+			debugView.Canvas.Image = bitmap;
+			debugView.ShowDialog();
+		}
 	}
 }
