@@ -66,6 +66,7 @@ namespace CNCMaps.Engine.Generator {
 				InitialiseMapLayer(131);
 				GenerateHeightLayout();
 				DefineMapTilesFromHeightLayout(theater);
+				DefineWaterSubtiles(theater);
 				DefineShoreTiles(theater);
 
 				// FillMapTest(theater);
@@ -83,7 +84,7 @@ namespace CNCMaps.Engine.Generator {
 			return true;
 		}
 
-		internal void FillMapTest(Theater theater) {
+		private void FillMapTest(Theater theater) {
 			var cl = theater.GetTileCollection();
 			var t = TileLayer.GetTile(5,5);
 			t.TileNum = cl.GetTileNumFromSet(13);
@@ -124,7 +125,7 @@ namespace CNCMaps.Engine.Generator {
 		// #3: Shore TopRight, size 2x2, variant 3 of 3
 		// #4: Shore TopRight, size 1x2,
 
-		internal void DefineMapTilesFromHeightLayout(Theater theater) {
+		private void DefineMapTilesFromHeightLayout(Theater theater) {
 		    IsoTile currentTile;
 			_logger.Debug("Defining map tiles from height layout.");
 			var cl = theater.GetTileCollection();
@@ -142,8 +143,15 @@ namespace CNCMaps.Engine.Generator {
 						currentTile = TileLayer.GetTile(x, y);
 						currentTile.TileNum = sand;
 					}
+					// todo: Make height shift (max 14, but start with max 10)
+
+
 				}
 			}
+		}
+		private void DefineWaterSubtiles(Theater theater) {
+			// todo: Make 2x2 tiles where possible 
+			// WaterTileLarge
 		}
 
 		private void DefineShoreTiles(Theater theater) {
