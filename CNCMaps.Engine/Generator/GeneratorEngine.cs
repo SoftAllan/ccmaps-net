@@ -21,7 +21,7 @@ namespace CNCMaps.Engine.Generator {
 
 		public GeneratorEngine(Settings settings, Logger logger) {
 			Settings = settings;
-			Noise = new PerlinNoise(Environment.TickCount);   // todo: set seed to Environment.TickCount
+			Noise = new PerlinNoise(222);   // todo: set seed to Environment.TickCount
 			_logger = logger;
 		}
 
@@ -32,7 +32,7 @@ namespace CNCMaps.Engine.Generator {
 		internal ushort Height;
 		internal ushort Width;
 		internal PerlinNoise Noise { get; }
-		private int[,] _heightLayout;
+		internal int[,] HeightLayout { get; set; }
 		private Logger _logger { get; }
 
 		public virtual bool GenerateMap() {
@@ -65,7 +65,7 @@ namespace CNCMaps.Engine.Generator {
 
 		// todo: Add a random map size.
 		// todo: Define the min, max range for each map size.
-		public virtual void ParseMapSize(MapSize mapSize) {
+		internal virtual void ParseMapSize(MapSize mapSize) {
 			_logger.Debug("Parsing map size.");
 			switch (mapSize) {
 				case MapSize.Small:
@@ -91,7 +91,7 @@ namespace CNCMaps.Engine.Generator {
 
 		// Crate a new tilelayer, fill tiles for all array values and set coordinates.
 		// (Code from MapFile.cs)
-		public void InitialiseMapLayer(int tilenumber) {
+		internal void InitialiseMapLayer(int tilenumber) {
 			_logger.Debug("Initializing map layer.");
 			TileLayer = new TileLayer(Width, Height);
 			for (ushort y = 0; y < Height; y++) {
@@ -105,15 +105,14 @@ namespace CNCMaps.Engine.Generator {
 			}
 		}
 
-		public void GenerateHeightLayout() {
+		internal void GenerateHeightLayout() {
 			_logger.Debug("Generating height layout");
-			_heightLayout = new int[TileLayer.Height, TileLayer.Width];
+			HeightLayout = new int[TileLayer.Height, TileLayer.Width];
 			var nv = 0d;
-			var h = 0;
 			for (int y = 0; y < TileLayer.Height; y++) {
 				for (int x = 0; x < TileLayer.Width; x++) {
 					nv = Noise.Noise(x * NoiseOffset, y * NoiseOffset, 0d) + 1d;
-					_heightLayout[y,x] = (int)(nv * 128);
+					HeightLayout[y,x] = (int)(nv * 128);
 				}
 			}
 			DebugLayoutHeight();
@@ -240,7 +239,7 @@ namespace CNCMaps.Engine.Generator {
 			var h = 0;
 			for (int y = 0; y < TileLayer.Height; y++) {
 				for (int x = 0; x < TileLayer.Width; x++) {
-					h = _heightLayout[y, x];
+					h = HeightLayout[y, x];
 					if (h < 100)
 						c = Color.FromArgb(0, 0, h + 80);   // water
 					else if (h < 110)
