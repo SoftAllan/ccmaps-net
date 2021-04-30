@@ -4,6 +4,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
+using CNCMaps.Engine.Game;
 using CNCMaps.Engine.Generator.Map;
 using CNCMaps.Engine.Utility;
 using CNCMaps.FileFormats;
@@ -31,8 +32,9 @@ namespace CNCMaps.Engine.Generator {
 		public TileLayer TileLayer { get ; set ; }
 		public ushort Height;
 		public ushort Width;
+		public Theater Theater { get; set; }
 		internal PerlinNoise Noise { get; }
-		internal byte[,] HeightLayout { get; set; }
+		public byte[,] HeightLayout { get; set; }
 		private Logger _logger { get; }
 
 		public virtual bool GenerateMap() {

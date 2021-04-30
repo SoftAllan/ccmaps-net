@@ -17,9 +17,9 @@ namespace CNCMaps.Engine.Generator {
 		const int WaterTileSingle = 322;
 		const int WaterTileLarge = 314; // 4 subtiles.
 		
-		const byte SeaLevel = 100 ;
-		const byte SandLevel = 110;
-		const byte HeightInterval = (256 - SandLevel) / 14;
+		public const byte SeaLevel = 100 ;
+		public const byte SandLevel = 110;
+		public const byte HeightInterval = (256 - SandLevel) / 14;
 
 
 		// Shore Pieces (Set 12) filename: Shore
@@ -68,6 +68,7 @@ namespace CNCMaps.Engine.Generator {
 
 				InitialiseMapLayer(ClearTile);
 				GenerateHeightLayout();
+				LevelOutHeight();
 				DefineMapTilesFromHeightLayout(theater);
 				DefineWaterSubtiles(theater);
 				DefineShoreTiles(theater);
@@ -130,7 +131,7 @@ namespace CNCMaps.Engine.Generator {
 		// #3: Shore TopRight, size 2x2, variant 3 of 3
 		// #4: Shore TopRight, size 1x2,
 
-		private void DefineMapTilesFromHeightLayout(Theater theater) {
+		public void DefineMapTilesFromHeightLayout(Theater theater) {
 		    IsoTile currentTile;
 			_logger.Debug("Defining map tiles from height layout.");
 			var cl = theater.GetTileCollection();
@@ -138,8 +139,8 @@ namespace CNCMaps.Engine.Generator {
 			var sand = cl.GetTileNumFromSet(cl.SandTile, 0);
 			for (int y = 0; y < TileLayer.Height; y++) {
 				for (int x = 0; x < TileLayer.Width; x++) {
-					var h = HeightLayout[y, x];
-					currentTile = TileLayer.GetTile(x, y);
+					var h = HeightLayout[x, y];
+					currentTile = TileLayer[x, y];
 					if (h < SeaLevel) {
 						currentTile.TileNum = water;
 						currentTile.Z = 0;
@@ -154,7 +155,6 @@ namespace CNCMaps.Engine.Generator {
 					}
 				}
 			}
-			LevelOutHeight();
 		}
 
 		// Make sure that neighbour z is not jumping more than 1.
