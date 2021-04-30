@@ -285,7 +285,9 @@ namespace CNCMaps.Engine {
 #if DEBUG
 				throw;
 #endif
+#pragma warning disable CS0162 // Unreachable code detected
 				return EngineResult.Exception;
+#pragma warning restore CS0162 // Unreachable code detected
 			}
 			return EngineResult.RenderedOk;
 		}

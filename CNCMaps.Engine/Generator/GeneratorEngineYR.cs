@@ -17,6 +17,10 @@ namespace CNCMaps.Engine.Generator {
 		const int ClearTile = 0;
 		const int WaterTileSingle = 322;
 		const int WaterTileLarge = 314; // 4 subtiles.
+		
+		const byte SeaLevel = 100 ;
+		const byte SandLevel = 110;
+		const byte HeightInterval = (256 - SandLevel) / 14;
 
 
 		// Shore Pieces (Set 12) filename: Shore
@@ -63,11 +67,12 @@ namespace CNCMaps.Engine.Generator {
 				var theater = new Theater(Settings.TheaterType, modConfig, vfs, vfs.Open<IniFile>("rulesmd.ini"), vfs.Open<IniFile>("artmd.ini"));
 				theater.Initialize();
 
-				InitialiseMapLayer(131);
+				InitialiseMapLayer(ClearTile);
 				GenerateHeightLayout();
 				DefineMapTilesFromHeightLayout(theater);
 				DefineWaterSubtiles(theater);
 				DefineShoreTiles(theater);
+				DefineHillSlope(theater);
 
 				// FillMapTest(theater);
 
@@ -83,6 +88,7 @@ namespace CNCMaps.Engine.Generator {
 
 			return true;
 		}
+
 
 		private void FillMapTest(Theater theater) {
 			var cl = theater.GetTileCollection();
@@ -131,21 +137,20 @@ namespace CNCMaps.Engine.Generator {
 			var cl = theater.GetTileCollection();
 			var water = cl.GetTileNumFromSet(cl.WaterSet, 0);
 			var sand = cl.GetTileNumFromSet(cl.SandTile, 0);
-			var h = 0;
 			for (int y = 0; y < TileLayer.Height; y++) {
 				for (int x = 0; x < TileLayer.Width; x++) {
-					h = HeightLayout[y, x];
-					if (h < 100) {
-						currentTile = TileLayer.GetTile(x, y);
+					var h = HeightLayout[y, x];
+					currentTile = TileLayer.GetTile(x, y);
+					if (h < SeaLevel) {
 						currentTile.TileNum = water;
 					}
-					else if (h < 110) {
-						currentTile = TileLayer.GetTile(x, y);
+					else if (h < SandLevel) {
 						currentTile.TileNum = sand;
 					}
-					// todo: Make height shift (max 14, but start with max 10)
-
-
+					else {
+						var hLevel = (byte)((h - SandLevel) / HeightInterval);
+						currentTile.Z = hLevel;
+					}
 				}
 			}
 		}
@@ -154,11 +159,23 @@ namespace CNCMaps.Engine.Generator {
 			// WaterTileLarge
 		}
 
+		// Make shore tiles instead of sand tiles.
 		private void DefineShoreTiles(Theater theater) {
 			
 
 		}
 
+		// Make slopes where Z changes.
+		private void DefineHillSlope(Theater theater) {
+			for (int y = 0; y < TileLayer.Height; y++) {
+				for (int x = 0; x < TileLayer.Width; x++) {
+					var currentTile = TileLayer.GetTile(x, y);
+
+
+				}
+			}
+
+		}
 
 	}
 }

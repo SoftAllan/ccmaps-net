@@ -107,8 +107,10 @@
     </Compile>
     <Compile Include="Generator\GeneratorEngine.cs" />
     <Compile Include="Generator\IGeneratorEngine.cs" />
+    <Compile Include="Generator\Map\IsoTile.cs" />
     <Compile Include="Generator\RandomMapGenerator.cs" />
     <Compile Include="Generator\GeneratorEngineYR.cs" />
+    <Compile Include="Generator\Map\TileLayer.cs" />
     <Compile Include="RenderEngine.cs" />
     <Compile Include="Game\Defaults.cs" />
     <Compile Include="Game\FrameDeciders.cs" />
