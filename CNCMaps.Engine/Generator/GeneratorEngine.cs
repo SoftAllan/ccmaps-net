@@ -28,9 +28,9 @@ namespace CNCMaps.Engine.Generator {
 		private const double NoiseOffset = 0.04d;
 
 		internal Settings Settings { get; }
-		internal TileLayer TileLayer { get ; set ; }
-		internal ushort Height;
-		internal ushort Width;
+		public TileLayer TileLayer { get ; set ; }
+		public ushort Height;
+		public ushort Width;
 		internal PerlinNoise Noise { get; }
 		internal byte[,] HeightLayout { get; set; }
 		private Logger _logger { get; }
@@ -91,7 +91,7 @@ namespace CNCMaps.Engine.Generator {
 
 		// Crate a new tilelayer, fill tiles for all array values and set coordinates.
 		// (Code from MapFile.cs)
-		internal void InitialiseMapLayer(int tilenumber) {
+		public void InitialiseMapLayer(int tilenumber) {
 			_logger.Debug("Initializing map layer.");
 			TileLayer = new TileLayer(Width, Height);
 			for (ushort y = 0; y < Height; y++) {

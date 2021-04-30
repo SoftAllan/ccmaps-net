@@ -4,11 +4,10 @@ using NLog;
 using CNCMaps.FileFormats.VirtualFileSystem;
 using CNCMaps.FileFormats;
 using CNCMaps.Engine.Game;
-using CNCMaps.FileFormats.Map;
-using CNCMaps.Engine.Drawables;
+using CNCMaps.Engine.Generator.Map;
 
 namespace CNCMaps.Engine.Generator {
-	internal class GeneratorEngineYR : GeneratorEngine {
+	public class GeneratorEngineYR : GeneratorEngine {
 		
 		private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
 
@@ -143,9 +142,11 @@ namespace CNCMaps.Engine.Generator {
 					currentTile = TileLayer.GetTile(x, y);
 					if (h < SeaLevel) {
 						currentTile.TileNum = water;
+						currentTile.Z = 0;
 					}
 					else if (h < SandLevel) {
 						currentTile.TileNum = sand;
+						currentTile.Z = 0;
 					}
 					else {
 						var hLevel = (byte)((h - SandLevel) / HeightInterval);
@@ -153,7 +154,16 @@ namespace CNCMaps.Engine.Generator {
 					}
 				}
 			}
+			LevelOutHeight();
 		}
+
+		// Make sure that neighbour z is not jumping more than 1.
+		public void LevelOutHeight() {
+			// todo: Make the ajustment.
+			// Todo: for now just try out that the unit test is working. 
+			TileLayer[1, 1].Z = 0;
+		}
+
 		private void DefineWaterSubtiles(Theater theater) {
 			// todo: Make 2x2 tiles where possible 
 			// WaterTileLarge
@@ -170,12 +180,21 @@ namespace CNCMaps.Engine.Generator {
 			for (int y = 0; y < TileLayer.Height; y++) {
 				for (int x = 0; x < TileLayer.Width; x++) {
 					var currentTile = TileLayer.GetTile(x, y);
-
+					CheckStraightLine(currentTile);
 
 				}
 			}
 
 		}
+
+		public void CheckStraightLine(IsoTile currentTile) {
+			var topLeft = TileLayer.GetNeighbourTile(currentTile, TileLayer.TileDirection.TopLeft);
+			var top = TileLayer.GetNeighbourTile(currentTile, TileLayer.TileDirection.Top);
+			var topRight = TileLayer.GetNeighbourTile(currentTile, TileLayer.TileDirection.TopRight);
+
+
+		}
+	
 
 	}
 }
