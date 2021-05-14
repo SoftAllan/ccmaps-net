@@ -13,10 +13,10 @@ namespace CNCMaps.Engine.Generator {
 
 		public GeneratorEngineYR(Settings settings) : base(settings, _logger) { }
 
-		const int ClearTile = 0;
-		const int WaterTileSingle = 322;
-		const int WaterTileLarge = 314; // 4 subtiles.
-		const int SandTileSingle = 418;
+		public const int ClearTile = 0;
+		public const int WaterTileSingle = 322;
+		public const int WaterTileLarge = 314; // 4 subtiles.
+		public const int SandTileSingle = 418;
 
 		public const byte SeaLevel = 100 ;
 		public const byte SandLevel = 110;
@@ -140,7 +140,7 @@ namespace CNCMaps.Engine.Generator {
 					var h = HeightLayout[x, y];
 					currentTile = TileLayer[x, y];
 					if (h < SeaLevel) {
-						currentTile.TileNum = WaterTileLarge;	// todo: change to single. Large tiles are fixed later.
+						currentTile.TileNum = WaterTileSingle;	// todo: change to single. Large tiles are fixed later.
 						currentTile.Z = 0;
 					}
 					else if (h < SandLevel) {
@@ -242,7 +242,6 @@ namespace CNCMaps.Engine.Generator {
 			return false;
 		}
 
-		/*
 		public void CheckWaterOrSandLevel(int x, int y) {
 			var ct = TileLayer[x, y];
 			if (CheckTileWaterlineLevel(ct, TileLayer.GridTile(x, y, TileLayer.TileDirection.Top))) return;
@@ -253,20 +252,16 @@ namespace CNCMaps.Engine.Generator {
 		// the level is ajusted.
 		// Returns true if the current tile has been altered.
 		private bool CheckTileWaterlineLevel(IsoTile current, IsoTile validated) {
-			if (validated.TileNum != -1) {
-				if (validated.Tile =  - 1 > current.Z) {
-					current.Z = (byte)(validated.Z - 1);
-					return true;
-				}
-				if (validated.Z + 1 < current.Z) {
-					current.Z = (byte)(validated.Z + 1);
-					return true;
+			if (current.TileNum == WaterTileSingle) {
+				if (validated.TileNum == WaterTileSingle || validated.TileNum == SandTileSingle) {
+					if (validated.Z != current.Z) {
+						current.Z = validated.Z;
+						return true;
+					}
 				}
 			}
 			return false;
-
 		}
-		*/
 
 	}
 }
