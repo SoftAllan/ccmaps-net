@@ -111,7 +111,7 @@ namespace TestRandomMapGenerator
 		}
 
 		[TestMethod]
-		public void TestLevelWaterHighTop() {
+		public void TestLevelWaterTop() {
 			var te = NewTestGeneratorEngineYR(3, 3);
 			int x = 1;
 			int y = 1;
@@ -135,6 +135,37 @@ namespace TestRandomMapGenerator
 			Assert.AreEqual(0, te.TileLayer[x, y].Z);
 			te.TileLayer[1, 0].Z = 1;
 			te.TileLayer[1, 0].TileNum = 0;
+			te.TileLayer[1, 1].Z = 0;
+			te.TileLayer[1, 1].TileNum = GeneratorEngineYR.WaterTileSingle;
+			te.CheckWaterOrSandLevel(x, y);
+			Assert.AreEqual(0, te.TileLayer[x, y].Z);
+		}
+
+		[TestMethod]
+		public void TestLevelWaterLeft() {
+			var te = NewTestGeneratorEngineYR(3, 3);
+			int x = 1;
+			int y = 1;
+			te.TileLayer[0, 0].Z = 1;
+			te.TileLayer[1, 0].Z = 1;
+			te.TileLayer[2, 0].Z = 1;
+			te.TileLayer[0, 1].Z = 1;
+			te.TileLayer[0, 1].TileNum = GeneratorEngineYR.WaterTileSingle;
+			te.TileLayer[1, 1].Z = 0;
+			te.TileLayer[1, 1].TileNum = GeneratorEngineYR.WaterTileSingle;
+			te.TileLayer[2, 1].Z = 0;
+			// [3, y] and [4, y] is not used in this test.
+			// [x, 2] is not used in this test.
+			te.CheckWaterOrSandLevel(x, y);
+			Assert.AreEqual(1, te.TileLayer[x, y].Z);
+			te.TileLayer[0, 1].Z = 1;
+			te.TileLayer[0, 1].TileNum = GeneratorEngineYR.WaterTileSingle;
+			te.TileLayer[1, 1].Z = 0;
+			te.TileLayer[1, 1].TileNum = 0;
+			te.CheckWaterOrSandLevel(x, y);
+			Assert.AreEqual(0, te.TileLayer[x, y].Z);
+			te.TileLayer[0, 1].Z = 1;
+			te.TileLayer[0, 1].TileNum = 0;
 			te.TileLayer[1, 1].Z = 0;
 			te.TileLayer[1, 1].TileNum = GeneratorEngineYR.WaterTileSingle;
 			te.CheckWaterOrSandLevel(x, y);
