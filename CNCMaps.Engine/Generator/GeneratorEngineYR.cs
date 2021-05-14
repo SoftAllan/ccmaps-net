@@ -223,11 +223,11 @@ namespace CNCMaps.Engine.Generator {
 			var top = TileLayer.GridTile(x, y, TileLayer.TileDirection.Top);
 			if (top.TileNum != -1) {
 				if (top.Z - 1 > ct.Z) {
-					ct.Z = top.Z--;
+					ct.Z = (byte)(top.Z - 1);
 					return;
 				}
 				if (top.Z + 1 < ct.Z) {
-					ct.Z = top.Z++;
+					ct.Z = (byte)(top.Z + 1);
 					return;
 				}
 			}

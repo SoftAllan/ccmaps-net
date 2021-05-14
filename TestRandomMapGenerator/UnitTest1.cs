@@ -43,20 +43,37 @@ namespace TestRandomMapGenerator
 		}
 
 		[TestMethod]
-		public void TestLevelOutHeight() {
+		public void TestLevelOutLowTop() {
 			var te = NewTestGeneratorEngineYR(3, 3);
 			int x = 1;
 			int y = 1;
 			te.TileLayer[0, 0].Z = 1;
 			te.TileLayer[1, 0].Z = 1;
 			te.TileLayer[2, 0].Z = 1;
-			te.TileLayer[0, 1].Z = 0;
+			te.TileLayer[0, 1].Z = 1;
 			te.TileLayer[1, 1].Z = 3;
-			te.TileLayer[2, 1].Z = 0;
+			te.TileLayer[2, 1].Z = 1;
 			// [3, y] and [4, y] is not used in this test.
 			// [x, 2] is not used in this test.
-			te.LevelOut();
-			Assert.AreEqual(2, te.TileLayer[1, 1].Z);
+			te.CheckLevel(x, y);
+			Assert.AreEqual(2, te.TileLayer[x, y].Z);
+		}
+
+		[TestMethod]
+		public void TestLevelOutHighTop() {
+			var te = NewTestGeneratorEngineYR(3, 3);
+			int x = 1;
+			int y = 1;
+			te.TileLayer[0, 0].Z = 4;
+			te.TileLayer[1, 0].Z = 4;
+			te.TileLayer[2, 0].Z = 4;
+			te.TileLayer[0, 1].Z = 4;
+			te.TileLayer[1, 1].Z = 0;
+			te.TileLayer[2, 1].Z = 4;
+			// [3, y] and [4, y] is not used in this test.
+			// [x, 2] is not used in this test.
+			te.CheckLevel(x, y);
+			Assert.AreEqual(3, te.TileLayer[x, y].Z);
 		}
 
 		[TestMethod]
