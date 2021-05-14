@@ -180,10 +180,9 @@ namespace CNCMaps.Engine.Generator {
 			for (int y = 0; y < Height; y++) {
 				for (int x = 0; x < Width * 2 - 1; x++) {
 					CheckPit(x, y);
-
+					CheckSpike(x, y);
 				}
 			}
-
 		}
 
 		// Remove small holes.
@@ -194,10 +193,25 @@ namespace CNCMaps.Engine.Generator {
 				TileLayer.GridTile(x, y, TileLayer.TileDirection.TopRight).Z - 1 == ct.Z &&
 				TileLayer.GridTile(x, y, TileLayer.TileDirection.Left).Z - 1 == ct.Z &&
 				TileLayer.GridTile(x, y, TileLayer.TileDirection.Right).Z - 1 == ct.Z &&
-				TileLayer.GridTile(x, y, TileLayer.TileDirection.BottomLeft).Z -1 == ct.Z &&
-				TileLayer.GridTile(x, y, TileLayer.TileDirection.Bottom).Z -1 == ct.Z &&
+				TileLayer.GridTile(x, y, TileLayer.TileDirection.BottomLeft).Z - 1 == ct.Z &&
+				TileLayer.GridTile(x, y, TileLayer.TileDirection.Bottom).Z - 1 == ct.Z &&
 				TileLayer.GridTile(x, y, TileLayer.TileDirection.BottomRight).Z - 1 == ct.Z) {
 					ct.Z++;
+			}
+		}
+
+		// Removes small spikes
+		public void CheckSpike(int x, int y) {
+			var ct = TileLayer[x, y];
+			if (TileLayer.GridTile(x, y, TileLayer.TileDirection.TopLeft).Z + 1 == ct.Z &&
+				TileLayer.GridTile(x, y, TileLayer.TileDirection.Top).Z + 1 == ct.Z &&
+				TileLayer.GridTile(x, y, TileLayer.TileDirection.TopRight).Z + 1 == ct.Z &&
+				TileLayer.GridTile(x, y, TileLayer.TileDirection.Left).Z + 1 == ct.Z &&
+				TileLayer.GridTile(x, y, TileLayer.TileDirection.Right).Z + 1 == ct.Z &&
+				TileLayer.GridTile(x, y, TileLayer.TileDirection.BottomLeft).Z + 1 == ct.Z &&
+				TileLayer.GridTile(x, y, TileLayer.TileDirection.Bottom).Z + 1 == ct.Z &&
+				TileLayer.GridTile(x, y, TileLayer.TileDirection.BottomRight).Z + 1 == ct.Z) {
+				ct.Z--;
 			}
 		}
 	}
