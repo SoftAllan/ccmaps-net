@@ -10,7 +10,7 @@ using CNCMaps.Shared.Utility;
 using NLog;
 
 namespace CNCMaps.Engine.Generator.Map {
-	public class TileLayer : IEnumerable<IsoTile> {
+	public class TileLayer {
 
 		static Logger logger = LogManager.GetCurrentClassLogger();
 
@@ -69,17 +69,6 @@ namespace CNCMaps.Engine.Generator.Map {
 				return GetTile(dx, dy / 2);
 		}
 
-		// Todo: The enumerator might not be needed.
-		#region enumerator stuff
-		public IEnumerator<IsoTile> GetEnumerator() {
-			return new TwoDimensionalEnumerator<IsoTile>(isoTiles);
-		}
-
-		IEnumerator IEnumerable.GetEnumerator() {
-			return new TwoDimensionalEnumerator<IsoTile>(isoTiles);
-		}
-		#endregion
-
 		public enum TileDirection {
 			Top,
 			TopLeft,
@@ -89,56 +78,6 @@ namespace CNCMaps.Engine.Generator.Map {
 			BottomLeft,
 			Bottom,
 			BottomRight
-		}
-
-		public IsoTile GetNeighbourTile(IsoTile t, TileDirection tileDirection) {
-			// find index for t
-			int x = t.Dx;
-			int y = (t.Dy + (t.Dx + 1) % 2) / 2;
-			return GetNeighbourTile(x, y, tileDirection);
-		}
-
-		public IsoTile GetNeighbourTile(int x, int y, TileDirection direction) {
-			switch (direction) {
-				// in non-diagonal direction we don't need to check odd/evenness of x
-				case TileDirection.Bottom:
-					if (y >= isoTiles.GetLength(1)) return null;
-					return this[x, y + 1];
-
-				case TileDirection.Top:
-					if (y < 2) return null;
-					return this[x, y - 1];
-
-				case TileDirection.Left:
-					if (x < 2) return null;
-					return this[x - 2, y];
-
-				case TileDirection.Right:
-					if (x >= isoTiles.GetLength(0) - 1) return null;
-					return this[x + 2, y];
-			}
-
-			// the horizontally neighbouring tiles have dy' = dy + 1 if x is odd,
-			// and the horizontally neighbouring tiles have dy' = dy - 1 if x is even,
-			y += x % 2;
-			switch (direction) {
-				case TileDirection.BottomLeft:
-					if (x < 1 || y >= isoTiles.GetLength(1)) return null;
-					return this[x - 1, y];
-
-				case TileDirection.BottomRight:
-					if (x >= isoTiles.GetLength(0) || y >= isoTiles.GetLength(1)) return null;
-					return this[x + 1, y];
-
-				case TileDirection.TopLeft:
-					if (x < 1 || y < 1) return null;
-					return this[x - 1, y - 1];
-
-				case TileDirection.TopRight:
-					if (y < 1 || x >= isoTiles.GetLength(0) - 1) return null;
-					return this[x + 1, y - 1];
-			}
-			throw new InvalidOperationException();
 		}
 
 		public void SerializeIsoMapPack5(FileFormats.IniFile.IniSection isoMapPack5) {
