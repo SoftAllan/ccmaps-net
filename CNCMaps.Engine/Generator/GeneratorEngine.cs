@@ -26,7 +26,9 @@ namespace CNCMaps.Engine.Generator {
 			_logger = logger;
 		}
 
-		private const double NoiseOffset = 0.04d;
+		// 0.04 large hills
+		// 0.20 many hills
+		private const double NoiseOffset = 0.20d;  
 
 		internal Settings Settings { get; }
 		public TileLayer TileLayer { get ; set ; }
