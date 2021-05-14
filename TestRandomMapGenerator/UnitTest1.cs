@@ -45,20 +45,18 @@ namespace TestRandomMapGenerator
 		[TestMethod]
 		public void TestLevelOutHeight() {
 			var te = NewTestGeneratorEngineYR(3, 3);
+			int x = 1;
+			int y = 1;
 			te.TileLayer[0, 0].Z = 1;
 			te.TileLayer[1, 0].Z = 1;
 			te.TileLayer[2, 0].Z = 1;
 			te.TileLayer[0, 1].Z = 0;
 			te.TileLayer[1, 1].Z = 3;
 			te.TileLayer[2, 1].Z = 0;
-			te.TileLayer[0, 2].Z = 0;
-			te.TileLayer[1, 2].Z = 0;
-			te.TileLayer[2, 2].Z = 0;
-			Assert.AreEqual(3, te.TileLayer[1, 1].Z);
-			te.LevelOutHeight();
-			Assert.AreEqual(1, te.TileLayer[0, 0].Z);
-			Assert.AreEqual(0, te.TileLayer[1, 1].Z);
-			Assert.AreEqual(0, te.TileLayer[2, 2].Z);
+			// [3, y] and [4, y] is not used in this test.
+			// [x, 2] is not used in this test.
+			te.LevelOut();
+			Assert.AreEqual(2, te.TileLayer[1, 1].Z);
 		}
 
 		[TestMethod]
@@ -72,6 +70,7 @@ namespace TestRandomMapGenerator
 			te.HeightLayout[1, 1] = 120;
 			te.HeightLayout[1, 2] = 200;
 			te.HeightLayout[2, 2] = 255;
+			// [3, y] and [4, y] is not used in this test.
 			te.DefineMapTilesFromHeightLayout(TestTheater);
 			Assert.AreEqual<byte>(0, te.TileLayer[0, 0].Z);
 			Assert.AreEqual<byte>(0, te.TileLayer[1, 0].Z);
@@ -95,6 +94,7 @@ namespace TestRandomMapGenerator
 			te.TileLayer[0, 2].Z = 7;
 			te.TileLayer[1, 2].Z = 8;
 			te.TileLayer[2, 2].Z = 9;
+			// [3, y] and [4, y] is not used in this test.
 			Assert.AreEqual(1, te.TileLayer.GridTile(x, y, TileLayer.TileDirection.TopLeft).Z);
 			Assert.AreEqual(2,te.TileLayer.GridTile(x, y, TileLayer.TileDirection.Top).Z);
 			Assert.AreEqual(3,te.TileLayer.GridTile(x, y, TileLayer.TileDirection.TopRight).Z);
@@ -113,44 +113,56 @@ namespace TestRandomMapGenerator
 			te.TileLayer[0, 0].Z = 1;
 			te.TileLayer[1, 0].Z = 2;
 			te.TileLayer[2, 0].Z = 3;
-			te.TileLayer[0, 1].Z = 4;
-			te.TileLayer[1, 1].Z = 5;
-			te.TileLayer[2, 1].Z = 6;
-			te.TileLayer[0, 2].Z = 7;
-			te.TileLayer[1, 2].Z = 8;
-			te.TileLayer[2, 2].Z = 9;
-			Assert.AreEqual(0, te.TileLayer.GridTile(x, y, TileLayer.TileDirection.TopLeft).Z);
-			Assert.AreEqual(0, te.TileLayer.GridTile(x, y, TileLayer.TileDirection.Top).Z);
-			Assert.AreEqual(0, te.TileLayer.GridTile(x, y, TileLayer.TileDirection.TopRight).Z);
-			Assert.AreEqual(0, te.TileLayer.GridTile(x, y, TileLayer.TileDirection.Left).Z);
+			te.TileLayer[3, 0].Z = 4;
+			te.TileLayer[4, 0].Z = 5;
+			te.TileLayer[0, 1].Z = 6;
+			te.TileLayer[1, 1].Z = 7;
+			te.TileLayer[2, 1].Z = 8;
+			te.TileLayer[3, 1].Z = 9;
+			te.TileLayer[4, 1].Z = 10;
+			te.TileLayer[0, 2].Z = 11;
+			te.TileLayer[1, 2].Z = 12;
+			te.TileLayer[2, 2].Z = 13;
+			te.TileLayer[3, 2].Z = 14;
+			te.TileLayer[4, 2].Z = 15;
+			Assert.AreEqual(-1, te.TileLayer.GridTile(x, y, TileLayer.TileDirection.TopLeft).TileNum);
+			Assert.AreEqual(-1, te.TileLayer.GridTile(x, y, TileLayer.TileDirection.Top).TileNum);
+			Assert.AreEqual(-1, te.TileLayer.GridTile(x, y, TileLayer.TileDirection.TopRight).TileNum);
+			Assert.AreEqual(-1, te.TileLayer.GridTile(x, y, TileLayer.TileDirection.Left).TileNum);
 			Assert.AreEqual(2, te.TileLayer.GridTile(x, y, TileLayer.TileDirection.Right).Z);
-			Assert.AreEqual(0, te.TileLayer.GridTile(x, y, TileLayer.TileDirection.BottomLeft).Z);
-			Assert.AreEqual(4, te.TileLayer.GridTile(x, y, TileLayer.TileDirection.Bottom).Z);
-			Assert.AreEqual(5, te.TileLayer.GridTile(x, y, TileLayer.TileDirection.BottomRight).Z);
+			Assert.AreEqual(-1, te.TileLayer.GridTile(x, y, TileLayer.TileDirection.BottomLeft).TileNum);
+			Assert.AreEqual(6, te.TileLayer.GridTile(x, y, TileLayer.TileDirection.Bottom).Z);
+			Assert.AreEqual(7, te.TileLayer.GridTile(x, y, TileLayer.TileDirection.BottomRight).Z);
 		}
 
 		[TestMethod]
 		public void TestGridInvalidBoundsBottomRight() {
 			var te = NewTestGeneratorEngineYR(3, 3);
-			int x = 2;
-			int y = 2;
+			int x = te.Width * 2 - 2;
+			int y = te.Width - 1;
 			te.TileLayer[0, 0].Z = 1;
 			te.TileLayer[1, 0].Z = 2;
 			te.TileLayer[2, 0].Z = 3;
-			te.TileLayer[0, 1].Z = 4;
-			te.TileLayer[1, 1].Z = 5;
-			te.TileLayer[2, 1].Z = 6;
-			te.TileLayer[0, 2].Z = 7;
-			te.TileLayer[1, 2].Z = 8;
-			te.TileLayer[2, 2].Z = 9;
-			Assert.AreEqual(5, te.TileLayer.GridTile(x, y, TileLayer.TileDirection.TopLeft).Z);
-			Assert.AreEqual(6, te.TileLayer.GridTile(x, y, TileLayer.TileDirection.Top).Z);
-			Assert.AreEqual(0, te.TileLayer.GridTile(x, y, TileLayer.TileDirection.TopRight).Z);
-			Assert.AreEqual(8, te.TileLayer.GridTile(x, y, TileLayer.TileDirection.Left).Z);
-			Assert.AreEqual(0, te.TileLayer.GridTile(x, y, TileLayer.TileDirection.Right).Z);
-			Assert.AreEqual(0, te.TileLayer.GridTile(x, y, TileLayer.TileDirection.BottomLeft).Z);
-			Assert.AreEqual(0, te.TileLayer.GridTile(x, y, TileLayer.TileDirection.Bottom).Z);
-			Assert.AreEqual(0, te.TileLayer.GridTile(x, y, TileLayer.TileDirection.BottomRight).Z);
+			te.TileLayer[3, 0].Z = 4;
+			te.TileLayer[4, 0].Z = 5;
+			te.TileLayer[0, 1].Z = 6;
+			te.TileLayer[1, 1].Z = 7;
+			te.TileLayer[2, 1].Z = 8;
+			te.TileLayer[3, 1].Z = 9;
+			te.TileLayer[4, 1].Z = 10;
+			te.TileLayer[0, 2].Z = 11;
+			te.TileLayer[1, 2].Z = 12;
+			te.TileLayer[2, 2].Z = 13;
+			te.TileLayer[3, 2].Z = 14;
+			te.TileLayer[4, 2].Z = 15;
+			Assert.AreEqual(9, te.TileLayer.GridTile(x, y, TileLayer.TileDirection.TopLeft).Z);
+			Assert.AreEqual(10, te.TileLayer.GridTile(x, y, TileLayer.TileDirection.Top).Z);
+			Assert.AreEqual(-1, te.TileLayer.GridTile(x, y, TileLayer.TileDirection.TopRight).TileNum);
+			Assert.AreEqual(14, te.TileLayer.GridTile(x, y, TileLayer.TileDirection.Left).Z);
+			Assert.AreEqual(-1, te.TileLayer.GridTile(x, y, TileLayer.TileDirection.Right).TileNum);
+			Assert.AreEqual(-1, te.TileLayer.GridTile(x, y, TileLayer.TileDirection.BottomLeft).TileNum);
+			Assert.AreEqual(-1, te.TileLayer.GridTile(x, y, TileLayer.TileDirection.Bottom).TileNum);
+			Assert.AreEqual(-1, te.TileLayer.GridTile(x, y, TileLayer.TileDirection.BottomRight).TileNum);
 		}
 
 		[TestMethod]
@@ -165,6 +177,7 @@ namespace TestRandomMapGenerator
 			te.TileLayer[0, 2].Z = 1;
 			te.TileLayer[1, 2].Z = 1;
 			te.TileLayer[2, 2].Z = 1;
+			// [3, y] and [4, y] is not used in this test.
 			te.CheckPit(1, 1);
 			Assert.AreEqual(1, te.TileLayer[1, 1].Z);
 			te.TileLayer[1, 1].Z = 0;
@@ -185,6 +198,7 @@ namespace TestRandomMapGenerator
 			te.TileLayer[0, 2].Z = 1;
 			te.TileLayer[1, 2].Z = 1;
 			te.TileLayer[2, 2].Z = 1;
+			// [3, y] and [4, y] is not used in this test.
 			te.CheckSpike(1, 1);
 			Assert.AreEqual(1, te.TileLayer[1, 1].Z);
 			te.TileLayer[1, 1].Z = 2;
@@ -192,5 +206,6 @@ namespace TestRandomMapGenerator
 			te.CheckSpike(1, 1);
 			Assert.AreEqual(2, te.TileLayer[1, 1].Z);
 		}
+
 	}
 }

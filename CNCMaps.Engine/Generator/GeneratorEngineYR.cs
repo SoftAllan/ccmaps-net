@@ -68,11 +68,11 @@ namespace CNCMaps.Engine.Generator {
 
 				InitialiseMapLayer(ClearTile);
 				GenerateHeightLayout();
-				LevelOutHeight();
+				LevelOut();
 				DefineMapTilesFromHeightLayout(theater);
 				DefineWaterSubtiles(theater);
 				DefineShoreTiles(theater);
-				CheckHeights(theater);
+				CheckForPitAndSpike(theater);
 
 				// FillMapTest(theater);
 
@@ -158,10 +158,13 @@ namespace CNCMaps.Engine.Generator {
 		}
 
 		// Make sure that neighbour z is not jumping more than 1.
-		public void LevelOutHeight() {
-			// todo: Make the ajustment.
-			// Todo: for now just try out that the unit test is working. 
-			TileLayer[1, 1].Z = 0;
+		// Control against top, then left.
+		public void LevelOut() {
+			for (int y = 0; y < Height; y++) {
+				for (int x = 0; x < Width * 2 - 1; x++) {
+					CheckLevel(y, x);
+				}
+			}
 		}
 
 		private void DefineWaterSubtiles(Theater theater) {
@@ -175,8 +178,8 @@ namespace CNCMaps.Engine.Generator {
 
 		}
 
-		// Make slopes where Z changes.
-		private void CheckHeights(Theater theater) {
+		// Check for pits and spikes.
+		private void CheckForPitAndSpike(Theater theater) {
 			for (int y = 0; y < Height; y++) {
 				for (int x = 0; x < Width * 2 - 1; x++) {
 					CheckPit(x, y);
@@ -212,6 +215,21 @@ namespace CNCMaps.Engine.Generator {
 				TileLayer.GridTile(x, y, TileLayer.TileDirection.Bottom).Z + 1 == ct.Z &&
 				TileLayer.GridTile(x, y, TileLayer.TileDirection.BottomRight).Z + 1 == ct.Z) {
 				ct.Z--;
+			}
+		}
+
+		public void CheckLevel(int x, int y) {
+			var ct = TileLayer[x, y];
+			var top = TileLayer.GridTile(x, y, TileLayer.TileDirection.Top);
+			if (top.TileNum != -1) {
+				if (top.Z - 1 > ct.Z) {
+					ct.Z = top.Z--;
+					return;
+				}
+				if (top.Z + 1 < ct.Z) {
+					ct.Z = top.Z++;
+					return;
+				}
 			}
 		}
 	}

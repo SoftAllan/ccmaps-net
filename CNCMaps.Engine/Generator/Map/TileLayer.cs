@@ -140,7 +140,7 @@ namespace CNCMaps.Engine.Generator.Map {
 		}
 
 		private IsoTile GetInvalidTile() {
-			return new IsoTile(0, 0, 0, 0, 0, 0, 0, 0);
+			return new IsoTile(0, 0, 0, 0, 0, -1, 0, 0);
 		}
 
 	}
