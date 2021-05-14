@@ -162,7 +162,7 @@ namespace CNCMaps.Engine.Generator {
 			for (int y = 0; y < Height; y++) {
 				for (int x = 0; x < Width * 2 - 1; x++) {
 					CheckLevel(x, y);
-					// CheckWaterOrSandLevel(x, y);
+					CheckWaterOrSandLevel(x, y);
 				}
 			}
 		}
@@ -252,7 +252,7 @@ namespace CNCMaps.Engine.Generator {
 		// the level is ajusted.
 		// Returns true if the current tile has been altered.
 		private bool CheckTileWaterlineLevel(IsoTile current, IsoTile validated) {
-			if (current.TileNum == WaterTileSingle) {
+			if (current.TileNum == WaterTileSingle || current.TileNum == SandTileSingle) {
 				if (validated.TileNum == WaterTileSingle || validated.TileNum == SandTileSingle) {
 					if (validated.Z != current.Z) {
 						current.Z = validated.Z;
