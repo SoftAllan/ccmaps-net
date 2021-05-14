@@ -218,19 +218,28 @@ namespace CNCMaps.Engine.Generator {
 			}
 		}
 
+		// Check the level of the tile[x, y].
+		// If it is more that +/1 against either the top or the left tile it is corrected.
 		public void CheckLevel(int x, int y) {
 			var ct = TileLayer[x, y];
-			var top = TileLayer.GridTile(x, y, TileLayer.TileDirection.Top);
-			if (top.TileNum != -1) {
-				if (top.Z - 1 > ct.Z) {
-					ct.Z = (byte)(top.Z - 1);
-					return;
+			if (CheckTileLevel(ct, TileLayer.GridTile(x, y, TileLayer.TileDirection.Top))) return;
+			CheckTileLevel(ct, TileLayer.GridTile(x, y, TileLayer.TileDirection.Left));
+		}
+
+		// Check the current tile against the validated tile.
+		// Returns true if the current tile has been altered.
+		private bool CheckTileLevel(IsoTile current, IsoTile validated) {
+			if (validated.TileNum != -1) {
+				if (validated.Z - 1 > current.Z) {
+					current.Z = (byte)(validated.Z - 1);
+					return true;
 				}
-				if (top.Z + 1 < ct.Z) {
-					ct.Z = (byte)(top.Z + 1);
-					return;
+				if (validated.Z + 1 < current.Z) {
+					current.Z = (byte)(validated.Z + 1);
+					return true;
 				}
 			}
+			return false;
 		}
 	}
 }
