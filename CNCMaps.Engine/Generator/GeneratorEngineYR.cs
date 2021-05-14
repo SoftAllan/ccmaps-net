@@ -8,7 +8,7 @@ using CNCMaps.Engine.Generator.Map;
 
 namespace CNCMaps.Engine.Generator {
 	public class GeneratorEngineYR : GeneratorEngine {
-		
+
 		private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
 
 		public GeneratorEngineYR(Settings settings) : base(settings, _logger) { }
@@ -16,7 +16,7 @@ namespace CNCMaps.Engine.Generator {
 		const int ClearTile = 0;
 		const int WaterTileSingle = 322;
 		const int WaterTileLarge = 314; // 4 subtiles.
-		
+
 		public const byte SeaLevel = 100 ;
 		public const byte SandLevel = 110;
 		public const byte HeightInterval = (256 - SandLevel) / 14;
@@ -72,7 +72,7 @@ namespace CNCMaps.Engine.Generator {
 				DefineMapTilesFromHeightLayout(theater);
 				DefineWaterSubtiles(theater);
 				DefineShoreTiles(theater);
-				DefineHillSlope(theater);
+				CheckHeights(theater);
 
 				// FillMapTest(theater);
 
@@ -117,7 +117,7 @@ namespace CNCMaps.Engine.Generator {
 				x.TileNum = cl.GetTileNumFromSet(42, (byte)i);
 			}
 			t = TileLayer.GetTile(5, 21);
-			for (int i = 0; i < 14; i++ ) {
+			for (int i = 0; i < 14; i++) {
 				var x = TileLayer.GetTile(5 + (i * 2), 21);
 				x.TileNum = cl.GetTileNumFromSet(21, (byte)i);
 			}
@@ -132,13 +132,13 @@ namespace CNCMaps.Engine.Generator {
 		// #4: Shore TopRight, size 1x2,
 
 		public void DefineMapTilesFromHeightLayout(Theater theater) {
-		    IsoTile currentTile;
+			IsoTile currentTile;
 			_logger.Debug("Defining map tiles from height layout.");
 			var cl = theater.GetTileCollection();
 			var water = cl.GetTileNumFromSet(cl.WaterSet, 0);
 			var sand = cl.GetTileNumFromSet(cl.SandTile, 0);
-			for (int y = 0; y < TileLayer.Height; y++) {
-				for (int x = 0; x < TileLayer.Width; x++) {
+			for (int y = 0; y < Height; y++) {
+				for (int x = 0; x < Width * 2 - 1; x++) {
 					var h = HeightLayout[x, y];
 					currentTile = TileLayer[x, y];
 					if (h < SeaLevel) {
@@ -171,30 +171,34 @@ namespace CNCMaps.Engine.Generator {
 
 		// Make shore tiles instead of sand tiles.
 		private void DefineShoreTiles(Theater theater) {
-			
+
 
 		}
 
 		// Make slopes where Z changes.
-		private void DefineHillSlope(Theater theater) {
-			for (int y = 0; y < TileLayer.Height; y++) {
-				for (int x = 0; x < TileLayer.Width; x++) {
-					var currentTile = TileLayer.GetTile(x, y);
-					CheckStraightLine(currentTile);
+		private void CheckHeights(Theater theater) {
+			for (int y = 0; y < Height; y++) {
+				for (int x = 0; x < Width * 2 - 1; x++) {
+					CheckPit(x, y);
 
 				}
 			}
 
 		}
 
-		public void CheckStraightLine(IsoTile currentTile) {
-			var topLeft = TileLayer.GetNeighbourTile(currentTile, TileLayer.TileDirection.TopLeft);
-			var top = TileLayer.GetNeighbourTile(currentTile, TileLayer.TileDirection.Top);
-			var topRight = TileLayer.GetNeighbourTile(currentTile, TileLayer.TileDirection.TopRight);
-
-
+		// Remove small holes.
+		public void CheckPit(int x, int y) {
+			var ct = TileLayer[x, y];
+			if (TileLayer.GridTile(x, y, TileLayer.TileDirection.TopLeft).Z - 1 == ct.Z &&
+				TileLayer.GridTile(x, y, TileLayer.TileDirection.Top).Z - 1 == ct.Z && 
+				TileLayer.GridTile(x, y, TileLayer.TileDirection.TopRight).Z - 1 == ct.Z &&
+				TileLayer.GridTile(x, y, TileLayer.TileDirection.Left).Z - 1 == ct.Z &&
+				TileLayer.GridTile(x, y, TileLayer.TileDirection.Right).Z - 1 == ct.Z &&
+				TileLayer.GridTile(x, y, TileLayer.TileDirection.BottomLeft).Z -1 == ct.Z &&
+				TileLayer.GridTile(x, y, TileLayer.TileDirection.Bottom).Z -1 == ct.Z &&
+				TileLayer.GridTile(x, y, TileLayer.TileDirection.BottomRight).Z - 1 == ct.Z) {
+					ct.Z++;
+			}
 		}
-	
-
 	}
 }

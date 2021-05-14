@@ -109,12 +109,12 @@ namespace CNCMaps.Engine.Generator {
 
 		internal void GenerateHeightLayout() {
 			_logger.Debug("Generating height layout");
-			HeightLayout = new byte[TileLayer.Height, TileLayer.Width];
+			HeightLayout = new byte[Width * 2 - 1, Height];
 			var nv = 0d;
-			for (int y = 0; y < TileLayer.Height; y++) {
-				for (int x = 0; x < TileLayer.Width; x++) {
+			for (int y = 0; y < Height; y++) {
+				for (int x = 0; x < Width * 2 - 2; x++) {
 					nv = Noise.Noise(x * NoiseOffset, y * NoiseOffset, 0d) + 1d;
-					HeightLayout[y,x] = (byte)(nv * 128);
+					HeightLayout[x, y] = (byte)(nv * 128);
 				}
 			}
 			DebugLayoutHeight();
@@ -236,12 +236,12 @@ namespace CNCMaps.Engine.Generator {
 		}
 
 		internal void DebugLayoutHeight() {
-			Bitmap bitmap = new Bitmap(TileLayer.Width, TileLayer.Height);
+			Bitmap bitmap = new Bitmap(Width * 2 - 1, Height);
 			var c = Color.Empty;
 			var h = 0;
-			for (int y = 0; y < TileLayer.Height; y++) {
-				for (int x = 0; x < TileLayer.Width; x++) {
-					h = HeightLayout[y, x];
+			for (int y = 0; y < Height; y++) {
+				for (int x = 0; x < Width * 2 - 2; x++) {
+					h = HeightLayout[x, y];
 					if (h < 100)
 						c = Color.FromArgb(0, 0, h + 80);   // water
 					else if (h < 110)

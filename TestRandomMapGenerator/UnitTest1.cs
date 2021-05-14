@@ -44,27 +44,27 @@ namespace TestRandomMapGenerator
 
 		[TestMethod]
 		public void TestLevelOutHeight() {
-			var newEngine = NewTestGeneratorEngineYR(3, 3);
-			newEngine.TileLayer[0, 0].Z = 1;
-			newEngine.TileLayer[1, 0].Z = 1;
-			newEngine.TileLayer[2, 0].Z = 1;
-			newEngine.TileLayer[0, 1].Z = 0;
-			newEngine.TileLayer[1, 1].Z = 3;
-			newEngine.TileLayer[2, 1].Z = 0;
-			newEngine.TileLayer[0, 2].Z = 0;
-			newEngine.TileLayer[1, 2].Z = 0;
-			newEngine.TileLayer[2, 2].Z = 0;
-			Assert.AreEqual(newEngine.TileLayer[1, 1].Z, 3);
-			newEngine.LevelOutHeight();
-			Assert.AreEqual(newEngine.TileLayer[0, 0].Z, 1);
-			Assert.AreEqual(newEngine.TileLayer[1, 1].Z, 0);
-			Assert.AreEqual(newEngine.TileLayer[2, 2].Z, 0);
+			var te = NewTestGeneratorEngineYR(3, 3);
+			te.TileLayer[0, 0].Z = 1;
+			te.TileLayer[1, 0].Z = 1;
+			te.TileLayer[2, 0].Z = 1;
+			te.TileLayer[0, 1].Z = 0;
+			te.TileLayer[1, 1].Z = 3;
+			te.TileLayer[2, 1].Z = 0;
+			te.TileLayer[0, 2].Z = 0;
+			te.TileLayer[1, 2].Z = 0;
+			te.TileLayer[2, 2].Z = 0;
+			Assert.AreEqual(3, te.TileLayer[1, 1].Z);
+			te.LevelOutHeight();
+			Assert.AreEqual(1, te.TileLayer[0, 0].Z);
+			Assert.AreEqual(0, te.TileLayer[1, 1].Z);
+			Assert.AreEqual(0, te.TileLayer[2, 2].Z);
 		}
 
 		[TestMethod]
 		public void TestDefineMapTilesFromHeightLayout() {
 			var te = NewTestGeneratorEngineYR(3, 3);
-			te.HeightLayout = new byte[te.TileLayer.Height, te.TileLayer.Width];
+			te.HeightLayout = new byte[te.TileLayer.Width * 2 - 1, te.TileLayer.Height];
 			te.TileLayer[0, 0].Z = 0;
 			te.HeightLayout[0, 0] = GeneratorEngineYR.SeaLevel;
 			te.HeightLayout[1, 0] = GeneratorEngineYR.SandLevel;
@@ -79,6 +79,98 @@ namespace TestRandomMapGenerator
 			Assert.AreEqual<byte>(1, te.TileLayer[1, 1].Z);
 			Assert.AreEqual<byte>(9, te.TileLayer[1, 2].Z);
 			Assert.AreEqual<byte>(14, te.TileLayer[2, 2].Z);
+		}
+
+		[TestMethod]
+		public void TestGridDirection() {
+			var te = NewTestGeneratorEngineYR(3, 3);
+			int x = 1;
+			int y = 1;
+			te.TileLayer[0, 0].Z = 1;
+			te.TileLayer[1, 0].Z = 2;
+			te.TileLayer[2, 0].Z = 3;
+			te.TileLayer[0, 1].Z = 4;
+			te.TileLayer[1, 1].Z = 5;
+			te.TileLayer[2, 1].Z = 6;
+			te.TileLayer[0, 2].Z = 7;
+			te.TileLayer[1, 2].Z = 8;
+			te.TileLayer[2, 2].Z = 9;
+			Assert.AreEqual(1, te.TileLayer.GridTile(x, y, TileLayer.TileDirection.TopLeft).Z);
+			Assert.AreEqual(2,te.TileLayer.GridTile(x, y, TileLayer.TileDirection.Top).Z);
+			Assert.AreEqual(3,te.TileLayer.GridTile(x, y, TileLayer.TileDirection.TopRight).Z);
+			Assert.AreEqual(4,te.TileLayer.GridTile(x, y, TileLayer.TileDirection.Left).Z);
+			Assert.AreEqual(6,te.TileLayer.GridTile(x, y, TileLayer.TileDirection.Right).Z);
+			Assert.AreEqual(7,te.TileLayer.GridTile(x, y, TileLayer.TileDirection.BottomLeft).Z);
+			Assert.AreEqual(8,te.TileLayer.GridTile(x, y, TileLayer.TileDirection.Bottom).Z);
+			Assert.AreEqual(9,te.TileLayer.GridTile(x, y, TileLayer.TileDirection.BottomRight).Z);
+		}
+
+		[TestMethod]
+		public void TestGridInvalidBoundsTopLeft() {
+			var te = NewTestGeneratorEngineYR(3, 3);
+			int x = 0;
+			int	y = 0;
+			te.TileLayer[0, 0].Z = 1;
+			te.TileLayer[1, 0].Z = 2;
+			te.TileLayer[2, 0].Z = 3;
+			te.TileLayer[0, 1].Z = 4;
+			te.TileLayer[1, 1].Z = 5;
+			te.TileLayer[2, 1].Z = 6;
+			te.TileLayer[0, 2].Z = 7;
+			te.TileLayer[1, 2].Z = 8;
+			te.TileLayer[2, 2].Z = 9;
+			Assert.AreEqual(0, te.TileLayer.GridTile(x, y, TileLayer.TileDirection.TopLeft).Z);
+			Assert.AreEqual(0, te.TileLayer.GridTile(x, y, TileLayer.TileDirection.Top).Z);
+			Assert.AreEqual(0, te.TileLayer.GridTile(x, y, TileLayer.TileDirection.TopRight).Z);
+			Assert.AreEqual(0, te.TileLayer.GridTile(x, y, TileLayer.TileDirection.Left).Z);
+			Assert.AreEqual(2, te.TileLayer.GridTile(x, y, TileLayer.TileDirection.Right).Z);
+			Assert.AreEqual(0, te.TileLayer.GridTile(x, y, TileLayer.TileDirection.BottomLeft).Z);
+			Assert.AreEqual(4, te.TileLayer.GridTile(x, y, TileLayer.TileDirection.Bottom).Z);
+			Assert.AreEqual(5, te.TileLayer.GridTile(x, y, TileLayer.TileDirection.BottomRight).Z);
+		}
+
+		[TestMethod]
+		public void TestGridInvalidBoundsBottomRight() {
+			var te = NewTestGeneratorEngineYR(3, 3);
+			int x = 2;
+			int y = 2;
+			te.TileLayer[0, 0].Z = 1;
+			te.TileLayer[1, 0].Z = 2;
+			te.TileLayer[2, 0].Z = 3;
+			te.TileLayer[0, 1].Z = 4;
+			te.TileLayer[1, 1].Z = 5;
+			te.TileLayer[2, 1].Z = 6;
+			te.TileLayer[0, 2].Z = 7;
+			te.TileLayer[1, 2].Z = 8;
+			te.TileLayer[2, 2].Z = 9;
+			Assert.AreEqual(5, te.TileLayer.GridTile(x, y, TileLayer.TileDirection.TopLeft).Z);
+			Assert.AreEqual(6, te.TileLayer.GridTile(x, y, TileLayer.TileDirection.Top).Z);
+			Assert.AreEqual(0, te.TileLayer.GridTile(x, y, TileLayer.TileDirection.TopRight).Z);
+			Assert.AreEqual(8, te.TileLayer.GridTile(x, y, TileLayer.TileDirection.Left).Z);
+			Assert.AreEqual(0, te.TileLayer.GridTile(x, y, TileLayer.TileDirection.Right).Z);
+			Assert.AreEqual(0, te.TileLayer.GridTile(x, y, TileLayer.TileDirection.BottomLeft).Z);
+			Assert.AreEqual(0, te.TileLayer.GridTile(x, y, TileLayer.TileDirection.Bottom).Z);
+			Assert.AreEqual(0, te.TileLayer.GridTile(x, y, TileLayer.TileDirection.BottomRight).Z);
+		}
+
+		[TestMethod]
+		public void TestCheckPit() {
+			var te = NewTestGeneratorEngineYR(3, 3);
+			te.TileLayer[0, 0].Z = 1;
+			te.TileLayer[1, 0].Z = 1;
+			te.TileLayer[2, 0].Z = 1;
+			te.TileLayer[0, 1].Z = 1;
+			te.TileLayer[1, 1].Z = 0;
+			te.TileLayer[2, 1].Z = 1;
+			te.TileLayer[0, 2].Z = 1;
+			te.TileLayer[1, 2].Z = 1;
+			te.TileLayer[2, 2].Z = 1;
+			te.CheckPit(1, 1);
+			Assert.AreEqual(1, te.TileLayer[1, 1].Z);
+			te.TileLayer[1, 1].Z = 0;
+			te.TileLayer[2, 2].Z = 0;
+			te.CheckPit(1, 1);
+			Assert.AreEqual(0, te.TileLayer[1, 1].Z);
 		}
 	}
 }

@@ -176,5 +176,33 @@ namespace CNCMaps.Engine.Generator.Map {
 
 			return Format5.Encode(isoMapPack, 5);
 		}
+
+		public IsoTile GridTile(int x, int y, TileLayer.TileDirection direction) {
+			switch (direction) {
+				case TileDirection.Top: 
+					return y - 1 >= 0 ? isoTiles[x, y - 1] : GetInvalidTile();
+				case TileDirection.TopLeft:
+					return y - 1 >= 0 && x - 1 >= 0 ? isoTiles[x - 1, y - 1] : GetInvalidTile();
+				case TileDirection.TopRight:
+					return y - 1 >= 0 && x + 1 < Width * 2 - 1 ? isoTiles[x + 1, y - 1] : GetInvalidTile();
+				case TileDirection.Left:
+					return x - 1 >= 0 ? isoTiles[x - 1, y] : GetInvalidTile();
+				case TileDirection.Right:
+					return x + 1 < Width * 2 - 1 ? isoTiles[x + 1, y] : GetInvalidTile();
+				case TileDirection.BottomLeft:
+					return y + 1 < Height && x - 1 >= 0 ? isoTiles[x - 1, y + 1] : GetInvalidTile();
+				case TileDirection.Bottom:
+					return y + 1 < Height ? isoTiles[x, y + 1] : GetInvalidTile();
+				case TileDirection.BottomRight:
+					return y + 1 < Height && x + 1 < Width * 2 - 1 ? isoTiles[x + 1, y + 1] : GetInvalidTile();
+				default:
+					return GetInvalidTile();
+			}
+		}
+
+		private IsoTile GetInvalidTile() {
+			return new IsoTile(0, 0, 0, 0, 0, 0, 0, 0);
+		}
+
 	}
 }
