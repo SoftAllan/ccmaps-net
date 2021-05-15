@@ -14,6 +14,9 @@ namespace CNCMaps.Engine.Generator {
 
 		public GeneratorEngineYR(Settings settings) : base(settings, _logger) { }
 
+		/* Should be using the Theater to define the correct tiles. But for now this is hardcoded to specific values.
+		 * Not sure if it is possible to define this dynamically. Or if it is worth the efford.
+		 */
 		public const int ClearTile = 0;
 		public const int WaterTileSingle = 322;
 		public const int WaterTileLarge = 314; // 4 subtiles.
@@ -53,9 +56,6 @@ namespace CNCMaps.Engine.Generator {
 			ParseMapSize(Settings.MapSize);
 			_logger.Debug($"Map width={Width} and hight={Height}.");
 
-			/* If using the Theater to define the correct tiles. But for now this is hardcoded to specific values.
-			 * Not sure if it is possible to define this dynamically. Or if it is worth the efford.
-			 */
 			using (var vfs = new VirtualFileSystem()) {
 				vfs.Add(VirtualFileSystem.RA2InstallDir);
 				vfs.LoadMixes(EngineType.YurisRevenge);
@@ -66,7 +66,7 @@ namespace CNCMaps.Engine.Generator {
 				InitialiseMapLayer(ClearTile);
 				// 0.04 large hills
 				// 0.20 many hills
-				GenerateHeightLayout(0.04d, debug: true); 
+				GenerateHeightLayout(0.20d, debug: true); 
 				DefineZFromHeightLayout();
 				LevelOut();
 				DefineWaterSubtiles(theater);

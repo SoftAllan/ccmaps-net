@@ -123,19 +123,23 @@ namespace CNCMaps.Engine.Generator.Map {
 				case TileDirection.Top: 
 					return y - 1 >= 0 ? isoTiles[x, y - 1] : GetInvalidTile();
 				case TileDirection.TopLeft:
+					y += x % 2;
 					return y - 1 >= 0 && x - 1 >= 0 ? isoTiles[x - 1, y - 1] : GetInvalidTile();
 				case TileDirection.TopRight:
+					y += x % 2;
 					return y - 1 >= 0 && x + 1 < Width * 2 - 1 ? isoTiles[x + 1, y - 1] : GetInvalidTile();
 				case TileDirection.Left:
-					return x - 1 >= 0 ? isoTiles[x - 1, y] : GetInvalidTile();
+					return x - 2 >= 0 ? isoTiles[x - 2, y] : GetInvalidTile();
 				case TileDirection.Right:
-					return x + 1 < Width * 2 - 1 ? isoTiles[x + 1, y] : GetInvalidTile();
+					return x + 2 < Width * 2 - 1 ? isoTiles[x + 2, y] : GetInvalidTile();
 				case TileDirection.BottomLeft:
-					return y + 1 < Height && x - 1 >= 0 ? isoTiles[x - 1, y + 1] : GetInvalidTile();
+					y += x % 2;
+					return y < Height && x - 1 >= 0 ? isoTiles[x - 1, y] : GetInvalidTile();
 				case TileDirection.Bottom:
 					return y + 1 < Height ? isoTiles[x, y + 1] : GetInvalidTile();
 				case TileDirection.BottomRight:
-					return y + 1 < Height && x + 1 < Width * 2 - 1 ? isoTiles[x + 1, y + 1] : GetInvalidTile();
+					y += x % 2;
+					return y < Height && x + 1 < Width * 2 - 1 ? isoTiles[x + 1, y] : GetInvalidTile();
 				default:
 					return GetInvalidTile();
 			}

@@ -17,7 +17,6 @@ namespace CNCMaps.Engine.Generator {
 
 		/* Notes about the generator:
 		 * Regardless of the size of the map the size of lakes, rivers and the like has to be set to the same scale.
-		 * 
 		 */
 		public const byte SeaLevel = 80 ;
 		public const byte SandLevel = 90;
@@ -108,7 +107,6 @@ namespace CNCMaps.Engine.Generator {
 				}
 			}
 		}
-
 
 		public string TheaterType(TheaterType theaterType) {
 			switch (theaterType) {
@@ -219,7 +217,6 @@ namespace CNCMaps.Engine.Generator {
 					bitmap.SetPixel(x, y, c);
 				}
 			}
-
 			var debugView = new DebugGeneratorEngine();
 			debugView.Canvas.Image = bitmap;
 			debugView.ShowDialog();
@@ -237,6 +234,26 @@ namespace CNCMaps.Engine.Generator {
 			}
 			if (debug)
 				DebugLayoutHeight();
+		}
+
+		internal void DebugLayoutHeight() {
+			Bitmap bitmap = new Bitmap(Width * 2 - 1, Height);
+			var c = Color.Empty;
+			for (int y = 0; y < Height; y++) {
+				for (int x = 0; x < Width * 2 - 1; x++) {
+					var h = HeightLayout[x, y];
+					if (h <= SeaLevel)
+						c = Color.FromArgb(0, 0, h + 80);   // water
+					else if (h <= SandLevel)
+						c = Color.FromArgb(300 - h, 300 - h, 0);        // sand
+					else
+						c = Color.FromArgb(0, h, 0);        // grass.
+					bitmap.SetPixel(x, y, c);
+				}
+			}
+			var debugView = new DebugGeneratorEngine();
+			debugView.Canvas.Image = bitmap;
+			debugView.ShowDialog();
 		}
 
 		public void DefineZFromHeightLayout() {
@@ -273,7 +290,9 @@ namespace CNCMaps.Engine.Generator {
 					CheckLevel(x, y);
 				}
 			}
-			CheckForPitAndSpike();
+			CheckForPitsAndSpikes();
+			TileLayer.DumpZToFile();
+			// CheckForWaterConnections();
 		}
 
 		// Check the level of the tile[x, y].
@@ -310,7 +329,7 @@ namespace CNCMaps.Engine.Generator {
 		}
 
 		// Remove small holes and spikes.
-		private void CheckForPitAndSpike() {
+		private void CheckForPitsAndSpikes() {
 			for (int y = 0; y < Height; y++) {
 				for (int x = 0; x < Width * 2 - 1; x++) {
 					CheckPit(x, y);
@@ -335,7 +354,7 @@ namespace CNCMaps.Engine.Generator {
 			}
 		}
 
-		// Removes small spikes
+		// Removes small spikes.
 		public void CheckSpike(int x, int y) {
 			var ct = TileLayer[x, y];
 			if (TileLayer.GridTile(x, y, TileLayer.TileDirection.TopLeft).Z + 1 == ct.Z &&
@@ -347,29 +366,27 @@ namespace CNCMaps.Engine.Generator {
 				TileLayer.GridTile(x, y, TileLayer.TileDirection.Bottom).Z + 1 == ct.Z &&
 				TileLayer.GridTile(x, y, TileLayer.TileDirection.BottomRight).Z + 1 == ct.Z) {
 				ct.Z--;
-				// ct.Ground = IsoTile.GroundType.Ground;
+				ct.Ground = IsoTile.GroundType.Ground;
 			}
 		}
 
-		internal void DebugLayoutHeight() {
-			Bitmap bitmap = new Bitmap(Width * 2 - 1, Height);
-			var c = Color.Empty;
+		private void CheckForWaterConnections() {
 			for (int y = 0; y < Height; y++) {
 				for (int x = 0; x < Width * 2 - 1; x++) {
-					var h = HeightLayout[x, y];
-					if (h <= SeaLevel)
-						c = Color.FromArgb(0, 0, h + 80);   // water
-					else if (h <= SandLevel)
-						c = Color.FromArgb(300 - h, 300 - h, 0);        // sand
-					else
-						c = Color.FromArgb(0, h, 0);        // grass.
-					bitmap.SetPixel(x, y, c);
+					CheckSingleWaterSpots(x, y);
 				}
 			}
+		}
 
-			var debugView = new DebugGeneratorEngine();
-			debugView.Canvas.Image = bitmap;
-			debugView.ShowDialog();
+		// Make sure that a water tile is always connected to at least one other water tile.
+		public void CheckSingleWaterSpots(int x, int y) {
+			if (TileLayer[x, y].Ground != IsoTile.GroundType.Water) return;
+			if (TileLayer.GridTile(x, y, TileLayer.TileDirection.Top).Ground == IsoTile.GroundType.Water ||
+				TileLayer.GridTile(x, y, TileLayer.TileDirection.Left).Ground == IsoTile.GroundType.Water ||
+				TileLayer.GridTile(x, y, TileLayer.TileDirection.Right).Ground == IsoTile.GroundType.Water ||
+				TileLayer.GridTile(x, y, TileLayer.TileDirection.Bottom).Ground == IsoTile.GroundType.Water) 
+				return;
+			TileLayer[x, y].Ground = IsoTile.GroundType.Ground;
 		}
 	}
 }
