@@ -2,7 +2,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using CNCMaps.FileFormats.Encodings;
 using CNCMaps.Shared;
@@ -142,6 +144,29 @@ namespace CNCMaps.Engine.Generator.Map {
 		private IsoTile GetInvalidTile() {
 			return new IsoTile(0, 0, 0, 0, 0, -1, 0, 0);
 		}
+
+		private const string _debugMapFile = "DebugMapFile.txt";
+		private string DebugMapFile() {
+			var dir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+			var file = Path.Combine(dir, _debugMapFile);
+			return file;
+		}
+
+		public void DumpZToFile() {
+			var file = DebugMapFile();
+			logger.Debug($"Dumping Z order to {file}");
+			var sb = new StringBuilder();
+			for (int y = 0; y < Height; y++) {
+				for (int x = 0; x < Width * 2 - 1; x++) {
+					sb.Append($"[{isoTiles[x, y].Z:D2}]");
+				}
+				sb.AppendLine();
+			}
+			using (var writeFile = new StreamWriter(file)) {
+				writeFile.Write(sb);
+			}
+		}
+
 
 	}
 }

@@ -68,12 +68,18 @@ namespace CNCMaps.Engine.Generator {
 				theater.Initialize();
 
 				InitialiseMapLayer(ClearTile);
-				GenerateHeightLayout();
+				// 0.04 large hills
+				// 0.20 many hills
+				GenerateHeightLayout(0.04d, debug: true); 
 				DefineMapTilesFromHeightLayout(theater);
 				LevelOut();
 				DefineWaterSubtiles(theater);
 				DefineShoreTiles(theater);
 				CheckForPitAndSpike(theater);
+
+
+
+				TileLayer.DumpZToFile();
 
 				// FillMapTest(theater);
 
@@ -89,7 +95,6 @@ namespace CNCMaps.Engine.Generator {
 
 			return true;
 		}
-
 
 		private void FillMapTest(Theater theater) {
 			var cl = theater.GetTileCollection();
@@ -219,23 +224,27 @@ namespace CNCMaps.Engine.Generator {
 		}
 
 		// Check the level of the tile[x, y].
-		// If it is more that +/1 against either the top or the left tile it is corrected.
+		// If it is more that +/1 against either the topleft, top or the left tile it is corrected.
 		public void CheckLevel(int x, int y) {
 			var ct = TileLayer[x, y];
-			if (CheckTileLevel(ct, TileLayer.GridTile(x, y, TileLayer.TileDirection.Top))) return;
+			CheckTileLevel(ct, TileLayer.GridTile(x, y, TileLayer.TileDirection.TopLeft));
+			CheckTileLevel(ct, TileLayer.GridTile(x, y, TileLayer.TileDirection.Top));
+			CheckTileLevel(ct, TileLayer.GridTile(x, y, TileLayer.TileDirection.TopRight));
 			CheckTileLevel(ct, TileLayer.GridTile(x, y, TileLayer.TileDirection.Left));
 		}
 
 		// Check the current tile against the validated tile.
 		// Returns true if the current tile has been altered.
-		private bool CheckTileLevel(IsoTile current, IsoTile validated) {
+		public bool CheckTileLevel(IsoTile current, IsoTile validated, bool correctLevel = true) {
 			if (validated.TileNum != -1) {
 				if (validated.Z - 1 > current.Z) {
-					current.Z = (byte)(validated.Z - 1);
+					if (correctLevel) 
+						current.Z = (byte)(validated.Z - 1);
 					return true;
 				}
 				if (validated.Z + 1 < current.Z) {
-					current.Z = (byte)(validated.Z + 1);
+					if (correctLevel)
+						current.Z = (byte)(validated.Z + 1);
 					return true;
 				}
 			}

@@ -26,10 +26,6 @@ namespace CNCMaps.Engine.Generator {
 			_logger = logger;
 		}
 
-		// 0.04 large hills
-		// 0.20 many hills
-		private const double NoiseOffset = 0.20d;  
-
 		internal Settings Settings { get; }
 		public TileLayer TileLayer { get ; set ; }
 		public ushort Height;
@@ -109,17 +105,18 @@ namespace CNCMaps.Engine.Generator {
 			}
 		}
 
-		internal void GenerateHeightLayout() {
+		public void GenerateHeightLayout(double noiseOffset, bool debug) {
 			_logger.Debug("Generating height layout");
 			HeightLayout = new byte[Width * 2 - 1, Height];
 			var nv = 0d;
 			for (int y = 0; y < Height; y++) {
 				for (int x = 0; x < Width * 2 - 2; x++) {
-					nv = Noise.Noise(x * NoiseOffset, y * NoiseOffset, 0d) + 1d;
+					nv = Noise.Noise(x * noiseOffset, y * noiseOffset, 0d) + 1d;
 					HeightLayout[x, y] = (byte)(nv * 128);
 				}
 			}
-			DebugLayoutHeight();
+			if (debug)
+				DebugLayoutHeight();
 		}
 
 		public string TheaterType(TheaterType theaterType) {
