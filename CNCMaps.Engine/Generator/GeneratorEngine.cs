@@ -292,19 +292,20 @@ namespace CNCMaps.Engine.Generator {
 		// If z is sand or water treat as level 0 while testing. This will change the value correctly if the current tile
 		// needs to be liftet to a higher level. This will also remove the tile as a water or sand level.
 		// If sand or water is 
-		// todo: Correct for water and sand.
 		public bool CheckTileLevel(IsoTile current, IsoTile validated, bool correctLevel = true) {
 			if (validated.TileNum != -1) {
 				if (validated.Z - 1 > current.Z) {
-					if (correctLevel)
+					if (correctLevel) {
 						current.Z = (byte)(validated.Z - 1);
-					// todo: Set ground type to validated ground type
+						current.Ground = IsoTile.GroundType.Ground;
+					}
 					return true;
 				}
 				if (validated.Z + 1 < current.Z) {
-					if (correctLevel)
+					if (correctLevel) {
 						current.Z = (byte)(validated.Z + 1);
-					// todo: Set ground type to validated ground type
+						current.Ground = IsoTile.GroundType.Ground;
+					}
 					return true;
 				}
 			}
