@@ -188,14 +188,14 @@ namespace CNCMaps.Engine.Generator {
 
 		private void AddWaypointsSection(IniFile iniFile) {
 			var waypoints = iniFile.GetOrCreateSection("Waypoints");
-			waypoints.SetValue("0", "50050");
-			waypoints.SetValue("1", "51050");
-			waypoints.SetValue("2", "52050");
-			waypoints.SetValue("3", "53050");
-			waypoints.SetValue("4", "50051");
-			waypoints.SetValue("5", "51051");
-			waypoints.SetValue("6", "52051");
-			waypoints.SetValue("7", "53051");
+			waypoints.SetValue("0", "65055");
+			waypoints.SetValue("1", "66055");
+			waypoints.SetValue("2", "67055");
+			waypoints.SetValue("3", "68055");
+			waypoints.SetValue("4", "65056");
+			waypoints.SetValue("5", "66056");
+			waypoints.SetValue("6", "67056");
+			waypoints.SetValue("7", "68056");
 		}
 
 		internal void TestPerlin() {

@@ -5,6 +5,7 @@ using CNCMaps.FileFormats.VirtualFileSystem;
 using CNCMaps.FileFormats;
 using CNCMaps.Engine.Game;
 using CNCMaps.Engine.Generator.Map;
+using System;
 
 namespace CNCMaps.Engine.Generator {
 	public class GeneratorEngineYR : GeneratorEngine {
@@ -69,6 +70,7 @@ namespace CNCMaps.Engine.Generator {
 				DefineZFromHeightLayout();
 				LevelOut();
 				DefineWaterSubtiles(theater);
+				DefineSandTiles(theater);
 				DefineShoreTiles(theater);
 				
 
@@ -90,6 +92,7 @@ namespace CNCMaps.Engine.Generator {
 
 			return true;
 		}
+
 
 		private void FillMapTest(Theater theater) {
 			var cl = theater.GetTileCollection();
@@ -137,38 +140,26 @@ namespace CNCMaps.Engine.Generator {
 		private void DefineWaterSubtiles(Theater theater) {
 			// todo: Make 2x2 tiles where possible 
 			// WaterTileLarge
+			for (int y = 0; y < Height; y++) {
+				for (int x = 0; x < Width * 2 - 1; x++) {
+					if (TileLayer[x, y].Ground == IsoTile.GroundType.Water)
+						TileLayer[x, y].TileNum = WaterTileSingle;
+				}
+			}
+		}
+
+		private void DefineSandTiles(Theater theater) {
+			for (int y = 0; y < Height; y++) {
+				for (int x = 0; x < Width * 2 - 1; x++) {
+					if (TileLayer[x, y].Ground == IsoTile.GroundType.Sand)
+						TileLayer[x, y].TileNum = SandTileSingle;
+				}
+			}
 		}
 
 		// Make shore tiles instead of sand tiles.
 		private void DefineShoreTiles(Theater theater) {
 
-
-		}
-
-		// Check for pits and spikes.
-
-
-		public void CheckWaterOrSandLevel(int x, int y) {
-			var ct = TileLayer[x, y];
-			CheckTileWaterlineLevel(ct, TileLayer.GridTile(x, y, TileLayer.TileDirection.TopLeft));
-			CheckTileWaterlineLevel(ct, TileLayer.GridTile(x, y, TileLayer.TileDirection.Top));
-			CheckTileWaterlineLevel(ct, TileLayer.GridTile(x, y, TileLayer.TileDirection.TopRight));
-			CheckTileWaterlineLevel(ct, TileLayer.GridTile(x, y, TileLayer.TileDirection.Left));
-		}
-
-		// Checks the current tile against the validated waterline. If the validated tile is a water or sand tile
-		// the level is ajusted.
-		// Returns true if the current tile has been altered.
-		private bool CheckTileWaterlineLevel(IsoTile current, IsoTile validated) {
-			if (current.TileNum == WaterTileSingle || current.TileNum == SandTileSingle) {
-				if (validated.TileNum == WaterTileSingle || validated.TileNum == SandTileSingle) {
-					if (validated.Z != current.Z) {
-						current.Z = validated.Z;
-						return true;
-					}
-				}
-			}
-			return false;
 		}
 
 	}
