@@ -229,49 +229,51 @@ namespace TestRandomMapGenerator
 		[TestMethod]
 		public void TestCheckPit() {
 			var te = NewTestGeneratorEngineYR(3, 3);
-			te.TileLayer[0, 0].Z = 1;
-			te.TileLayer[1, 0].Z = 1;
-			te.TileLayer[2, 0].Z = 1;
-			te.TileLayer[0, 1].Z = 1;
-			te.TileLayer[1, 1].Z = 0;
-			te.TileLayer[1, 1].Ground = IsoTile.GroundType.Water;
-			te.TileLayer[2, 1].Z = 1;
-			te.TileLayer[0, 2].Z = 1;
-			te.TileLayer[1, 2].Z = 1;
-			te.TileLayer[2, 2].Z = 1;
-			// [3, y] and [4, y] is not used in this test.
-			te.CheckPit(1, 1);
-			Assert.AreEqual(1, te.TileLayer[1, 1].Z);
-			Assert.AreEqual(IsoTile.GroundType.Ground, te.TileLayer[1, 1].Ground);
-			te.TileLayer[1, 1].Z = 0;
-			te.TileLayer[1, 1].Ground = IsoTile.GroundType.Water;
-			te.TileLayer[2, 2].Z = 0;
-			te.CheckPit(1, 1);
-			Assert.AreEqual(0, te.TileLayer[1, 1].Z);
-			Assert.AreEqual(IsoTile.GroundType.Water, te.TileLayer[1, 1].Ground);
+			int x = 2;
+			int y = 1;
+			te.TileLayer.GridTile(x, y, TileLayer.TileDirection.TopLeft).Z = 1;
+			te.TileLayer.GridTile(x, y, TileLayer.TileDirection.Top).Z = 1;
+			te.TileLayer.GridTile(x, y, TileLayer.TileDirection.TopRight).Z = 1;
+			te.TileLayer.GridTile(x, y, TileLayer.TileDirection.Left).Z = 1;
+			te.TileLayer[x, y].Z = 0;
+			te.TileLayer[x, y].Ground = IsoTile.GroundType.Water;
+			te.TileLayer.GridTile(x, y, TileLayer.TileDirection.Right).Z = 1;
+			te.TileLayer.GridTile(x, y, TileLayer.TileDirection.BottomLeft).Z = 1;
+			te.TileLayer.GridTile(x, y, TileLayer.TileDirection.Bottom).Z = 1;
+			te.TileLayer.GridTile(x, y, TileLayer.TileDirection.BottomRight).Z = 1;
+			te.CheckPit(x, y);
+			Assert.AreEqual(1, te.TileLayer[x, y].Z);
+			Assert.AreEqual(IsoTile.GroundType.Ground, te.TileLayer[x, y].Ground);
+			te.TileLayer[x, y].Z = 0;
+			te.TileLayer[x, y].Ground = IsoTile.GroundType.Water;
+			te.TileLayer.GridTile(x, y, TileLayer.TileDirection.BottomRight).Z = 0;
+			te.CheckPit(x, y);
+			Assert.AreEqual(0, te.TileLayer[x, y].Z);
+			Assert.AreEqual(IsoTile.GroundType.Water, te.TileLayer[x, y].Ground);
 		}
 
 		[TestMethod]
 		public void TestCheckSpike() {
 			var te = NewTestGeneratorEngineYR(3, 3);
-			te.TileLayer[0, 0].Z = 1;
-			te.TileLayer[1, 0].Z = 1;
-			te.TileLayer[2, 0].Z = 1;
-			te.TileLayer[0, 1].Z = 1;
-			te.TileLayer[1, 1].Z = 2;
-			te.TileLayer[2, 1].Z = 1;
-			te.TileLayer[0, 2].Z = 1;
-			te.TileLayer[1, 2].Z = 1;
-			te.TileLayer[2, 2].Z = 1;
-			// [3, y] and [4, y] is not used in this test.
-			te.CheckSpike(1, 1);
-			Assert.AreEqual(1, te.TileLayer[1, 1].Z);
-			Assert.AreEqual(IsoTile.GroundType.Ground, te.TileLayer[1, 1].Ground);
-			te.TileLayer[1, 1].Z = 2;
-			te.TileLayer[2, 2].Z = 2;
-			te.CheckSpike(1, 1);
-			Assert.AreEqual(2, te.TileLayer[1, 1].Z);
-			Assert.AreEqual(IsoTile.GroundType.Ground, te.TileLayer[1, 1].Ground);
+			int x = 2;
+			int y = 1;
+			te.TileLayer.GridTile(x, y, TileLayer.TileDirection.TopLeft).Z = 1;
+			te.TileLayer.GridTile(x, y, TileLayer.TileDirection.Top).Z = 1;
+			te.TileLayer.GridTile(x, y, TileLayer.TileDirection.TopRight).Z = 1;
+			te.TileLayer.GridTile(x, y, TileLayer.TileDirection.Left).Z = 1;
+			te.TileLayer[x, y].Z = 2;
+			te.TileLayer.GridTile(x, y, TileLayer.TileDirection.Right).Z = 1;
+			te.TileLayer.GridTile(x, y, TileLayer.TileDirection.BottomLeft).Z = 1;
+			te.TileLayer.GridTile(x, y, TileLayer.TileDirection.Bottom).Z = 1;
+			te.TileLayer.GridTile(x, y, TileLayer.TileDirection.BottomRight).Z = 1;
+			te.CheckSpike(x, y);
+			Assert.AreEqual(1, te.TileLayer[x, y].Z);
+			Assert.AreEqual(IsoTile.GroundType.Ground, te.TileLayer[x, y].Ground);
+			te.TileLayer[x, y].Z = 2;
+			te.TileLayer.GridTile(x, y, TileLayer.TileDirection.BottomRight).Z = 2;
+			te.CheckSpike(x, y);
+			Assert.AreEqual(2, te.TileLayer[x, y].Z);
+			Assert.AreEqual(IsoTile.GroundType.Ground, te.TileLayer[x, y].Ground);
 		}
 
 		// Test that the all grid neighbor tiles do not differ more than +/-1.
@@ -283,7 +285,7 @@ namespace TestRandomMapGenerator
 			te.GenerateHeightLayout(0.9d, false);	// Many hills.
 			te.DefineZFromHeightLayout();
 			te.LevelOut();
-			// te.TileLayer.DumpZToFile();
+			te.TileLayer.DumpZToFile();
 			for (int y = 0; y < te.Height; y++) {
 				for (int x = 0; x < te.Width * 2 - 1; x++) {
 					var ct = te.TileLayer[x, y];
