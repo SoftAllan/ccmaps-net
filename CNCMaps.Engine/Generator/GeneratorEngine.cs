@@ -273,6 +273,7 @@ namespace CNCMaps.Engine.Generator {
 					CheckLevel(x, y);
 				}
 			}
+			CheckForPitAndSpike();
 		}
 
 		// Check the level of the tile[x, y].
@@ -306,6 +307,48 @@ namespace CNCMaps.Engine.Generator {
 				}
 			}
 			return false;
+		}
+
+		// Remove small holes and spikes.
+		private void CheckForPitAndSpike() {
+			for (int y = 0; y < Height; y++) {
+				for (int x = 0; x < Width * 2 - 1; x++) {
+					CheckPit(x, y);
+					CheckSpike(x, y);
+				}
+			}
+		}
+
+		// Remove small holes.
+		public void CheckPit(int x, int y) {
+			var ct = TileLayer[x, y];
+			if (TileLayer.GridTile(x, y, TileLayer.TileDirection.TopLeft).Z - 1 == ct.Z &&
+				TileLayer.GridTile(x, y, TileLayer.TileDirection.Top).Z - 1 == ct.Z &&
+				TileLayer.GridTile(x, y, TileLayer.TileDirection.TopRight).Z - 1 == ct.Z &&
+				TileLayer.GridTile(x, y, TileLayer.TileDirection.Left).Z - 1 == ct.Z &&
+				TileLayer.GridTile(x, y, TileLayer.TileDirection.Right).Z - 1 == ct.Z &&
+				TileLayer.GridTile(x, y, TileLayer.TileDirection.BottomLeft).Z - 1 == ct.Z &&
+				TileLayer.GridTile(x, y, TileLayer.TileDirection.Bottom).Z - 1 == ct.Z &&
+				TileLayer.GridTile(x, y, TileLayer.TileDirection.BottomRight).Z - 1 == ct.Z) {
+				ct.Z++;
+				ct.Ground = IsoTile.GroundType.Ground;
+			}
+		}
+
+		// Removes small spikes
+		public void CheckSpike(int x, int y) {
+			var ct = TileLayer[x, y];
+			if (TileLayer.GridTile(x, y, TileLayer.TileDirection.TopLeft).Z + 1 == ct.Z &&
+				TileLayer.GridTile(x, y, TileLayer.TileDirection.Top).Z + 1 == ct.Z &&
+				TileLayer.GridTile(x, y, TileLayer.TileDirection.TopRight).Z + 1 == ct.Z &&
+				TileLayer.GridTile(x, y, TileLayer.TileDirection.Left).Z + 1 == ct.Z &&
+				TileLayer.GridTile(x, y, TileLayer.TileDirection.Right).Z + 1 == ct.Z &&
+				TileLayer.GridTile(x, y, TileLayer.TileDirection.BottomLeft).Z + 1 == ct.Z &&
+				TileLayer.GridTile(x, y, TileLayer.TileDirection.Bottom).Z + 1 == ct.Z &&
+				TileLayer.GridTile(x, y, TileLayer.TileDirection.BottomRight).Z + 1 == ct.Z) {
+				ct.Z--;
+				// ct.Ground = IsoTile.GroundType.Ground;
+			}
 		}
 
 		internal void DebugLayoutHeight() {

@@ -363,6 +363,7 @@ namespace TestRandomMapGenerator
 			te.TileLayer[2, 0].Z = 1;
 			te.TileLayer[0, 1].Z = 1;
 			te.TileLayer[1, 1].Z = 0;
+			te.TileLayer[1, 1].Ground = IsoTile.GroundType.Water;
 			te.TileLayer[2, 1].Z = 1;
 			te.TileLayer[0, 2].Z = 1;
 			te.TileLayer[1, 2].Z = 1;
@@ -370,10 +371,13 @@ namespace TestRandomMapGenerator
 			// [3, y] and [4, y] is not used in this test.
 			te.CheckPit(1, 1);
 			Assert.AreEqual(1, te.TileLayer[1, 1].Z);
+			Assert.AreEqual(IsoTile.GroundType.Ground, te.TileLayer[1, 1].Ground);
 			te.TileLayer[1, 1].Z = 0;
+			te.TileLayer[1, 1].Ground = IsoTile.GroundType.Water;
 			te.TileLayer[2, 2].Z = 0;
 			te.CheckPit(1, 1);
 			Assert.AreEqual(0, te.TileLayer[1, 1].Z);
+			Assert.AreEqual(IsoTile.GroundType.Water, te.TileLayer[1, 1].Ground);
 		}
 
 		[TestMethod]
@@ -391,10 +395,12 @@ namespace TestRandomMapGenerator
 			// [3, y] and [4, y] is not used in this test.
 			te.CheckSpike(1, 1);
 			Assert.AreEqual(1, te.TileLayer[1, 1].Z);
+			Assert.AreEqual(IsoTile.GroundType.Ground, te.TileLayer[1, 1].Ground);
 			te.TileLayer[1, 1].Z = 2;
 			te.TileLayer[2, 2].Z = 2;
 			te.CheckSpike(1, 1);
 			Assert.AreEqual(2, te.TileLayer[1, 1].Z);
+			Assert.AreEqual(IsoTile.GroundType.Ground, te.TileLayer[1, 1].Ground);
 		}
 
 		// Test that the all grid neighbor tiles do not differ more than +/-1.
