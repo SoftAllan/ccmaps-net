@@ -19,6 +19,10 @@ namespace CNCMaps.Engine.Generator {
 		 * Regardless of the size of the map the size of lakes, rivers and the like has to be set to the same scale.
 		 * 
 		 */
+		public const byte SeaLevel = 80 ;
+		public const byte SandLevel = 90;
+		public const byte GroundLevel = 110;
+		public const byte HeightInterval = (256 - GroundLevel) / 14;
 
 		public GeneratorEngine(Settings settings, Logger logger) {
 			Settings = settings;
@@ -105,19 +109,6 @@ namespace CNCMaps.Engine.Generator {
 			}
 		}
 
-		public void GenerateHeightLayout(double noiseOffset, bool debug) {
-			_logger.Debug("Generating height layout");
-			HeightLayout = new byte[Width * 2 - 1, Height];
-			var nv = 0d;
-			for (int y = 0; y < Height; y++) {
-				for (int x = 0; x < Width * 2 - 2; x++) {
-					nv = Noise.Noise(x * noiseOffset, y * noiseOffset, 0d) + 1d;
-					HeightLayout[x, y] = (byte)(nv * 128);
-				}
-			}
-			if (debug)
-				DebugLayoutHeight();
-		}
 
 		public string TheaterType(TheaterType theaterType) {
 			switch (theaterType) {
@@ -207,6 +198,7 @@ namespace CNCMaps.Engine.Generator {
 			waypoints.SetValue("7", "53051");
 		}
 
+		// todo: Correct for the new constants.
 		internal void TestPerlin() {
 			Bitmap bitmap = new Bitmap(300, 300);
 
@@ -234,6 +226,92 @@ namespace CNCMaps.Engine.Generator {
 			debugView.ShowDialog();
 		}
 
+		public void GenerateHeightLayout(double noiseOffset, bool debug) {
+			_logger.Debug("Generating height layout");
+			HeightLayout = new byte[Width * 2 - 1, Height];
+			var nv = 0d;
+			for (int y = 0; y < Height; y++) {
+				for (int x = 0; x < Width * 2 - 2; x++) {
+					nv = Noise.Noise(x * noiseOffset, y * noiseOffset, 0d) + 1d;
+					HeightLayout[x, y] = (byte)(nv * 128);
+				}
+			}
+			if (debug)
+				DebugLayoutHeight();
+		}
+
+		public void DefineZFromHeightLayout() {
+			IsoTile currentTile;
+			_logger.Debug("Defining z from height layout.");
+			for (int y = 0; y < Height; y++) {
+				for (int x = 0; x < Width * 2 - 1; x++) {
+					var h = HeightLayout[x, y];
+					currentTile = TileLayer[x, y];
+					if (h <= SeaLevel) {
+						currentTile.Ground = IsoTile.GroundType.Water;
+						currentTile.Z = 0;
+					}
+					else if (h <= SandLevel) {
+						currentTile.Ground = IsoTile.GroundType.Sand;
+						currentTile.Z = 0;
+					}
+					else if (h <= GroundLevel) {
+						currentTile.Z = 0;
+					}
+					else {
+						var hLevel = (byte)((h - GroundLevel) / HeightInterval);
+						currentTile.Z = hLevel;
+					}
+				}
+			}
+		}
+
+		// Make sure that neighbour z is not jumping more than 1.
+		// Control against top, then left.
+		// Sea and sand level might be raised.
+		public void LevelOut() {
+			for (int y = 0; y < Height; y++) {
+				for (int x = 0; x < Width * 2 - 1; x++) {
+					CheckLevel(x, y);
+				}
+			}
+		}
+
+		// Check the level of the tile[x, y].
+		// If it is more that +/1 against either the topleft, top or the left tile it is corrected.
+		public void CheckLevel(int x, int y) {
+			var ct = TileLayer[x, y];
+			CheckTileLevel(ct, TileLayer.GridTile(x, y, TileLayer.TileDirection.TopLeft));
+			CheckTileLevel(ct, TileLayer.GridTile(x, y, TileLayer.TileDirection.Top));
+			CheckTileLevel(ct, TileLayer.GridTile(x, y, TileLayer.TileDirection.TopRight));
+			CheckTileLevel(ct, TileLayer.GridTile(x, y, TileLayer.TileDirection.Left));
+		}
+
+		// Check the current tile against the validated tile.
+		// Returns true if the current tile has been altered.
+		// If z is sand or water treat as level 0 while testing. This will change the value correctly if the current tile
+		// needs to be liftet to a higher level. This will also remove the tile as a water or sand level.
+		// If sand or water is 
+		// todo: Correct for water and sand.
+		public bool CheckTileLevel(IsoTile current, IsoTile validated, bool correctLevel = true) {
+			if (validated.TileNum != -1) {
+				if (validated.Z - 1 > current.Z) {
+					if (correctLevel)
+						current.Z = (byte)(validated.Z - 1);
+					// todo: Set ground type to validated ground type
+					return true;
+				}
+				if (validated.Z + 1 < current.Z) {
+					if (correctLevel)
+						current.Z = (byte)(validated.Z + 1);
+					// todo: Set ground type to validated ground type
+					return true;
+				}
+			}
+			return false;
+		}
+
+		// Todo: correct for the new constants.
 		internal void DebugLayoutHeight() {
 			Bitmap bitmap = new Bitmap(Width * 2 - 1, Height);
 			var c = Color.Empty;

@@ -166,11 +166,11 @@ namespace CNCMaps.Engine.Generator.Map {
 				for (int x = 0; x < Width * 2 - 1; x++) {
 					var h = $"{isoTiles[x, y].Z,0:X}";
 					char t;
-					switch (isoTiles[x, y].TileNum) {
-						case GeneratorEngineYR.WaterTileSingle:
+					switch (isoTiles[x, y].Ground) {
+						case IsoTile.GroundType.Water:
 							t = 'w';
 							break;
-						case GeneratorEngineYR.SandTileSingle:
+						case IsoTile.GroundType.Sand:
 							t = 's';
 							break;
 						default:

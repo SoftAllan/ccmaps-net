@@ -18,12 +18,6 @@ namespace CNCMaps.Engine.Generator {
 		public const int WaterTileLarge = 314; // 4 subtiles.
 		public const int SandTileSingle = 418;
 
-		public const byte SeaLevel = 80 ;
-		public const byte SandLevel = 90;
-		public const byte GroundLevel = 110;
-		public const byte HeightInterval = (256 - GroundLevel) / 14;
-
-
 		// Shore Pieces (Set 12) filename: Shore
 		// - 42 tiles
 
@@ -76,7 +70,7 @@ namespace CNCMaps.Engine.Generator {
 				LevelOut();
 				DefineWaterSubtiles(theater);
 				DefineShoreTiles(theater);
-				CheckForPitAndSpike(theater);
+				// CheckForPitAndSpike(theater);
 
 
 
@@ -138,42 +132,7 @@ namespace CNCMaps.Engine.Generator {
 		// #3: Shore TopRight, size 2x2, variant 3 of 3
 		// #4: Shore TopRight, size 1x2,
 
-		public void DefineZFromHeightLayout() {
-			IsoTile currentTile;
-			_logger.Debug("Defining z from height layout.");
-			for (int y = 0; y < Height; y++) {
-				for (int x = 0; x < Width * 2 - 1; x++) {
-					var h = HeightLayout[x, y];
-					currentTile = TileLayer[x, y];
-					if (h < SeaLevel) {
-						currentTile.TileNum = WaterTileSingle;
-						currentTile.Z = 0;
-					}
-					else if (h < SandLevel) {
-						currentTile.TileNum = SandTileSingle;
-						currentTile.Z = 0;
-					}
-					else if (h < GroundLevel) {
-						currentTile.Z = 0;
-					}
-					else {
-						var hLevel = (byte)((h - GroundLevel) / HeightInterval);
-						currentTile.Z = hLevel;
-					}
-				}
-			}
-		}
 
-		// Make sure that neighbour z is not jumping more than 1.
-		// Control against top, then left.
-		// Sea and sand level might be raised.
-		public void LevelOut() {
-			for (int y = 0; y < Height; y++) {
-				for (int x = 0; x < Width * 2 - 1; x++) {
-					CheckLevel(x, y);
-				}
-			}
-		}
 
 		private void DefineWaterSubtiles(Theater theater) {
 			// todo: Make 2x2 tiles where possible 
@@ -226,33 +185,6 @@ namespace CNCMaps.Engine.Generator {
 			}
 		}
 
-		// Check the level of the tile[x, y].
-		// If it is more that +/1 against either the topleft, top or the left tile it is corrected.
-		public void CheckLevel(int x, int y) {
-			var ct = TileLayer[x, y];
-			CheckTileLevel(ct, TileLayer.GridTile(x, y, TileLayer.TileDirection.TopLeft));
-			CheckTileLevel(ct, TileLayer.GridTile(x, y, TileLayer.TileDirection.Top));
-			CheckTileLevel(ct, TileLayer.GridTile(x, y, TileLayer.TileDirection.TopRight));
-			CheckTileLevel(ct, TileLayer.GridTile(x, y, TileLayer.TileDirection.Left));
-		}
-
-		// Check the current tile against the validated tile.
-		// Returns true if the current tile has been altered.
-		public bool CheckTileLevel(IsoTile current, IsoTile validated, bool correctLevel = true) {
-			if (validated.TileNum != -1) {
-				if (validated.Z - 1 > current.Z) {
-					if (correctLevel) 
-						current.Z = (byte)(validated.Z - 1);
-					return true;
-				}
-				if (validated.Z + 1 < current.Z) {
-					if (correctLevel)
-						current.Z = (byte)(validated.Z + 1);
-					return true;
-				}
-			}
-			return false;
-		}
 
 		public void CheckWaterOrSandLevel(int x, int y) {
 			var ct = TileLayer[x, y];
