@@ -18,9 +18,10 @@ namespace CNCMaps.Engine.Generator {
 		public const int WaterTileLarge = 314; // 4 subtiles.
 		public const int SandTileSingle = 418;
 
-		public const byte SeaLevel = 100 ;
-		public const byte SandLevel = 110;
-		public const byte HeightInterval = (256 - SandLevel) / 14;
+		public const byte SeaLevel = 80 ;
+		public const byte SandLevel = 90;
+		public const byte GroundLevel = 110;
+		public const byte HeightInterval = (256 - GroundLevel) / 14;
 
 
 		// Shore Pieces (Set 12) filename: Shore
@@ -71,7 +72,7 @@ namespace CNCMaps.Engine.Generator {
 				// 0.04 large hills
 				// 0.20 many hills
 				GenerateHeightLayout(0.04d, debug: true); 
-				DefineMapTilesFromHeightLayout(theater);
+				DefineZFromHeightLayout();
 				LevelOut();
 				DefineWaterSubtiles(theater);
 				DefineShoreTiles(theater);
@@ -137,23 +138,26 @@ namespace CNCMaps.Engine.Generator {
 		// #3: Shore TopRight, size 2x2, variant 3 of 3
 		// #4: Shore TopRight, size 1x2,
 
-		public void DefineMapTilesFromHeightLayout(Theater theater) {
+		public void DefineZFromHeightLayout() {
 			IsoTile currentTile;
-			_logger.Debug("Defining map tiles from height layout.");
+			_logger.Debug("Defining z from height layout.");
 			for (int y = 0; y < Height; y++) {
 				for (int x = 0; x < Width * 2 - 1; x++) {
 					var h = HeightLayout[x, y];
 					currentTile = TileLayer[x, y];
 					if (h < SeaLevel) {
-						currentTile.TileNum = WaterTileSingle;	// todo: change to single. Large tiles are fixed later.
+						currentTile.TileNum = WaterTileSingle;
 						currentTile.Z = 0;
 					}
 					else if (h < SandLevel) {
 						currentTile.TileNum = SandTileSingle;
 						currentTile.Z = 0;
 					}
+					else if (h < GroundLevel) {
+						currentTile.Z = 0;
+					}
 					else {
-						var hLevel = (byte)((h - SandLevel) / HeightInterval);
+						var hLevel = (byte)((h - GroundLevel) / HeightInterval);
 						currentTile.Z = hLevel;
 					}
 				}
