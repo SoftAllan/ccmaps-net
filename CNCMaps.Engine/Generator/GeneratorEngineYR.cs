@@ -167,7 +167,6 @@ namespace CNCMaps.Engine.Generator {
 			for (int y = 0; y < Height; y++) {
 				for (int x = 0; x < Width * 2 - 1; x++) {
 					CheckLevel(x, y);
-					CheckWaterOrSandLevel(x, y);
 				}
 			}
 		}
@@ -253,7 +252,9 @@ namespace CNCMaps.Engine.Generator {
 
 		public void CheckWaterOrSandLevel(int x, int y) {
 			var ct = TileLayer[x, y];
-			if (CheckTileWaterlineLevel(ct, TileLayer.GridTile(x, y, TileLayer.TileDirection.Top))) return;
+			CheckTileWaterlineLevel(ct, TileLayer.GridTile(x, y, TileLayer.TileDirection.TopLeft));
+			CheckTileWaterlineLevel(ct, TileLayer.GridTile(x, y, TileLayer.TileDirection.Top));
+			CheckTileWaterlineLevel(ct, TileLayer.GridTile(x, y, TileLayer.TileDirection.TopRight));
 			CheckTileWaterlineLevel(ct, TileLayer.GridTile(x, y, TileLayer.TileDirection.Left));
 		}
 

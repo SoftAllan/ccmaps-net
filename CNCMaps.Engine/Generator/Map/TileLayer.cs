@@ -156,9 +156,28 @@ namespace CNCMaps.Engine.Generator.Map {
 			var file = DebugMapFile();
 			logger.Debug($"Dumping Z order to {file}");
 			var sb = new StringBuilder();
+			sb.Append("    ");
+			for (int x = 0; x < Width * 2 - 1; x++) {
+				sb.Append($"{x,3} ");
+			}
+			sb.AppendLine();
 			for (int y = 0; y < Height; y++) {
+				sb.Append($"{y,4}");
 				for (int x = 0; x < Width * 2 - 1; x++) {
-					sb.Append($"[{isoTiles[x, y].Z:D2}]");
+					var h = $"{isoTiles[x, y].Z,0:X}";
+					char t;
+					switch (isoTiles[x, y].TileNum) {
+						case GeneratorEngineYR.WaterTileSingle:
+							t = 'w';
+							break;
+						case GeneratorEngineYR.SandTileSingle:
+							t = 's';
+							break;
+						default:
+							t = ' ';
+							break;
+					}
+					sb.Append($"[{t}{h}]");
 				}
 				sb.AppendLine();
 			}

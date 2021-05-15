@@ -44,7 +44,7 @@ namespace TestRandomMapGenerator
 		}
 
 		// Todo: Make test for TopLeft (low/high) and for TopRight (low/high).
-
+		
 		[TestMethod]
 		public void TestLevelOutLowTop() {
 			var te = NewTestGeneratorEngineYR(3, 3);
@@ -416,28 +416,29 @@ namespace TestRandomMapGenerator
 		public void TestCompleteLevel() {
 			var te = NewTestGeneratorEngineYR(50, 50);
 			var noise = new PerlinNoise(222);
-			te.GenerateHeightLayout(0.4d, false);
+			te.GenerateHeightLayout(0.9d, false);	// Many hills.
 			te.DefineMapTilesFromHeightLayout(te.Theater);
 			te.LevelOut();
+			te.TileLayer.DumpZToFile();
 			for (int y = 0; y < te.Height; y++) {
 				for (int x = 0; x < te.Width * 2 - 1; x++) {
 					var ct = te.TileLayer[x, y];
 					var t = te.TileLayer.GridTile(x, y, TileLayer.TileDirection.TopLeft);
-					Assert.IsFalse(te.CheckTileLevel(ct, t, correctLevel: false), $"Map layout failed on [{x},{y}] for TopLeft. Current Z:{ct.Z}, TopLeft Z:{t.Z}");
+					Assert.IsFalse(te.CheckTileLevel(ct, t, correctLevel: false), $"Map layout failed on [{x},{y}]. Current Z:{ct.Z}, TopLeft Z:{t.Z}");
 					t = te.TileLayer.GridTile(x, y, TileLayer.TileDirection.Top);
-					Assert.IsFalse(te.CheckTileLevel(ct, t, correctLevel: false), $"Map layout failed on [{x},{y}] for TopLeft. Current Z:{ct.Z}, Top Z:{t.Z}");
+					Assert.IsFalse(te.CheckTileLevel(ct, t, correctLevel: false), $"Map layout failed on [{x},{y}]. Current Z:{ct.Z}, Top Z:{t.Z}");
 					t = te.TileLayer.GridTile(x, y, TileLayer.TileDirection.TopRight);
-					Assert.IsFalse(te.CheckTileLevel(ct, t, correctLevel: false), $"Map layout failed on [{x},{y}] for TopLeft. Current Z:{ct.Z}, TopRight Z:{t.Z}");
+					Assert.IsFalse(te.CheckTileLevel(ct, t, correctLevel: false), $"Map layout failed on [{x},{y}]. Current Z:{ct.Z}, TopRight Z:{t.Z}");
 					t = te.TileLayer.GridTile(x, y, TileLayer.TileDirection.Left);
-					Assert.IsFalse(te.CheckTileLevel(ct, t, correctLevel: false), $"Map layout failed on [{x},{y}] for TopLeft. Current Z:{ct.Z}, Left Z:{t.Z}");
+					Assert.IsFalse(te.CheckTileLevel(ct, t, correctLevel: false), $"Map layout failed on [{x},{y}]. Current Z:{ct.Z}, Left Z:{t.Z}");
 					t = te.TileLayer.GridTile(x, y, TileLayer.TileDirection.Right);
-					Assert.IsFalse(te.CheckTileLevel(ct, t, correctLevel: false), $"Map layout failed on [{x},{y}] for TopLeft. Current Z:{ct.Z}, Right Z:{t.Z}");
+					Assert.IsFalse(te.CheckTileLevel(ct, t, correctLevel: false), $"Map layout failed on [{x},{y}]. Current Z:{ct.Z}, Right Z:{t.Z}");
 					t = te.TileLayer.GridTile(x, y, TileLayer.TileDirection.BottomLeft);
-					Assert.IsFalse(te.CheckTileLevel(ct, t, correctLevel: false), $"Map layout failed on [{x},{y}] for TopLeft. Current Z:{ct.Z}, BottomLeft Z:{t.Z}");
+					Assert.IsFalse(te.CheckTileLevel(ct, t, correctLevel: false), $"Map layout failed on [{x},{y}]. Current Z:{ct.Z}, BottomLeft Z:{t.Z}");
 					t = te.TileLayer.GridTile(x, y, TileLayer.TileDirection.Bottom);
-					Assert.IsFalse(te.CheckTileLevel(ct, t, correctLevel: false), $"Map layout failed on [{x},{y}] for TopLeft. Current Z:{ct.Z}, Bottom Z:{t.Z}");
+					Assert.IsFalse(te.CheckTileLevel(ct, t, correctLevel: false), $"Map layout failed on [{x},{y}]. Current Z:{ct.Z}, Bottom Z:{t.Z}");
 					t = te.TileLayer.GridTile(x, y, TileLayer.TileDirection.BottomRight);
-					Assert.IsFalse(te.CheckTileLevel(ct, t, correctLevel: false), $"Map layout failed on [{x},{y}] for TopLeft. Current Z:{ct.Z}, BottomRight Z:{t.Z}");
+					Assert.IsFalse(te.CheckTileLevel(ct, t, correctLevel: false), $"Map layout failed on [{x},{y}]. Current Z:{ct.Z}, BottomRight Z:{t.Z}");
 				}
 			}
 		}
