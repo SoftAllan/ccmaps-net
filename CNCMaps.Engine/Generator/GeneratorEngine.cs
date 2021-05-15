@@ -198,7 +198,6 @@ namespace CNCMaps.Engine.Generator {
 			waypoints.SetValue("7", "53051");
 		}
 
-		// todo: Correct for the new constants.
 		internal void TestPerlin() {
 			Bitmap bitmap = new Bitmap(300, 300);
 
@@ -267,7 +266,6 @@ namespace CNCMaps.Engine.Generator {
 		}
 
 		// Make sure that neighbour z is not jumping more than 1.
-		// Control against top, then left.
 		// Sea and sand level might be raised.
 		public void LevelOut() {
 			for (int y = 0; y < Height; y++) {
@@ -288,10 +286,8 @@ namespace CNCMaps.Engine.Generator {
 		}
 
 		// Check the current tile against the validated tile.
+		// If the current tile is altered the ground type is reset to ground (removing water or sand).
 		// Returns true if the current tile has been altered.
-		// If z is sand or water treat as level 0 while testing. This will change the value correctly if the current tile
-		// needs to be liftet to a higher level. This will also remove the tile as a water or sand level.
-		// If sand or water is 
 		public bool CheckTileLevel(IsoTile current, IsoTile validated, bool correctLevel = true) {
 			if (validated.TileNum != -1) {
 				if (validated.Z - 1 > current.Z) {
@@ -312,17 +308,15 @@ namespace CNCMaps.Engine.Generator {
 			return false;
 		}
 
-		// Todo: correct for the new constants.
 		internal void DebugLayoutHeight() {
 			Bitmap bitmap = new Bitmap(Width * 2 - 1, Height);
 			var c = Color.Empty;
-			var h = 0;
 			for (int y = 0; y < Height; y++) {
-				for (int x = 0; x < Width * 2 - 2; x++) {
-					h = HeightLayout[x, y];
-					if (h < 100)
+				for (int x = 0; x < Width * 2 - 1; x++) {
+					var h = HeightLayout[x, y];
+					if (h <= SeaLevel)
 						c = Color.FromArgb(0, 0, h + 80);   // water
-					else if (h < 110)
+					else if (h <= SandLevel)
 						c = Color.FromArgb(300 - h, 300 - h, 0);        // sand
 					else
 						c = Color.FromArgb(0, h, 0);        // grass.
