@@ -284,19 +284,22 @@ namespace CNCMaps.Engine.Generator {
 
 		// Make sure that neighbour z is not jumping more than 1.
 		// Sea and sand level might be raised.
+		// Repeat this as many times needed until no changes has been made.
+		// Max 15 repeats.
+		// Check for Pits and spikes and water connection at the end. Only needed once.
 		public void LevelOut() {
 			for (int y = 0; y < Height; y++) {
 				for (int x = 0; x < Width * 2 - 1; x++) {
 					CheckLevel(x, y);
 				}
 			}
-			CheckForPitsAndSpikes();
-			TileLayer.DumpZToFile();
+			// CheckForPitsAndSpikes();
 			// CheckForWaterConnections();
 		}
 
 		// Check the level of the tile[x, y].
-		// If it is more that +/1 against either the topleft, top or the left tile it is corrected.
+		// If it is more that +/1 against either the topleft, top, topright or the left tile it is corrected.
+		// todo: this does not work after change to the new mapping.
 		public void CheckLevel(int x, int y) {
 			var ct = TileLayer[x, y];
 			CheckTileLevel(ct, TileLayer.GridTile(x, y, TileLayer.TileDirection.TopLeft));

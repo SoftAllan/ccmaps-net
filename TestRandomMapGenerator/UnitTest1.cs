@@ -103,6 +103,35 @@ namespace TestRandomMapGenerator
 			Assert.AreEqual(5, te.TileLayer[x, y].Z);
 		}
 
+
+		[TestMethod]
+		public void TestLevelOutTopLeftBottomRight() {
+			var te = NewTestGeneratorEngineYR(3, 3);
+			int x = 2;
+			int y = 0;
+			te.TileLayer[0, 0].Z = 1;
+			te.TileLayer[1, 0].Z = 2;
+			te.TileLayer[2, 0].Z = 1;
+			te.TileLayer[3, 0].Z = 3;   // = 2
+			te.TileLayer[4, 0].Z = 2;
+			te.TileLayer[0, 1].Z = 2;
+			te.TileLayer[1, 1].Z = 2;
+			te.TileLayer[2, 1].Z = 2;
+			te.TileLayer[3, 1].Z = 1;
+			te.TileLayer[4, 1].Z = 2;
+			te.TileLayer[0, 2].Z = 3;
+			te.TileLayer[1, 2].Z = 2;
+			te.TileLayer[2, 2].Z = 2;
+			te.TileLayer[3, 2].Z = 2;
+			te.TileLayer[4, 2].Z = 2;
+			te.TileLayer.DumpZToFile();
+			te.CheckLevel(x, y);
+			x = 3;
+			te.CheckLevel(x, y);
+			te.TileLayer.DumpZToFile();
+			TestNeighborLevel(te, x, y);
+		}
+
 		[TestMethod]
 		public void TestDefineGroundTypeFromHeightLayout() {
 			var te = NewTestGeneratorEngineYR(3, 3);
@@ -278,39 +307,50 @@ namespace TestRandomMapGenerator
 
 		// Test that the all grid neighbor tiles do not differ more than +/-1.
 		// This generate a random map with the same seed. This gives the same result for each test.
+		// Many hills. Requires 3 runs at Levelout.
 		[TestMethod]
 		public void TestCompleteLevel() {
-			var te = NewTestGeneratorEngineYR(50, 50);
+			var te = NewTestGeneratorEngineYR(10, 10);
 			var noise = new PerlinNoise(222);
-			te.GenerateHeightLayout(0.9d, false);	// Many hills.
+			te.GenerateHeightLayout(0.70d, false);	
 			te.DefineZFromHeightLayout();
+			Assert.AreNotEqual(3, te.TileLayer.GridTile(5, 0, TileLayer.TileDirection.Bottom).Z);
+			te.LevelOut();
+			Assert.AreEqual(3, te.TileLayer.GridTile(5, 0, TileLayer.TileDirection.Bottom).Z);
+			Assert.AreNotEqual(3, te.TileLayer.GridTile(1, 5, TileLayer.TileDirection.Bottom).Z);
+			te.LevelOut();
+			Assert.AreEqual(3, te.TileLayer.GridTile(1, 5, TileLayer.TileDirection.Bottom).Z);
 			te.LevelOut();
 			te.TileLayer.DumpZToFile();
 			for (int y = 0; y < te.Height; y++) {
 				for (int x = 0; x < te.Width * 2 - 1; x++) {
-					var ct = te.TileLayer[x, y];
-					var t = te.TileLayer.GridTile(x, y, TileLayer.TileDirection.TopLeft);
-					Assert.IsFalse(te.CheckTileLevel(ct, t, correctLevel: false), $"Map layout failed on [{x},{y}]. Current Z:{ct.Z}, TopLeft Z:{t.Z}");
-					t = te.TileLayer.GridTile(x, y, TileLayer.TileDirection.Top);
-					Assert.IsFalse(te.CheckTileLevel(ct, t, correctLevel: false), $"Map layout failed on [{x},{y}]. Current Z:{ct.Z}, Top Z:{t.Z}");
-					t = te.TileLayer.GridTile(x, y, TileLayer.TileDirection.TopRight);
-					Assert.IsFalse(te.CheckTileLevel(ct, t, correctLevel: false), $"Map layout failed on [{x},{y}]. Current Z:{ct.Z}, TopRight Z:{t.Z}");
-					t = te.TileLayer.GridTile(x, y, TileLayer.TileDirection.Left);
-					Assert.IsFalse(te.CheckTileLevel(ct, t, correctLevel: false), $"Map layout failed on [{x},{y}]. Current Z:{ct.Z}, Left Z:{t.Z}");
-					t = te.TileLayer.GridTile(x, y, TileLayer.TileDirection.Right);
-					Assert.IsFalse(te.CheckTileLevel(ct, t, correctLevel: false), $"Map layout failed on [{x},{y}]. Current Z:{ct.Z}, Right Z:{t.Z}");
-					t = te.TileLayer.GridTile(x, y, TileLayer.TileDirection.BottomLeft);
-					Assert.IsFalse(te.CheckTileLevel(ct, t, correctLevel: false), $"Map layout failed on [{x},{y}]. Current Z:{ct.Z}, BottomLeft Z:{t.Z}");
-					t = te.TileLayer.GridTile(x, y, TileLayer.TileDirection.Bottom);
-					Assert.IsFalse(te.CheckTileLevel(ct, t, correctLevel: false), $"Map layout failed on [{x},{y}]. Current Z:{ct.Z}, Bottom Z:{t.Z}");
-					t = te.TileLayer.GridTile(x, y, TileLayer.TileDirection.BottomRight);
-					Assert.IsFalse(te.CheckTileLevel(ct, t, correctLevel: false), $"Map layout failed on [{x},{y}]. Current Z:{ct.Z}, BottomRight Z:{t.Z}");
-					if (ct.Ground == IsoTile.GroundType.Sand)
-						Assert.AreEqual(0, ct.Z, $"Map layout failed on [{x},{y}]. Ground type \"Sand\" should have Z = 0.");
-					if (ct.Ground == IsoTile.GroundType.Water)
-						Assert.AreEqual(0, ct.Z, $"Map layout failed on [{x},{y}]. Ground type \"Water\" should have Z = 0.");
+					TestNeighborLevel(te, x, y);
 				}
 			}
+		}
+
+		private void TestNeighborLevel(GeneratorEngineYR te, int x, int y) {
+			var ct = te.TileLayer[x, y];
+			var t = te.TileLayer.GridTile(x, y, TileLayer.TileDirection.TopLeft);
+			Assert.IsFalse(te.CheckTileLevel(ct, t, correctLevel: false), $"Map layout failed on [{x},{y}]. Current Z:{ct.Z}, TopLeft Z:{t.Z}");
+			t = te.TileLayer.GridTile(x, y, TileLayer.TileDirection.Top);
+			Assert.IsFalse(te.CheckTileLevel(ct, t, correctLevel: false), $"Map layout failed on [{x},{y}]. Current Z:{ct.Z}, Top Z:{t.Z}");
+			t = te.TileLayer.GridTile(x, y, TileLayer.TileDirection.TopRight);
+			Assert.IsFalse(te.CheckTileLevel(ct, t, correctLevel: false), $"Map layout failed on [{x},{y}]. Current Z:{ct.Z}, TopRight Z:{t.Z}");
+			t = te.TileLayer.GridTile(x, y, TileLayer.TileDirection.Left);
+			Assert.IsFalse(te.CheckTileLevel(ct, t, correctLevel: false), $"Map layout failed on [{x},{y}]. Current Z:{ct.Z}, Left Z:{t.Z}");
+			t = te.TileLayer.GridTile(x, y, TileLayer.TileDirection.Right);
+			Assert.IsFalse(te.CheckTileLevel(ct, t, correctLevel: false), $"Map layout failed on [{x},{y}]. Current Z:{ct.Z}, Right Z:{t.Z}");
+			t = te.TileLayer.GridTile(x, y, TileLayer.TileDirection.BottomLeft);
+			Assert.IsFalse(te.CheckTileLevel(ct, t, correctLevel: false), $"Map layout failed on [{x},{y}]. Current Z:{ct.Z}, BottomLeft Z:{t.Z}");
+			t = te.TileLayer.GridTile(x, y, TileLayer.TileDirection.Bottom);
+			Assert.IsFalse(te.CheckTileLevel(ct, t, correctLevel: false), $"Map layout failed on [{x},{y}]. Current Z:{ct.Z}, Bottom Z:{t.Z}");
+			t = te.TileLayer.GridTile(x, y, TileLayer.TileDirection.BottomRight);
+			Assert.IsFalse(te.CheckTileLevel(ct, t, correctLevel: false), $"Map layout failed on [{x},{y}]. Current Z:{ct.Z}, BottomRight Z:{t.Z}");
+			if (ct.Ground == IsoTile.GroundType.Sand)
+				Assert.AreEqual(0, ct.Z, $"Map layout failed on [{x},{y}]. Ground type \"Sand\" should have Z = 0.");
+			if (ct.Ground == IsoTile.GroundType.Water)
+				Assert.AreEqual(0, ct.Z, $"Map layout failed on [{x},{y}]. Ground type \"Water\" should have Z = 0.");
 		}
 
 		[TestMethod]
