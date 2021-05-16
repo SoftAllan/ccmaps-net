@@ -288,24 +288,30 @@ namespace CNCMaps.Engine.Generator {
 		// Max 15 repeats.
 		// Check for Pits and spikes and water connection at the end. Only needed once.
 		public void LevelOut() {
-			for (int y = 0; y < Height; y++) {
-				for (int x = 0; x < Width * 2 - 1; x++) {
-					CheckLevel(x, y);
+			int pass = 0;
+			bool changed;
+			do {
+				changed = false;
+				for (int y = 0; y < Height; y++) {
+					for (int x = 0; x < Width * 2 - 1; x++) {
+						changed = CheckLevel(x, y) || changed;
+					}
 				}
-			}
+			} while (changed == true && pass++ < 15);
 			// CheckForPitsAndSpikes();
 			// CheckForWaterConnections();
 		}
 
 		// Check the level of the tile[x, y].
 		// If it is more that +/1 against either the topleft, top, topright or the left tile it is corrected.
-		// todo: this does not work after change to the new mapping.
-		public void CheckLevel(int x, int y) {
+		public bool CheckLevel(int x, int y) {
 			var ct = TileLayer[x, y];
-			CheckTileLevel(ct, TileLayer.GridTile(x, y, TileLayer.TileDirection.TopLeft));
-			CheckTileLevel(ct, TileLayer.GridTile(x, y, TileLayer.TileDirection.Top));
-			CheckTileLevel(ct, TileLayer.GridTile(x, y, TileLayer.TileDirection.TopRight));
-			CheckTileLevel(ct, TileLayer.GridTile(x, y, TileLayer.TileDirection.Left));
+			var changed = false;
+			changed = CheckTileLevel(ct, TileLayer.GridTile(x, y, TileLayer.TileDirection.TopLeft)) || changed;
+			changed = CheckTileLevel(ct, TileLayer.GridTile(x, y, TileLayer.TileDirection.Top)) || changed;
+			changed = CheckTileLevel(ct, TileLayer.GridTile(x, y, TileLayer.TileDirection.TopRight)) || changed;
+			changed = CheckTileLevel(ct, TileLayer.GridTile(x, y, TileLayer.TileDirection.Left)) || changed;
+			return changed;
 		}
 
 		// Check the current tile against the validated tile.

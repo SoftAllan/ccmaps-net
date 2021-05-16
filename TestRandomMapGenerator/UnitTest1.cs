@@ -307,7 +307,7 @@ namespace TestRandomMapGenerator
 
 		// Test that the all grid neighbor tiles do not differ more than +/-1.
 		// This generate a random map with the same seed. This gives the same result for each test.
-		// Many hills. Requires 3 runs at Levelout.
+		// Many hills. Requires 3 runs of CheckLevel corrections.
 		[TestMethod]
 		public void TestCompleteLevel() {
 			var te = NewTestGeneratorEngineYR(10, 10);
@@ -315,19 +315,32 @@ namespace TestRandomMapGenerator
 			te.GenerateHeightLayout(0.70d, false);	
 			te.DefineZFromHeightLayout();
 			Assert.AreNotEqual(3, te.TileLayer.GridTile(5, 0, TileLayer.TileDirection.Bottom).Z);
-			te.LevelOut();
+			for (int y = 0; y < te.Height; y++) {
+				for (int x = 0; x < te.Width * 2 - 1; x++) {
+					te.CheckLevel(x, y);
+				}
+			}
 			Assert.AreEqual(3, te.TileLayer.GridTile(5, 0, TileLayer.TileDirection.Bottom).Z);
 			Assert.AreNotEqual(3, te.TileLayer.GridTile(1, 5, TileLayer.TileDirection.Bottom).Z);
-			te.LevelOut();
+			for (int y = 0; y < te.Height; y++) {
+				for (int x = 0; x < te.Width * 2 - 1; x++) {
+					te.CheckLevel(x, y);
+				}
+			}
 			Assert.AreEqual(3, te.TileLayer.GridTile(1, 5, TileLayer.TileDirection.Bottom).Z);
-			te.LevelOut();
-			te.TileLayer.DumpZToFile();
+			for (int y = 0; y < te.Height; y++) {
+				for (int x = 0; x < te.Width * 2 - 1; x++) {
+					te.CheckLevel(x, y);
+				}
+			}
 			for (int y = 0; y < te.Height; y++) {
 				for (int x = 0; x < te.Width * 2 - 1; x++) {
 					TestNeighborLevel(te, x, y);
 				}
 			}
 		}
+
+
 
 		private void TestNeighborLevel(GeneratorEngineYR te, int x, int y) {
 			var ct = te.TileLayer[x, y];
