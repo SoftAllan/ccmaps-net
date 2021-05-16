@@ -72,7 +72,7 @@ namespace CNCMaps.Engine.Generator {
 			_logger.Debug("Parsing map size.");
 			switch (mapSize) {
 				case MapSize.Small:
-					Height= 50;
+					Height= 50;		// 50 x 400 works. It just a matter of being able to place the players.
 					Width = 50;
 					break;
 				case MapSize.Medium:
@@ -84,8 +84,8 @@ namespace CNCMaps.Engine.Generator {
 					Width = 150;
 					break;
 				case MapSize.VeryLarge:
-					Height = 300;
-					Width = 300;
+					Height = 200;
+					Width = 200;
 					break;
 				default:
 					break;
@@ -298,7 +298,7 @@ namespace CNCMaps.Engine.Generator {
 					}
 				}
 			} while (changed == true && pass++ < 15);
-			// CheckForPitsAndSpikes();
+			CheckForPitsAndSpikes();
 			// CheckForWaterConnections();
 		}
 

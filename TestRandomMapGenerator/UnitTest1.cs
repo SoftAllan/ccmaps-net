@@ -309,7 +309,7 @@ namespace TestRandomMapGenerator
 		// This generate a random map with the same seed. This gives the same result for each test.
 		// Many hills. Requires 3 runs of CheckLevel corrections.
 		[TestMethod]
-		public void TestCompleteLevel() {
+		public void TestRepeatCheckLevel() {
 			var te = NewTestGeneratorEngineYR(10, 10);
 			var noise = new PerlinNoise(222);
 			te.GenerateHeightLayout(0.70d, false);	
@@ -340,7 +340,23 @@ namespace TestRandomMapGenerator
 			}
 		}
 
-
+		// Test that the all grid neighbor tiles do not differ more than +/-1.
+		// Use a very big map 222x444. Would max out the preview generator with 2GB use.
+		// This generate a random map with the same seed. This gives the same result for each test.
+		// Many hills.
+		[TestMethod]
+		public void TestLevelOut() {
+			var te = NewTestGeneratorEngineYR(222, 444);
+			var noise = new PerlinNoise(222);
+			te.GenerateHeightLayout(0.20d, false);
+			te.DefineZFromHeightLayout();
+			te.LevelOut();
+			for (int y = 0; y < te.Height; y++) {
+				for (int x = 0; x < te.Width * 2 - 1; x++) {
+					TestNeighborLevel(te, x, y);
+				}
+			}
+		}
 
 		private void TestNeighborLevel(GeneratorEngineYR te, int x, int y) {
 			var ct = te.TileLayer[x, y];
