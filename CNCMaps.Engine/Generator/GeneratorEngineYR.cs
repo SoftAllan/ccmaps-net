@@ -138,6 +138,7 @@ namespace CNCMaps.Engine.Generator {
 
 
 		private void DefineWaterSubtiles(Theater theater) {
+			_logger.Debug("Defining water tiles.");
 			// todo: Make 2x2 tiles where possible 
 			// WaterTileLarge
 			for (int y = 0; y < Height; y++) {
@@ -149,6 +150,7 @@ namespace CNCMaps.Engine.Generator {
 		}
 
 		private void DefineSandTiles(Theater theater) {
+			_logger.Debug("Defining sand tiles.");
 			for (int y = 0; y < Height; y++) {
 				for (int x = 0; x < Width * 2 - 1; x++) {
 					if (TileLayer[x, y].Ground == IsoTile.GroundType.Sand)
@@ -159,7 +161,7 @@ namespace CNCMaps.Engine.Generator {
 
 		// Make shore tiles instead of sand tiles.
 		private void DefineShoreTiles(Theater theater) {
-
+			_logger.Debug("Defining shore tiles.");
 		}
 
 	}

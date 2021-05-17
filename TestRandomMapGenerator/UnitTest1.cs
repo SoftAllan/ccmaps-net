@@ -20,6 +20,8 @@ namespace TestRandomMapGenerator
 		[TestInitialize]
 		public void Setup() {
 			// A test theater is setup for all testing methods as this takes a long time to do.
+			// todo: It is still called for each test method. Maybe use some kind of stub if possible.
+			//		 This would however require that the constructor of Theater can use interfaces for dependency injection. Maybe.
 			TestSettings = new Settings();
 			TestSettings.TheaterType = TheaterType.Temperate;
 			TestTheater = CreateTheater();

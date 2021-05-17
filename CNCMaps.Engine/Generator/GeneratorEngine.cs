@@ -223,7 +223,7 @@ namespace CNCMaps.Engine.Generator {
 		}
 
 		public void GenerateHeightLayout(double noiseOffset, bool debug) {
-			_logger.Debug("Generating height layout");
+			_logger.Debug("Generating height layout.");
 			HeightLayout = new byte[Width * 2 - 1, Height];
 			var nv = 0d;
 			for (int y = 0; y < Height; y++) {
@@ -258,7 +258,7 @@ namespace CNCMaps.Engine.Generator {
 
 		public void DefineZFromHeightLayout() {
 			IsoTile currentTile;
-			_logger.Debug("Defining z from height layout.");
+			_logger.Debug("Defining Z from height layout.");
 			for (int y = 0; y < Height; y++) {
 				for (int x = 0; x < Width * 2 - 1; x++) {
 					var h = HeightLayout[x, y];
@@ -288,6 +288,7 @@ namespace CNCMaps.Engine.Generator {
 		// Max 15 repeats.
 		// Check for Pits and spikes and water connection at the end. Only needed once.
 		public void LevelOut() {
+			_logger.Debug("Leveling out.");
 			int pass = 0;
 			bool changed;
 			do {
@@ -340,6 +341,7 @@ namespace CNCMaps.Engine.Generator {
 
 		// Remove small holes and spikes.
 		private void CheckForPitsAndSpikes() {
+			_logger.Debug("Removing pits and spikes.");
 			for (int y = 0; y < Height; y++) {
 				for (int x = 0; x < Width * 2 - 1; x++) {
 					CheckPit(x, y);
@@ -381,6 +383,7 @@ namespace CNCMaps.Engine.Generator {
 		}
 
 		private void CheckForWaterConnections() {
+			_logger.Debug("Ensuring water connections.");
 			for (int y = 0; y < Height; y++) {
 				for (int x = 0; x < Width * 2 - 1; x++) {
 					CheckSingleWaterSpots(x, y);
@@ -389,6 +392,7 @@ namespace CNCMaps.Engine.Generator {
 		}
 
 		private void CheckForWaterNextToHighGround() {
+			_logger.Debug("Removing water next to high ground.");
 			for (int y = 0; y < Height; y++) {
 				for (int x = 0; x < Width * 2 - 1; x++) {
 					CheckSingleWaterNextToHighGround(x, y);
