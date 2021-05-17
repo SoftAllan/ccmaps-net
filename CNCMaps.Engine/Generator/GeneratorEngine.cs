@@ -299,7 +299,7 @@ namespace CNCMaps.Engine.Generator {
 				}
 			} while (changed == true && pass++ < 15);
 			CheckForPitsAndSpikes();
-			// CheckForWaterConnections();
+			CheckForWaterConnections();
 		}
 
 		// Check the level of the tile[x, y].
@@ -390,10 +390,10 @@ namespace CNCMaps.Engine.Generator {
 		// Make sure that a water tile is always connected to at least one other water tile.
 		public void CheckSingleWaterSpots(int x, int y) {
 			if (TileLayer[x, y].Ground != IsoTile.GroundType.Water) return;
-			if (TileLayer.GridTile(x, y, TileLayer.TileDirection.Top).Ground == IsoTile.GroundType.Water ||
-				TileLayer.GridTile(x, y, TileLayer.TileDirection.Left).Ground == IsoTile.GroundType.Water ||
-				TileLayer.GridTile(x, y, TileLayer.TileDirection.Right).Ground == IsoTile.GroundType.Water ||
-				TileLayer.GridTile(x, y, TileLayer.TileDirection.Bottom).Ground == IsoTile.GroundType.Water) 
+			if (TileLayer.GridTile(x, y, TileLayer.TileDirection.TopLeft).Ground == IsoTile.GroundType.Water ||
+				TileLayer.GridTile(x, y, TileLayer.TileDirection.TopRight).Ground == IsoTile.GroundType.Water ||
+				TileLayer.GridTile(x, y, TileLayer.TileDirection.BottomRight).Ground == IsoTile.GroundType.Water ||
+				TileLayer.GridTile(x, y, TileLayer.TileDirection.BottomLeft).Ground == IsoTile.GroundType.Water) 
 				return;
 			TileLayer[x, y].Ground = IsoTile.GroundType.Ground;
 		}

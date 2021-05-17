@@ -66,7 +66,7 @@ namespace CNCMaps.Engine.Generator {
 				InitialiseMapLayer(ClearTile);
 				// 0.04 large hills
 				// 0.20 many hills
-				GenerateHeightLayout(0.04d, debug: true); 
+				GenerateHeightLayout(0.20d, debug: true); 
 				DefineZFromHeightLayout();
 				LevelOut();
 				DefineWaterSubtiles(theater);

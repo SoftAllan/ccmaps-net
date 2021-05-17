@@ -124,11 +124,9 @@ namespace TestRandomMapGenerator
 			te.TileLayer[2, 2].Z = 2;
 			te.TileLayer[3, 2].Z = 2;
 			te.TileLayer[4, 2].Z = 2;
-			te.TileLayer.DumpZToFile();
 			te.CheckLevel(x, y);
 			x = 3;
 			te.CheckLevel(x, y);
-			te.TileLayer.DumpZToFile();
 			TestNeighborLevel(te, x, y);
 		}
 
@@ -175,7 +173,6 @@ namespace TestRandomMapGenerator
 			te.TileLayer[2, 2].Z = 13;
 			te.TileLayer[3, 2].Z = 14;
 			te.TileLayer[4, 2].Z = 15;
-			te.TileLayer.DumpZToFile();
 			Assert.AreEqual(6, te.TileLayer.GridTile(x, y, TileLayer.TileDirection.TopLeft).Z);
 			Assert.AreEqual(2, te.TileLayer.GridTile(x, y, TileLayer.TileDirection.Top).Z);
 			Assert.AreEqual(8, te.TileLayer.GridTile(x, y, TileLayer.TileDirection.TopRight).Z);
@@ -385,55 +382,47 @@ namespace TestRandomMapGenerator
 		[TestMethod]
 		public void TestWaterToWaterConnection() {
 			var te = NewTestGeneratorEngineYR(3, 3);
-			int x = 1;
+			int x = 2;
 			int y = 1;
-			te.TileLayer[1, 1].Ground = IsoTile.GroundType.Water;
-			// te.TileLayer.DumpZToFile();
+			te.TileLayer[x, y].Ground = IsoTile.GroundType.Water;
 			te.CheckSingleWaterSpots(x, y);
-			Assert.AreEqual(IsoTile.GroundType.Ground, te.TileLayer[1, 1].Ground);
-			te.TileLayer[1, 1].Ground = IsoTile.GroundType.Water;
-			te.TileLayer[0, 0].Ground = IsoTile.GroundType.Water;
-			// te.TileLayer.DumpZToFile();
+			Assert.AreEqual(IsoTile.GroundType.Ground, te.TileLayer[x, y].Ground);
+			te.TileLayer[x, y].Ground = IsoTile.GroundType.Water;
+			te.TileLayer.GridTile(x, y, TileLayer.TileDirection.Top).Ground = IsoTile.GroundType.Water;
 			te.CheckSingleWaterSpots(x, y);
-			Assert.AreEqual(IsoTile.GroundType.Ground, te.TileLayer[1, 1].Ground);
-			te.TileLayer[0, 0].Ground = IsoTile.GroundType.Ground;
-			te.TileLayer[1, 1].Ground = IsoTile.GroundType.Water;
-			te.TileLayer[1, 0].Ground = IsoTile.GroundType.Water;
-			// te.TileLayer.DumpZToFile();
+			Assert.AreEqual(IsoTile.GroundType.Ground, te.TileLayer[x, y].Ground);
+			te.TileLayer[x, y].Ground = IsoTile.GroundType.Water;
+			te.TileLayer.GridTile(x, y, TileLayer.TileDirection.Top).Ground = IsoTile.GroundType.Ground;
+			te.TileLayer.GridTile(x, y, TileLayer.TileDirection.Right).Ground = IsoTile.GroundType.Water;
 			te.CheckSingleWaterSpots(x, y);
-			Assert.AreEqual(IsoTile.GroundType.Water, te.TileLayer[1, 1].Ground);
-			te.TileLayer[1, 0].Ground = IsoTile.GroundType.Ground;
-			te.TileLayer[2, 0].Ground = IsoTile.GroundType.Water;
-			// te.TileLayer.DumpZToFile();
+			Assert.AreEqual(IsoTile.GroundType.Ground, te.TileLayer[x, y].Ground);
+			te.TileLayer[x, y].Ground = IsoTile.GroundType.Water;
+			te.TileLayer.GridTile(x, y, TileLayer.TileDirection.Right).Ground = IsoTile.GroundType.Ground;
+			te.TileLayer.GridTile(x, y, TileLayer.TileDirection.Bottom).Ground = IsoTile.GroundType.Water;
 			te.CheckSingleWaterSpots(x, y);
-			Assert.AreEqual(IsoTile.GroundType.Ground, te.TileLayer[1, 1].Ground);
-			te.TileLayer[2, 0].Ground = IsoTile.GroundType.Ground;
-			te.TileLayer[1, 1].Ground = IsoTile.GroundType.Water;
-			te.TileLayer[0, 1].Ground = IsoTile.GroundType.Water;
-			// te.TileLayer.DumpZToFile();
+			Assert.AreEqual(IsoTile.GroundType.Ground, te.TileLayer[x, y].Ground);
+			te.TileLayer[x, y].Ground = IsoTile.GroundType.Water;
+			te.TileLayer.GridTile(x, y, TileLayer.TileDirection.Bottom).Ground = IsoTile.GroundType.Ground;
+			te.TileLayer.GridTile(x, y, TileLayer.TileDirection.Left).Ground = IsoTile.GroundType.Water;
 			te.CheckSingleWaterSpots(x, y);
-			Assert.AreEqual(IsoTile.GroundType.Water, te.TileLayer[1, 1].Ground);
-			te.TileLayer[0, 1].Ground = IsoTile.GroundType.Ground;
-			te.TileLayer[2, 1].Ground = IsoTile.GroundType.Water;
-			// te.TileLayer.DumpZToFile();
+			Assert.AreEqual(IsoTile.GroundType.Ground, te.TileLayer[x, y].Ground);
+			te.TileLayer[x, y].Ground = IsoTile.GroundType.Water;
+			te.TileLayer.GridTile(x, y, TileLayer.TileDirection.Left).Ground = IsoTile.GroundType.Ground;
+			te.TileLayer.GridTile(x, y, TileLayer.TileDirection.TopLeft).Ground = IsoTile.GroundType.Water;
 			te.CheckSingleWaterSpots(x, y);
-			Assert.AreEqual(IsoTile.GroundType.Water, te.TileLayer[1, 1].Ground);
-			te.TileLayer[2, 1].Ground = IsoTile.GroundType.Ground;
-			te.TileLayer[0, 2].Ground = IsoTile.GroundType.Water;
-			// te.TileLayer.DumpZToFile();
+			Assert.AreEqual(IsoTile.GroundType.Water, te.TileLayer[x, y].Ground);
+			te.TileLayer.GridTile(x, y, TileLayer.TileDirection.TopLeft).Ground = IsoTile.GroundType.Ground;
+			te.TileLayer.GridTile(x, y, TileLayer.TileDirection.TopRight).Ground = IsoTile.GroundType.Water;
 			te.CheckSingleWaterSpots(x, y);
-			Assert.AreEqual(IsoTile.GroundType.Ground, te.TileLayer[1, 1].Ground);
-			te.TileLayer[0, 2].Ground = IsoTile.GroundType.Ground;
-			te.TileLayer[1, 1].Ground = IsoTile.GroundType.Water;
-			te.TileLayer[1, 2].Ground = IsoTile.GroundType.Water;
-			// te.TileLayer.DumpZToFile();
+			Assert.AreEqual(IsoTile.GroundType.Water, te.TileLayer[x, y].Ground);
+			te.TileLayer.GridTile(x, y, TileLayer.TileDirection.TopRight).Ground = IsoTile.GroundType.Ground;
+			te.TileLayer.GridTile(x, y, TileLayer.TileDirection.BottomRight).Ground = IsoTile.GroundType.Water;
 			te.CheckSingleWaterSpots(x, y);
-			Assert.AreEqual(IsoTile.GroundType.Water, te.TileLayer[1, 1].Ground);
-			te.TileLayer[1, 2].Ground = IsoTile.GroundType.Ground;
-			te.TileLayer[2, 2].Ground = IsoTile.GroundType.Water;
-			// te.TileLayer.DumpZToFile();
+			Assert.AreEqual(IsoTile.GroundType.Water, te.TileLayer[x, y].Ground);
+			te.TileLayer.GridTile(x, y, TileLayer.TileDirection.BottomRight).Ground = IsoTile.GroundType.Ground;
+			te.TileLayer.GridTile(x, y, TileLayer.TileDirection.BottomLeft).Ground = IsoTile.GroundType.Water;
 			te.CheckSingleWaterSpots(x, y);
-			Assert.AreEqual(IsoTile.GroundType.Ground, te.TileLayer[1, 1].Ground);
+			Assert.AreEqual(IsoTile.GroundType.Water, te.TileLayer[x, y].Ground);
 		}
 
 	}
