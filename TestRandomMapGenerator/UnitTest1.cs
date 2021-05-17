@@ -425,5 +425,66 @@ namespace TestRandomMapGenerator
 			Assert.AreEqual(IsoTile.GroundType.Water, te.TileLayer[x, y].Ground);
 		}
 
+		[TestMethod]
+		public void TestWaterNextToHighGround() {
+			var te = NewTestGeneratorEngineYR(4, 5);
+			int x = 2;
+			int y = 2;
+			int x2 = 3;	// top right x
+			int y2 = 1; // top right y
+			te.TileLayer[x, y].Ground = IsoTile.GroundType.Water;
+			te.TileLayer.GridTile(x, y, TileLayer.TileDirection.TopRight).Ground = IsoTile.GroundType.Water;	// Top right x = 3, Y = 1
+			te.CheckSingleWaterNextToHighGround(x, y);
+			Assert.AreEqual(IsoTile.GroundType.Water, te.TileLayer[x, y].Ground);
+			Assert.AreEqual(IsoTile.GroundType.Water, te.TileLayer[x2, y2].Ground);
+			te.TileLayer.GridTile(x, y, TileLayer.TileDirection.Top).Z = 1;
+			te.CheckSingleWaterNextToHighGround(x, y);
+			Assert.AreEqual(IsoTile.GroundType.Sand, te.TileLayer[x, y].Ground);
+			Assert.AreEqual(IsoTile.GroundType.Water, te.TileLayer[x2, y2].Ground);
+			te.TileLayer.GridTile(x, y, TileLayer.TileDirection.Top).Z = 0;
+			te.TileLayer[x, y].Ground = IsoTile.GroundType.Water;
+			te.TileLayer.GridTile(x2, y2, TileLayer.TileDirection.TopRight).Z = 1;
+			te.CheckSingleWaterNextToHighGround(x2, y2);
+			Assert.AreEqual(IsoTile.GroundType.Water, te.TileLayer[x, y].Ground);
+			Assert.AreEqual(IsoTile.GroundType.Sand, te.TileLayer[x2, y2].Ground);
+			te.TileLayer[x2, y2].Ground = IsoTile.GroundType.Water;
+			te.TileLayer.GridTile(x2, y2, TileLayer.TileDirection.TopRight).Z = 0;
+			te.TileLayer.GridTile(x2, y2, TileLayer.TileDirection.Right).Z = 1;
+			te.CheckSingleWaterNextToHighGround(x2, y2);
+			Assert.AreEqual(IsoTile.GroundType.Water, te.TileLayer[x, y].Ground);
+			Assert.AreEqual(IsoTile.GroundType.Sand, te.TileLayer[x2, y2].Ground);
+			te.TileLayer[x2, y2].Ground = IsoTile.GroundType.Water;
+			te.TileLayer.GridTile(x2, y2, TileLayer.TileDirection.Right).Z = 0;
+			te.TileLayer.GridTile(x, y, TileLayer.TileDirection.BottomRight).Z = 1;
+			te.CheckSingleWaterNextToHighGround(x, y);
+			Assert.AreEqual(IsoTile.GroundType.Sand, te.TileLayer[x, y].Ground);
+			Assert.AreEqual(IsoTile.GroundType.Water, te.TileLayer[x2, y2].Ground);
+			te.TileLayer[x, y].Ground = IsoTile.GroundType.Water;
+			te.TileLayer.GridTile(x, y, TileLayer.TileDirection.BottomRight).Z = 0;
+			te.TileLayer.GridTile(x, y, TileLayer.TileDirection.Bottom).Z = 1;
+			te.CheckSingleWaterNextToHighGround(x, y);
+			Assert.AreEqual(IsoTile.GroundType.Sand, te.TileLayer[x, y].Ground);
+			Assert.AreEqual(IsoTile.GroundType.Water, te.TileLayer[x2, y2].Ground);
+			te.TileLayer[x, y].Ground = IsoTile.GroundType.Water;
+			te.TileLayer.GridTile(x, y, TileLayer.TileDirection.Bottom).Z = 0;
+			te.TileLayer.GridTile(x, y, TileLayer.TileDirection.BottomLeft).Z = 1;
+			te.CheckSingleWaterNextToHighGround(x, y);
+			Assert.AreEqual(IsoTile.GroundType.Sand, te.TileLayer[x, y].Ground);
+			Assert.AreEqual(IsoTile.GroundType.Water, te.TileLayer[x2, y2].Ground);
+			te.TileLayer[x, y].Ground = IsoTile.GroundType.Water;
+			te.TileLayer.GridTile(x, y, TileLayer.TileDirection.BottomLeft).Z = 0;
+			te.TileLayer.GridTile(x, y, TileLayer.TileDirection.Left).Z = 1;
+			te.CheckSingleWaterNextToHighGround(x, y);
+			Assert.AreEqual(IsoTile.GroundType.Sand, te.TileLayer[x, y].Ground);
+			Assert.AreEqual(IsoTile.GroundType.Water, te.TileLayer[x2, y2].Ground);
+			te.TileLayer[x, y].Ground = IsoTile.GroundType.Water;
+			te.TileLayer.GridTile(x, y, TileLayer.TileDirection.Left).Z = 0;
+			te.TileLayer.GridTile(x, y, TileLayer.TileDirection.TopLeft).Z = 1;
+			te.CheckSingleWaterNextToHighGround(x, y);
+			Assert.AreEqual(IsoTile.GroundType.Sand, te.TileLayer[x, y].Ground);
+			Assert.AreEqual(IsoTile.GroundType.Water, te.TileLayer[x2, y2].Ground);
+		}
+
+
 	}
 }

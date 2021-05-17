@@ -30,7 +30,7 @@ namespace CNCMaps.Engine.Generator {
 		}
 
 		internal Settings Settings { get; }
-		public TileLayer TileLayer { get ; set ; }
+		public TileLayer TileLayer { get; set; }
 		public ushort Height;
 		public ushort Width;
 		public Theater Theater { get; set; }
@@ -72,7 +72,7 @@ namespace CNCMaps.Engine.Generator {
 			_logger.Debug("Parsing map size.");
 			switch (mapSize) {
 				case MapSize.Small:
-					Height= 50;		// 50 x 400 works. It just a matter of being able to place the players.
+					Height= 50;     // 50 x 400 works. It just a matter of being able to place the players.
 					Width = 50;
 					break;
 				case MapSize.Medium:
@@ -148,7 +148,7 @@ namespace CNCMaps.Engine.Generator {
 			var basic = iniFile.GetOrCreateSection("Basic");
 			basic.SetValue("Name", "RANDOMMAP");    // todo: name should be RANDOMMAP{date and time}
 			basic.SetValue("Author", "Random Map Generator");
-			basic.SetValue("Percent", "0");			// todo: What is this?
+			basic.SetValue("Percent", "0");         // todo: What is this?
 			basic.SetValue("GameMode", "standard"); // todo: maybe set to Random Map or "randommap"?
 			basic.SetValue("HomeCell", "98");           // todo: What is this?
 			basic.SetValue("InitTime", "10000");    // todo: What is this?
@@ -299,6 +299,7 @@ namespace CNCMaps.Engine.Generator {
 				}
 			} while (changed == true && pass++ < 15);
 			CheckForPitsAndSpikes();
+			CheckForWaterNextToHighGround();	// Check this before water connections.
 			CheckForWaterConnections();
 		}
 
@@ -387,15 +388,38 @@ namespace CNCMaps.Engine.Generator {
 			}
 		}
 
+		private void CheckForWaterNextToHighGround() {
+			for (int y = 0; y < Height; y++) {
+				for (int x = 0; x < Width * 2 - 1; x++) {
+					CheckSingleWaterNextToHighGround(x, y);
+				}
+			}
+		}
+
 		// Make sure that a water tile is always connected to at least one other water tile.
 		public void CheckSingleWaterSpots(int x, int y) {
 			if (TileLayer[x, y].Ground != IsoTile.GroundType.Water) return;
 			if (TileLayer.GridTile(x, y, TileLayer.TileDirection.TopLeft).Ground == IsoTile.GroundType.Water ||
 				TileLayer.GridTile(x, y, TileLayer.TileDirection.TopRight).Ground == IsoTile.GroundType.Water ||
 				TileLayer.GridTile(x, y, TileLayer.TileDirection.BottomRight).Ground == IsoTile.GroundType.Water ||
-				TileLayer.GridTile(x, y, TileLayer.TileDirection.BottomLeft).Ground == IsoTile.GroundType.Water) 
+				TileLayer.GridTile(x, y, TileLayer.TileDirection.BottomLeft).Ground == IsoTile.GroundType.Water)
 				return;
 			TileLayer[x, y].Ground = IsoTile.GroundType.Sand;
+		}
+
+		public void CheckSingleWaterNextToHighGround(int x, int y) {
+			var ct = TileLayer[x, y];
+			if (TileLayer[x, y].Ground != IsoTile.GroundType.Water) return;
+			if (TileLayer.GridTile(x, y, TileLayer.TileDirection.TopLeft).Z - 1 == ct.Z ||
+				TileLayer.GridTile(x, y, TileLayer.TileDirection.Top).Z - 1 == ct.Z ||
+				TileLayer.GridTile(x, y, TileLayer.TileDirection.TopRight).Z - 1 == ct.Z ||
+				TileLayer.GridTile(x, y, TileLayer.TileDirection.Left).Z - 1 == ct.Z ||
+				TileLayer.GridTile(x, y, TileLayer.TileDirection.Right).Z - 1 == ct.Z ||
+				TileLayer.GridTile(x, y, TileLayer.TileDirection.BottomLeft).Z - 1 == ct.Z ||
+				TileLayer.GridTile(x, y, TileLayer.TileDirection.Bottom).Z - 1 == ct.Z ||
+				TileLayer.GridTile(x, y, TileLayer.TileDirection.BottomRight).Z - 1 == ct.Z) {
+				TileLayer[x, y].Ground = IsoTile.GroundType.Sand;
+			}
 		}
 	}
 }
