@@ -17,10 +17,49 @@ namespace CNCMaps.Engine.Generator {
 		/* Should be using the Theater to define the correct tiles. But for now this is hardcoded to specific values.
 		 * Not sure if it is possible to define this dynamically. Or if it is worth the efford.
 		 */
-		public const int ClearTile = 0;
-		public const int WaterTileSingle = 322;
-		public const int WaterTileLarge = 314; // 4 subtiles.
-		public const int SandTileSingle = 418;
+		public const ushort ClearTile = 0;
+		public const ushort WaterTileSingle = 322;
+		public const ushort WaterTileLarge = 314; // 4 subtiles.
+		// Center = Subtile 0
+		// BottomRight = Subtile 1
+		// BottomLeft = Subtile 2
+		// Bottom = Subtile 3
+
+		public const ushort SandTileSingle = 418;
+
+		/* Ramps (all 1 subtile = 0)
+		 * TL = Top Left
+		 * BR = Bottom Right
+		 * TR = Top Right
+		 * BL = Bottom Left
+		 * T = Top
+		 * B = Bottom
+		 * L = Left
+		 * R = Right
+		 * 0 = Level 0
+		 * 1 = Level 1
+		 * C = Connection side
+		 * RampTL0BR1 => Ramp has Top Left at level 0 and Bottom Right at level 1
+		 */
+
+		// 1 level ramps
+		public const ushort RampTL0BR1 = 29;
+		public const ushort RampTR0BL1 = 30;
+		public const ushort RampTL1BR0 = 31;
+		public const ushort RampTR1BL0 = 32;
+
+		public const ushort RampT0BC1 = 33;
+		public const ushort RampLC1R0 = 34;
+		public const ushort RampTC1B0 = 35;
+		public const ushort RampL0RC1 = 36;
+		
+		public const ushort RampTC0B1 = 37;
+		public const ushort RampL1RC0 = 38;
+		public const ushort RampT1BC0 = 39;
+		public const ushort RampLC0R1 = 40;
+
+		// the other ramps are mostly for rasing 2 levels.
+		
 
 		// Shore Pieces (Set 12) filename: Shore
 		// - 42 tiles
