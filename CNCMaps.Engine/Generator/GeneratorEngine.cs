@@ -395,7 +395,7 @@ namespace CNCMaps.Engine.Generator {
 				TileLayer.GridTile(x, y, TileLayer.TileDirection.BottomRight).Ground == IsoTile.GroundType.Water ||
 				TileLayer.GridTile(x, y, TileLayer.TileDirection.BottomLeft).Ground == IsoTile.GroundType.Water) 
 				return;
-			TileLayer[x, y].Ground = IsoTile.GroundType.Ground;
+			TileLayer[x, y].Ground = IsoTile.GroundType.Sand;
 		}
 	}
 }
