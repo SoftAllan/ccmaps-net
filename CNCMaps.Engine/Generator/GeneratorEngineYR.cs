@@ -250,6 +250,22 @@ namespace CNCMaps.Engine.Generator {
 				ct.TileNum = RampTR0BL1;
 				return;
 			}
+			if (TileLayer.GridTile(x, y, TileLayer.TileDirection.Left).Z > ct.Z) {
+				ct.TileNum = RampLC1R0;
+				return;
+			}
+			if (TileLayer.GridTile(x, y, TileLayer.TileDirection.Top).Z > ct.Z) {
+				ct.TileNum = RampTC1B0;
+				return;
+			}
+			if (TileLayer.GridTile(x, y, TileLayer.TileDirection.Right).Z > ct.Z) {
+				ct.TileNum = RampL0RC1;
+				return;
+			}
+			if (TileLayer.GridTile(x, y, TileLayer.TileDirection.Bottom).Z > ct.Z) {
+				ct.TileNum = RampT0BC1;
+				return;
+			}
 		}
 	}
 }

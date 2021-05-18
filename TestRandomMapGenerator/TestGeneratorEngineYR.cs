@@ -97,5 +97,29 @@ namespace TestRandomMapGenerator {
 			te.DefineRampTile(x, y);
 			Assert.AreEqual(GeneratorEngineYR.RampTC0B1, te.TileLayer[x, y].TileNum);
 		}
+
+
+		[TestMethod]
+		public void TestRampC() {
+			var te = NewTestGeneratorEngineYR(3, 3);
+			int x = 2;
+			int y = 1;
+			te.TileLayer.GridTile(x, y, TileLayer.TileDirection.Left).Z = 1;
+			te.DefineRampTile(x, y);
+			Assert.AreEqual(GeneratorEngineYR.RampLC1R0, te.TileLayer[x, y].TileNum);
+			te.TileLayer.GridTile(x, y, TileLayer.TileDirection.Left).Z = 0;
+			te.TileLayer.GridTile(x, y, TileLayer.TileDirection.Top).Z = 1;
+			te.DefineRampTile(x, y);
+			Assert.AreEqual(GeneratorEngineYR.RampTC1B0, te.TileLayer[x, y].TileNum);
+			te.TileLayer.GridTile(x, y, TileLayer.TileDirection.Top).Z = 0;
+			te.TileLayer.GridTile(x, y, TileLayer.TileDirection.Right).Z = 1;
+			te.DefineRampTile(x, y);
+			Assert.AreEqual(GeneratorEngineYR.RampL0RC1, te.TileLayer[x, y].TileNum);
+			te.TileLayer.GridTile(x, y, TileLayer.TileDirection.Right).Z = 0;
+			te.TileLayer.GridTile(x, y, TileLayer.TileDirection.Bottom).Z = 1;
+			te.DefineRampTile(x, y);
+			Assert.AreEqual(GeneratorEngineYR.RampT0BC1, te.TileLayer[x, y].TileNum);
+		}
+
 	}
 }
