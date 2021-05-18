@@ -105,13 +105,13 @@ namespace CNCMaps.Engine.Generator {
 				InitialiseMapLayer(ClearTile);
 				// 0.04 large hills
 				// 0.20 many hills
-				GenerateHeightLayout(0.20d, debug: true); 
+				GenerateHeightLayout(0.04d, debug: true); 
 				DefineZFromHeightLayout();
 				LevelOut();
-				DefineWaterSubtiles(theater);
-				DefineSandTiles(theater);
-				DefineShoreTiles(theater);
-				
+				DefineWaterSubtiles();
+				DefineSandTiles();
+				DefineShoreTiles();
+				DefineRampTiles();
 
 
 
@@ -176,7 +176,7 @@ namespace CNCMaps.Engine.Generator {
 
 
 
-		private void DefineWaterSubtiles(Theater theater) {
+		private void DefineWaterSubtiles() {
 			_logger.Debug("Defining water tiles.");
 			// todo: Make 2x2 tiles where possible 
 			// WaterTileLarge
@@ -188,7 +188,7 @@ namespace CNCMaps.Engine.Generator {
 			}
 		}
 
-		private void DefineSandTiles(Theater theater) {
+		private void DefineSandTiles() {
 			_logger.Debug("Defining sand tiles.");
 			for (int y = 0; y < Height; y++) {
 				for (int x = 0; x < Width * 2 - 1; x++) {
@@ -199,11 +199,20 @@ namespace CNCMaps.Engine.Generator {
 		}
 
 		// Make shore tiles instead of sand tiles.
-		private void DefineShoreTiles(Theater theater) {
+		private void DefineShoreTiles() {
 			_logger.Debug("Defining shore tiles.");
 		}
 
-		public void DefineRamp(int x, int y) {
+		private void DefineRampTiles() {
+			_logger.Debug("Defining sand tiles.");
+			for (int y = 0; y < Height; y++) {
+				for (int x = 0; x < Width * 2 - 1; x++) {
+					DefineRampTile(x, y);
+				}
+			}
+		}
+
+		public void DefineRampTile(int x, int y) {
 			var ct = TileLayer[x, y];
 			if (TileLayer.GridTile(x, y, TileLayer.TileDirection.TopLeft).Z > ct.Z)
 				if (TileLayer.GridTile(x, y, TileLayer.TileDirection.BottomLeft).Z > ct.Z) {
