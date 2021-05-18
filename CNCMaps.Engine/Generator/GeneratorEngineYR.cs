@@ -203,5 +203,44 @@ namespace CNCMaps.Engine.Generator {
 			_logger.Debug("Defining shore tiles.");
 		}
 
+		public void DefineRamp(int x, int y) {
+			var ct = TileLayer[x, y];
+			if (TileLayer.GridTile(x, y, TileLayer.TileDirection.TopLeft).Z > ct.Z)
+				if (TileLayer.GridTile(x, y, TileLayer.TileDirection.BottomLeft).Z > ct.Z) {
+					ct.TileNum = RampL1RC0;
+					return;
+				}
+			if (TileLayer.GridTile(x, y, TileLayer.TileDirection.TopLeft).Z > ct.Z)
+				if (TileLayer.GridTile(x, y, TileLayer.TileDirection.TopRight).Z > ct.Z) {
+					ct.TileNum = RampT1BC0;
+					return;
+				}
+			if (TileLayer.GridTile(x, y, TileLayer.TileDirection.BottomRight).Z > ct.Z)
+				if (TileLayer.GridTile(x, y, TileLayer.TileDirection.TopRight).Z > ct.Z) {
+					ct.TileNum = RampLC0R1;
+					return;
+				}
+			if (TileLayer.GridTile(x, y, TileLayer.TileDirection.BottomRight).Z > ct.Z)
+				if (TileLayer.GridTile(x, y, TileLayer.TileDirection.BottomLeft).Z > ct.Z) {
+					ct.TileNum = RampTC0B1;
+					return;
+				}
+			if (TileLayer.GridTile(x, y, TileLayer.TileDirection.TopLeft).Z > ct.Z) {
+				ct.TileNum = RampTL1BR0;
+				return;
+			}
+			if (TileLayer.GridTile(x, y, TileLayer.TileDirection.TopRight).Z > ct.Z) {
+				ct.TileNum = RampTR1BL0;
+				return;
+			}
+			if (TileLayer.GridTile(x, y, TileLayer.TileDirection.BottomRight).Z > ct.Z) {
+				ct.TileNum = RampTL0BR1;
+				return;
+			}
+			if (TileLayer.GridTile(x, y, TileLayer.TileDirection.BottomLeft).Z > ct.Z) {
+				ct.TileNum = RampTR0BL1;
+				return;
+			}
+		}
 	}
 }

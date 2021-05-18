@@ -12,7 +12,7 @@ using System;
 namespace TestRandomMapGenerator
 {
     [TestClass]
-    public class UnitTest1
+    public class TestGeneratorEngine
     {
 		public Settings TestSettings { get; set; }
 		public Theater TestTheater { get; set; }
@@ -486,7 +486,6 @@ namespace TestRandomMapGenerator
 			Assert.AreEqual(IsoTile.GroundType.Sand, te.TileLayer[x, y].Ground);
 			Assert.AreEqual(IsoTile.GroundType.Water, te.TileLayer[x2, y2].Ground);
 		}
-
 
 	}
 }

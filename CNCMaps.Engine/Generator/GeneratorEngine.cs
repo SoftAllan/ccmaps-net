@@ -425,5 +425,8 @@ namespace CNCMaps.Engine.Generator {
 				TileLayer[x, y].Ground = IsoTile.GroundType.Sand;
 			}
 		}
+
+		// todo: CheckForValleys. Min 3 neighbors on same level.
+		// Maybe 2 is enough. But i guess it looks better with 3.
 	}
 }

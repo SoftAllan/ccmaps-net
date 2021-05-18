@@ -190,6 +190,41 @@ namespace CNCMaps.Engine.Generator.Map {
 			}
 		}
 
+		public void DumpToFile() {
+			var file = DebugMapFile();
+			logger.Debug($"Dumping to {file}");
+			var sb = new StringBuilder();
+			sb.Append("     ");
+			for (int x = 0; x < Width * 2 - 1; x++) {
+				sb.Append($"{x,9} ");
+			}
+			sb.AppendLine();
+			for (int y = 0; y < Height; y++) {
+				sb.Append($"{y,4}");
+				for (int x = 0; x < Width * 2 - 1; x++) {
+					var h = $"{isoTiles[x, y].Z,0:X}";
+					var n = $"{isoTiles[x, y].TileNum:D3}";
+					var s = $"{isoTiles[x, y].SubTile}";
+					char t;
+					switch (isoTiles[x, y].Ground) {
+						case IsoTile.GroundType.Water:
+							t = 'w';
+							break;
+						case IsoTile.GroundType.Sand:
+							t = 's';
+							break;
+						default:
+							t = ' ';
+							break;
+					}
+					sb.Append($"[{t}{h}#{n}:{s}]");
+				}
+				sb.AppendLine();
+			}
+			using (var writeFile = new StreamWriter(file)) {
+				writeFile.Write(sb);
+			}
+		}
 
 	}
 }
