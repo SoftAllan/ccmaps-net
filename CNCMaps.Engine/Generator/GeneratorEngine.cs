@@ -285,7 +285,7 @@ namespace CNCMaps.Engine.Generator {
 		// Make sure that neighbour z is not jumping more than 1.
 		// Sea and sand level might be raised.
 		// Repeat this as many times needed until no changes has been made.
-		// Max 15 repeats.
+		// Max 50 repeats.
 		// Check for Pits and spikes and water connection at the end. Only needed once.
 		public void LevelOut() {
 			_logger.Debug("Leveling out.");
@@ -298,7 +298,8 @@ namespace CNCMaps.Engine.Generator {
 						changed = CheckLevel(x, y) || changed;
 					}
 				}
-			} while (changed == true && pass++ < 15);
+			} while (changed == true && pass++ < 50);
+			_logger.Debug($"Levelout passes: {pass}");
 			CheckForPitsAndSpikes();
 			CheckForWaterNextToHighGround();	// Check this before water connections.
 			CheckForWaterConnections();
@@ -309,6 +310,10 @@ namespace CNCMaps.Engine.Generator {
 		public bool CheckLevel(int x, int y) {
 			var ct = TileLayer[x, y];
 			var changed = false;
+			changed = CheckValleyLevel(ct, TileLayer.GridTile(x, y, TileLayer.TileDirection.TopLeft),
+				TileLayer.GridTile(x, y, TileLayer.TileDirection.BottomRight)) || changed;
+			changed = CheckValleyLevel(ct, TileLayer.GridTile(x, y, TileLayer.TileDirection.TopRight),
+				TileLayer.GridTile(x, y, TileLayer.TileDirection.BottomLeft)) || changed;
 			changed = CheckTileLevel(ct, TileLayer.GridTile(x, y, TileLayer.TileDirection.TopLeft)) || changed;
 			changed = CheckTileLevel(ct, TileLayer.GridTile(x, y, TileLayer.TileDirection.Top)) || changed;
 			changed = CheckTileLevel(ct, TileLayer.GridTile(x, y, TileLayer.TileDirection.TopRight)) || changed;
@@ -335,6 +340,23 @@ namespace CNCMaps.Engine.Generator {
 					}
 					return true;
 				}
+			}
+			return false;
+		}
+
+		// Examines the current tile for valleys. 
+		// There has to be at least two adjacent tiles on the same level before a level can raise again.
+		// If not the current tile is raised.
+		public bool CheckValleyLevel(IsoTile current, IsoTile topCorner, IsoTile bottomCorner, bool correctLevel = true) {
+			if (topCorner.TileNum != -1 && bottomCorner.TileNum != -1) {
+				if (topCorner.Z > current.Z)
+					if (bottomCorner.Z > current.Z) {
+						if (correctLevel) {
+							current.Ground = IsoTile.GroundType.Ground;
+							current.Z = topCorner.Z;
+						}
+						return true;
+					}
 			}
 			return false;
 		}

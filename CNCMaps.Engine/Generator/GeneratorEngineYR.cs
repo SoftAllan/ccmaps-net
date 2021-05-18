@@ -115,7 +115,7 @@ namespace CNCMaps.Engine.Generator {
 
 
 
-				TileLayer.DumpZToFile();
+				// TileLayer.DumpToFile();
 
 				// FillMapTest(theater);
 
