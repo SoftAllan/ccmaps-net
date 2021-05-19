@@ -306,6 +306,7 @@ namespace CNCMaps.Engine.Generator {
 		}
 
 		// Check the level of the tile[x, y].
+		// Make sure that there are no valleys.
 		// If it is more that +/1 against either the topleft, top, topright or the left tile it is corrected.
 		public bool CheckLevel(int x, int y) {
 			var ct = TileLayer[x, y];
@@ -314,6 +315,22 @@ namespace CNCMaps.Engine.Generator {
 				TileLayer.GridTile(x, y, TileLayer.TileDirection.BottomRight)) || changed;
 			changed = CheckValleyLevel(ct, TileLayer.GridTile(x, y, TileLayer.TileDirection.TopRight),
 				TileLayer.GridTile(x, y, TileLayer.TileDirection.BottomLeft)) || changed;
+			changed = CheckValleyLevel(ct, TileLayer.GridTile(x, y, TileLayer.TileDirection.Top),
+				TileLayer.GridTile(x, y, TileLayer.TileDirection.Bottom)) || changed;
+			changed = CheckValleyLevel(ct, TileLayer.GridTile(x, y, TileLayer.TileDirection.Left),
+				TileLayer.GridTile(x, y, TileLayer.TileDirection.Right)) || changed;
+			changed = CheckValleyLevel(ct, TileLayer.GridTile(x, y, TileLayer.TileDirection.TopLeft),
+				TileLayer.GridTile(x, y, TileLayer.TileDirection.TopRight),
+				TileLayer.GridTile(x, y, TileLayer.TileDirection.Bottom), correctLevel: true) || changed;
+			changed = CheckValleyLevel(ct, TileLayer.GridTile(x, y, TileLayer.TileDirection.TopRight),
+				TileLayer.GridTile(x, y, TileLayer.TileDirection.BottomRight),
+				TileLayer.GridTile(x, y, TileLayer.TileDirection.Left), correctLevel: true) || changed;
+			changed = CheckValleyLevel(ct, TileLayer.GridTile(x, y, TileLayer.TileDirection.BottomRight),
+				TileLayer.GridTile(x, y, TileLayer.TileDirection.BottomLeft),
+				TileLayer.GridTile(x, y, TileLayer.TileDirection.Top), correctLevel: true) || changed;
+			changed = CheckValleyLevel(ct, TileLayer.GridTile(x, y, TileLayer.TileDirection.BottomLeft),
+				TileLayer.GridTile(x, y, TileLayer.TileDirection.TopLeft),
+				TileLayer.GridTile(x, y, TileLayer.TileDirection.Right), correctLevel: true) || changed;
 			changed = CheckTileLevel(ct, TileLayer.GridTile(x, y, TileLayer.TileDirection.TopLeft)) || changed;
 			changed = CheckTileLevel(ct, TileLayer.GridTile(x, y, TileLayer.TileDirection.Top)) || changed;
 			changed = CheckTileLevel(ct, TileLayer.GridTile(x, y, TileLayer.TileDirection.TopRight)) || changed;
@@ -357,6 +374,21 @@ namespace CNCMaps.Engine.Generator {
 						}
 						return true;
 					}
+			}
+			return false;
+		}
+
+		public bool CheckValleyLevel(IsoTile current, IsoTile corner1, IsoTile corner2, IsoTile oppositeCenter, bool correctLevel) {
+			if (corner1.TileNum != -1 && corner2.TileNum != -1 && oppositeCenter.TileNum != -1) {
+				if (corner1.Z > current.Z)
+					if (corner2.Z > current.Z) 
+						if (oppositeCenter.Z > current.Z) {
+							if (correctLevel) {
+								current.Ground = IsoTile.GroundType.Ground;
+								current.Z = corner1.Z;
+							}
+							return true;
+						}
 			}
 			return false;
 		}
