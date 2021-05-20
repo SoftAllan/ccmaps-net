@@ -186,14 +186,14 @@ namespace CNCMaps.Engine.Generator {
 
 		private void AddWaypointsSection(IniFile iniFile) {
 			var waypoints = iniFile.GetOrCreateSection("Waypoints");
-			waypoints.SetValue("0", "65055");
-			waypoints.SetValue("1", "66055");
-			waypoints.SetValue("2", "67055");
-			waypoints.SetValue("3", "68055");
-			waypoints.SetValue("4", "65056");
-			waypoints.SetValue("5", "66056");
-			waypoints.SetValue("6", "67056");
-			waypoints.SetValue("7", "68056");
+			waypoints.SetValue("0", "60055");
+			waypoints.SetValue("1", "63055");
+			//waypoints.SetValue("2", "67055");
+			//waypoints.SetValue("3", "68055");
+			//waypoints.SetValue("4", "65056");
+			//waypoints.SetValue("5", "66056");
+			//waypoints.SetValue("6", "67056");
+			//waypoints.SetValue("7", "68056");
 		}
 
 		internal void TestPerlin() {
@@ -325,6 +325,9 @@ namespace CNCMaps.Engine.Generator {
 			changed = CheckValleyLevel(ct, TileLayer.GridTile(x, y, TileLayer.TileDirection.Top),
 				TileLayer.GridTile(x, y, TileLayer.TileDirection.BottomLeft),
 				TileLayer.GridTile(x, y, TileLayer.TileDirection.TopLeft), correctLevel: true) || changed;
+			changed = CheckValleyLevel(ct, TileLayer.GridTile(x, y, TileLayer.TileDirection.TopRight),
+				TileLayer.GridTile(x, y, TileLayer.TileDirection.Left),
+				TileLayer.GridTile(x, y, TileLayer.TileDirection.TopLeft), correctLevel: true) || changed;
 			changed = CheckTileLevel(ct, TileLayer.GridTile(x, y, TileLayer.TileDirection.TopLeft)) || changed;
 			changed = CheckTileLevel(ct, TileLayer.GridTile(x, y, TileLayer.TileDirection.Top)) || changed;
 			changed = CheckTileLevel(ct, TileLayer.GridTile(x, y, TileLayer.TileDirection.TopRight)) || changed;
@@ -356,18 +359,18 @@ namespace CNCMaps.Engine.Generator {
 		}
 
 		// Examines the current tile for valleys. 
-		// There has to be at least two adjacent tiles on the same level before a level can raise again.
+		// There has to be at least two adjacent tiles on the same level or higher before a level can raise again.
 		// If not the current tile is raised.
 		public bool CheckValleyLevel(IsoTile current, IsoTile topCorner, IsoTile bottomCorner, bool correctLevel = true) {
 			if (topCorner.TileNum != -1 && bottomCorner.TileNum != -1) {
 				if (topCorner.Z > current.Z)
-					if (bottomCorner.Z > current.Z) {
-						if (correctLevel) {
-							current.Ground = IsoTile.GroundType.Ground;
-							current.Z = topCorner.Z;
+					if (bottomCorner.Z > current.Z) { 
+							if (correctLevel) {
+								current.Ground = IsoTile.GroundType.Ground;
+								current.Z = topCorner.Z;
+							}
+							return true;
 						}
-						return true;
-					}
 			}
 			return false;
 		}
@@ -475,8 +478,5 @@ namespace CNCMaps.Engine.Generator {
 				TileLayer[x, y].Ground = IsoTile.GroundType.Sand;
 			}
 		}
-
-		// todo: CheckForValleys. Min 3 neighbors on same level.
-		// Maybe 2 is enough. But i guess it looks better with 3.
 	}
 }
