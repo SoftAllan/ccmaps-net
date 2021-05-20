@@ -320,17 +320,11 @@ namespace CNCMaps.Engine.Generator {
 			changed = CheckValleyLevel(ct, TileLayer.GridTile(x, y, TileLayer.TileDirection.Left),
 				TileLayer.GridTile(x, y, TileLayer.TileDirection.Right)) || changed;
 			changed = CheckValleyLevel(ct, TileLayer.GridTile(x, y, TileLayer.TileDirection.TopLeft),
-				TileLayer.GridTile(x, y, TileLayer.TileDirection.TopRight),
-				TileLayer.GridTile(x, y, TileLayer.TileDirection.Bottom), correctLevel: true) || changed;
-			changed = CheckValleyLevel(ct, TileLayer.GridTile(x, y, TileLayer.TileDirection.TopRight),
-				TileLayer.GridTile(x, y, TileLayer.TileDirection.BottomRight),
-				TileLayer.GridTile(x, y, TileLayer.TileDirection.Left), correctLevel: true) || changed;
-			changed = CheckValleyLevel(ct, TileLayer.GridTile(x, y, TileLayer.TileDirection.BottomRight),
+				TileLayer.GridTile(x, y, TileLayer.TileDirection.Bottom),
+				TileLayer.GridTile(x, y, TileLayer.TileDirection.BottomLeft), correctLevel: true) || changed;
+			changed = CheckValleyLevel(ct, TileLayer.GridTile(x, y, TileLayer.TileDirection.Top),
 				TileLayer.GridTile(x, y, TileLayer.TileDirection.BottomLeft),
-				TileLayer.GridTile(x, y, TileLayer.TileDirection.Top), correctLevel: true) || changed;
-			changed = CheckValleyLevel(ct, TileLayer.GridTile(x, y, TileLayer.TileDirection.BottomLeft),
-				TileLayer.GridTile(x, y, TileLayer.TileDirection.TopLeft),
-				TileLayer.GridTile(x, y, TileLayer.TileDirection.Right), correctLevel: true) || changed;
+				TileLayer.GridTile(x, y, TileLayer.TileDirection.TopLeft), correctLevel: true) || changed;
 			changed = CheckTileLevel(ct, TileLayer.GridTile(x, y, TileLayer.TileDirection.TopLeft)) || changed;
 			changed = CheckTileLevel(ct, TileLayer.GridTile(x, y, TileLayer.TileDirection.Top)) || changed;
 			changed = CheckTileLevel(ct, TileLayer.GridTile(x, y, TileLayer.TileDirection.TopRight)) || changed;
@@ -378,14 +372,16 @@ namespace CNCMaps.Engine.Generator {
 			return false;
 		}
 
-		public bool CheckValleyLevel(IsoTile current, IsoTile corner1, IsoTile corner2, IsoTile oppositeCenter, bool correctLevel) {
-			if (corner1.TileNum != -1 && corner2.TileNum != -1 && oppositeCenter.TileNum != -1) {
-				if (corner1.Z > current.Z)
-					if (corner2.Z > current.Z) 
-						if (oppositeCenter.Z > current.Z) {
+		// Examine the current tiles for valleys.
+		// Make sure that if center and opposite corner is higher than current tile the adjacent corner tile is higher also.
+		public bool CheckValleyLevel(IsoTile current, IsoTile topCorner, IsoTile bottom, IsoTile bottomCorner, bool correctLevel) {
+			if (topCorner.TileNum != -1 && bottom.TileNum != -1 && bottomCorner.TileNum != -1) {
+				if (topCorner.Z > current.Z)
+					if (bottom.Z > current.Z) 
+						if (bottomCorner.Z <= current.Z) {
 							if (correctLevel) {
 								current.Ground = IsoTile.GroundType.Ground;
-								current.Z = corner1.Z;
+								current.Z = topCorner.Z;
 							}
 							return true;
 						}

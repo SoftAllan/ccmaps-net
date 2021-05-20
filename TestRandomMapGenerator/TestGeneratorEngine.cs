@@ -350,6 +350,7 @@ namespace TestRandomMapGenerator
 			te.GenerateHeightLayout(0.20d, false);
 			te.DefineZFromHeightLayout();
 			te.LevelOut();
+			// te.TileLayer.DumpToFile();
 			for (int y = 0; y < te.Height; y++) {
 				for (int x = 0; x < te.Width * 2 - 1; x++) {
 					TestNeighborLevel(te, x, y);
@@ -388,21 +389,14 @@ namespace TestRandomMapGenerator
 			b = te.TileLayer.GridTile(x, y, TileLayer.TileDirection.Right);
 			Assert.IsFalse(te.CheckValleyLevel(ct, t, b, correctLevel: false), $"Map layout valley check failed on [{x},{y}]. Current Z:{ct.Z}, Left Z:{t.Z}, Right Z:{b.Z}");
 			t = te.TileLayer.GridTile(x, y, TileLayer.TileDirection.TopLeft);
-			var t2 = te.TileLayer.GridTile(x, y, TileLayer.TileDirection.TopRight);
 			b = te.TileLayer.GridTile(x, y, TileLayer.TileDirection.Bottom);
-			Assert.IsFalse(te.CheckValleyLevel(ct, t, t2, b, correctLevel: false), $"Map layout valley check failed on [{x},{y}]. Current Z:{ct.Z}, TopLeft Z:{t.Z}, TopRight Z:{t2.Z}, Bottom Z:{b.Z}");
-			t = te.TileLayer.GridTile(x, y, TileLayer.TileDirection.TopRight);
-			t2 = te.TileLayer.GridTile(x, y, TileLayer.TileDirection.BottomRight);
-			b = te.TileLayer.GridTile(x, y, TileLayer.TileDirection.Left);
-			Assert.IsFalse(te.CheckValleyLevel(ct, t, t2, b, correctLevel: false), $"Map layout valley check failed on [{x},{y}]. Current Z:{ct.Z}, TopRight Z:{t.Z}, BottomRight Z:{t2.Z}, Left Z:{b.Z}");
-			t = te.TileLayer.GridTile(x, y, TileLayer.TileDirection.BottomRight);
-			t2 = te.TileLayer.GridTile(x, y, TileLayer.TileDirection.BottomLeft);
-			b = te.TileLayer.GridTile(x, y, TileLayer.TileDirection.Top);
-			Assert.IsFalse(te.CheckValleyLevel(ct, t, t2, b, correctLevel: false), $"Map layout valley check failed on [{x},{y}]. Current Z:{ct.Z}, BottomRight Z:{t.Z}, BottomLeft Z:{t2.Z}, Top Z:{b.Z}");
-			t = te.TileLayer.GridTile(x, y, TileLayer.TileDirection.BottomLeft);
-			t2 = te.TileLayer.GridTile(x, y, TileLayer.TileDirection.TopLeft);
-			b = te.TileLayer.GridTile(x, y, TileLayer.TileDirection.Right);
-			Assert.IsFalse(te.CheckValleyLevel(ct, t, t2, b, correctLevel: false), $"Map layout valley check failed on [{x},{y}]. Current Z:{ct.Z}, BottomLeft Z:{t.Z}, TopLeft Z:{t2.Z}, Right Z:{b.Z}");
+			var v = te.TileLayer.GridTile(x, y, TileLayer.TileDirection.BottomLeft);
+			Assert.IsFalse(te.CheckValleyLevel(ct, t, b, v, correctLevel: false), $"Map layout valley check failed on [{x},{y}]. Current Z:{ct.Z}, TopLeft Z:{t.Z}, Bottom Z:{b.Z}, BottomLeft Z:{v.Z}");
+			t = te.TileLayer.GridTile(x, y, TileLayer.TileDirection.Top);
+			b = te.TileLayer.GridTile(x, y, TileLayer.TileDirection.BottomLeft);
+			v = te.TileLayer.GridTile(x, y, TileLayer.TileDirection.TopLeft);
+			Assert.IsFalse(te.CheckValleyLevel(ct, t, b, v, correctLevel: false), $"Map layout valley check failed on [{x},{y}]. Current Z:{ct.Z}, Top Z:{t.Z}, BottomLeft Z:{b.Z}, TopLeft Z:{v.Z}");
+
 			if (ct.Ground == IsoTile.GroundType.Sand)
 				Assert.AreEqual(0, ct.Z, $"Map layout failed on [{x},{y}]. Ground type \"Sand\" should have Z = 0.");
 			if (ct.Ground == IsoTile.GroundType.Water)

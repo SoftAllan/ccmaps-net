@@ -98,7 +98,6 @@ namespace TestRandomMapGenerator {
 			Assert.AreEqual(GeneratorEngineYR.RampTC0B1, te.TileLayer[x, y].TileNum);
 		}
 
-
 		[TestMethod]
 		public void TestRampC() {
 			var te = NewTestGeneratorEngineYR(3, 3);
