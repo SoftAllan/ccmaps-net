@@ -400,6 +400,10 @@ namespace TestRandomMapGenerator
 			b = te.TileLayer.GridTile(x, y, TileLayer.TileDirection.Left);
 			v = te.TileLayer.GridTile(x, y, TileLayer.TileDirection.TopLeft);
 			Assert.IsFalse(te.CheckValleyLevel(ct, t, b, v, correctLevel: false), $"Map layout valley check failed on [{x},{y}]. Current Z:{ct.Z}, TopRight Z:{t.Z}, Left Z:{b.Z}, TopLeft Z:{v.Z}");
+			t = te.TileLayer.GridTile(x, y, TileLayer.TileDirection.TopLeft);
+			b = te.TileLayer.GridTile(x, y, TileLayer.TileDirection.Right);
+			v = te.TileLayer.GridTile(x, y, TileLayer.TileDirection.TopRight);
+			Assert.IsFalse(te.CheckValleyLevel(ct, t, b, v, correctLevel: false), $"Map layout valley check failed on [{x},{y}]. Current Z:{ct.Z}, TopLeft Z:{t.Z}, Right Z:{b.Z}, TopRight Z:{v.Z}");
 			if (ct.Ground == IsoTile.GroundType.Sand)
 				Assert.AreEqual(0, ct.Z, $"Map layout failed on [{x},{y}]. Ground type \"Sand\" should have Z = 0.");
 			if (ct.Ground == IsoTile.GroundType.Water)

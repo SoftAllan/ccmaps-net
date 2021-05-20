@@ -328,6 +328,9 @@ namespace CNCMaps.Engine.Generator {
 			changed = CheckValleyLevel(ct, TileLayer.GridTile(x, y, TileLayer.TileDirection.TopRight),
 				TileLayer.GridTile(x, y, TileLayer.TileDirection.Left),
 				TileLayer.GridTile(x, y, TileLayer.TileDirection.TopLeft), correctLevel: true) || changed;
+			changed = CheckValleyLevel(ct, TileLayer.GridTile(x, y, TileLayer.TileDirection.TopLeft),
+				TileLayer.GridTile(x, y, TileLayer.TileDirection.Right),
+				TileLayer.GridTile(x, y, TileLayer.TileDirection.TopRight), correctLevel: true) || changed;
 			changed = CheckTileLevel(ct, TileLayer.GridTile(x, y, TileLayer.TileDirection.TopLeft)) || changed;
 			changed = CheckTileLevel(ct, TileLayer.GridTile(x, y, TileLayer.TileDirection.Top)) || changed;
 			changed = CheckTileLevel(ct, TileLayer.GridTile(x, y, TileLayer.TileDirection.TopRight)) || changed;
