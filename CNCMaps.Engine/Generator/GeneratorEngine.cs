@@ -23,9 +23,12 @@ namespace CNCMaps.Engine.Generator {
 		public const byte GroundLevel = 110;
 		public const byte HeightInterval = (256 - GroundLevel) / 14;
 
-		public GeneratorEngine(Settings settings, Logger logger) {
+		public GeneratorEngine(Settings settings, Logger logger) : this(settings, logger, Environment.TickCount) {
+		}
+
+		public GeneratorEngine(Settings settings, Logger logger, int perlinNoiseSeed) {
 			Settings = settings;
-			Noise = new PerlinNoise(222);   // todo: set seed to Environment.TickCount
+			Noise = new PerlinNoise(perlinNoiseSeed);
 			_logger = logger;
 		}
 

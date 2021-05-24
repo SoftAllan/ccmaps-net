@@ -9,8 +9,8 @@ namespace TestRandomMapGenerator {
 	[TestClass]
     public class TestGeneratorEngine
     {
-		private GeneratorEngineGeneral NewTestGeneratorEngine(int x, int y) {
-			var newEngine = new GeneratorEngineGeneral(new Settings());
+		private GeneratorEngineGeneral NewTestGeneratorEngine(int x, int y, int perlinNoiseSeed = 222) {
+			var newEngine = new GeneratorEngineGeneral(new Settings(), perlinNoiseSeed);
 			newEngine.Width = (ushort)x;
 			newEngine.Height = (ushort)y;
 			newEngine.InitialiseMapLayer(0);
@@ -282,7 +282,6 @@ namespace TestRandomMapGenerator {
 		[TestMethod]
 		public void TestRepeatCheckLevel() {
 			var te = NewTestGeneratorEngine(10, 10);
-			var noise = new PerlinNoise(222);
 			te.GenerateHeightLayout(0.70d, false);	
 			te.DefineZFromHeightLayout();
 			Assert.AreNotEqual(3, te.TileLayer.GridTile(5, 0, TileLayer.TileDirection.Bottom).Z);
@@ -318,7 +317,6 @@ namespace TestRandomMapGenerator {
 		[TestMethod]
 		public void TestLevelOut() {
 			var te = NewTestGeneratorEngine(222, 444);
-			var noise = new PerlinNoise(222);
 			te.GenerateHeightLayout(0.20d, false);
 			te.DefineZFromHeightLayout();
 			te.LevelOut();

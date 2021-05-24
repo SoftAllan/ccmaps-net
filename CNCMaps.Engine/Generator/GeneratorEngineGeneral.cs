@@ -9,7 +9,7 @@ namespace CNCMaps.Engine.Generator {
 	public class GeneratorEngineGeneral : GeneratorEngine {
 		private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
 
-		public GeneratorEngineGeneral(Settings settings) : base(settings, _logger) {
+		public GeneratorEngineGeneral(Settings settings, int perlinNoiseSeed) : base(settings, _logger, perlinNoiseSeed) {
 		}
 
 	}
