@@ -303,11 +303,7 @@ namespace TestRandomMapGenerator {
 					te.CheckLevel(x, y);
 				}
 			}
-			for (int y = 0; y < te.Height; y++) {
-				for (int x = 0; x < te.Width * 2 - 1; x++) {
-					TestNeighborLevel(te, x, y);
-				}
-			}
+			TestLevel(te);
 		}
 
 		// Test that the all grid neighbor tiles do not differ more than +/-1.
@@ -321,6 +317,10 @@ namespace TestRandomMapGenerator {
 			te.DefineZFromHeightLayout();
 			te.LevelOut();
 			// te.TileLayer.DumpToFile();
+			TestLevel(te);
+		}
+
+		private void TestLevel(GeneratorEngineGeneral te) {
 			for (int y = 0; y < te.Height; y++) {
 				for (int x = 0; x < te.Width * 2 - 1; x++) {
 					TestNeighborLevel(te, x, y);
