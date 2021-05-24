@@ -95,45 +95,40 @@ namespace CNCMaps.Engine.Generator {
 			ParseMapSize(Settings.MapSize);
 			_logger.Debug($"Map width={Width} and hight={Height}.");
 
-			using (var vfs = new VirtualFileSystem()) {
-				vfs.Add(VirtualFileSystem.RA2InstallDir);
-				vfs.LoadMixes(EngineType.YurisRevenge);
-				var modConfig = ModConfig.GetDefaultConfig(EngineType.YurisRevenge);
-				var theater = new Theater(Settings.TheaterType, modConfig, vfs, vfs.Open<IniFile>("rulesmd.ini"), vfs.Open<IniFile>("artmd.ini"));
-				theater.Initialize();
-
-				InitialiseMapLayer(ClearTile);
-				// 0.04 large hills
-				// 0.20 many hills
-				GenerateHeightLayout(0.04d, debug: true); 
-				DefineZFromHeightLayout();
-				LevelOut();
-				DefineWaterSubtiles();
-				DefineSandTiles();
-				DefineShoreTiles();
-				DefineRampTiles();
-
-
-
-				// TileLayer.DumpToFile();
-
-				// FillMapTest(theater);
-
-				// TestPerlin();
-
-				// todo: Maybe use the MapFile to wrap the tilelayer into.
-				// todo: MapFile can also save.
-				// var mapFile = new MapFile()
-
-			}
-
-
+			InitialiseMapLayer(ClearTile);
+			// 0.04 large hills
+			// 0.20 many hills
+			GenerateHeightLayout(0.04d, debug: false);
+			DefineZFromHeightLayout();
+			LevelOut();
+			DefineWaterSubtiles();
+			DefineSandTiles();
+			DefineShoreTiles();
+			DefineRampTiles();
 
 			return true;
 		}
 
 
-		private void FillMapTest(Theater theater) {
+		/*
+		private void FillMapTest() {
+			//using (var vfs = new VirtualFileSystem()) {
+			//vfs.Add(VirtualFileSystem.RA2InstallDir);
+			//vfs.LoadMixes(EngineType.YurisRevenge);
+			//var modConfig = ModConfig.GetDefaultConfig(EngineType.YurisRevenge);
+			//var theater = new Theater(Settings.TheaterType, modConfig, vfs, vfs.Open<IniFile>("rulesmd.ini"), vfs.Open<IniFile>("artmd.ini"));
+			//theater.Initialize();
+
+
+
+
+			// TestPerlin();
+
+			// todo: Maybe use the MapFile to wrap the tilelayer into.
+			// todo: MapFile can also save.
+			// var mapFile = new MapFile()
+
+			//}
 			var cl = theater.GetTileCollection();
 			var t = TileLayer.GetTile(5,5);
 			t.TileNum = cl.GetTileNumFromSet(13);
@@ -165,15 +160,14 @@ namespace CNCMaps.Engine.Generator {
 				x.TileNum = cl.GetTileNumFromSet(21, (byte)i);
 			}
 		}
+		*/
 
-		// todo: Maybe just define some constants for the known tiles and subtiles that is going to be used.
 
 		// Shore pieces: 42 tiles
 		// #1: Shore TopRight, size 2x2, variant 1 of 3
 		// #2: Shore TopRight, size 2x2, variant 2 of 3
 		// #3: Shore TopRight, size 2x2, variant 3 of 3
 		// #4: Shore TopRight, size 1x2,
-
 
 
 		private void DefineWaterSubtiles() {
