@@ -110,6 +110,7 @@
       <DependentUpon>DebugGeneratorEngine.cs</DependentUpon>
     </Compile>
     <Compile Include="Generator\GeneratorEngine.cs" />
+    <Compile Include="Generator\GeneratorEngineGeneral.cs" />
     <Compile Include="Generator\IGeneratorEngine.cs" />
     <Compile Include="Generator\Map\IsoTile.cs" />
     <Compile Include="Generator\RandomMapGenerator.cs" />

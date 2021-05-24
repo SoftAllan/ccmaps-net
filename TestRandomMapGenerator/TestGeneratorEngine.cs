@@ -1,44 +1,16 @@
-﻿using CNCMaps.Engine.Game;
-using CNCMaps.Engine.Generator;
+﻿using CNCMaps.Engine.Generator;
 using CNCMaps.Engine.Generator.Map;
 using CNCMaps.Engine.Utility;
-using CNCMaps.FileFormats;
-using CNCMaps.FileFormats.VirtualFileSystem;
-using CNCMaps.Shared;
 using CNCMaps.Shared.Generator;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
 
-namespace TestRandomMapGenerator
-{
-    [TestClass]
+namespace TestRandomMapGenerator {
+	
+	[TestClass]
     public class TestGeneratorEngine
     {
-		public Settings TestSettings { get; set; }
-		public Theater TestTheater { get; set; }
-
-		[TestInitialize]
-		public void Setup() {
-			// A test theater is setup for all testing methods as this takes a long time to do.
-			// todo: It is still called for each test method. Maybe use some kind of stub if possible.
-			//		 This would however require that the constructor of Theater can use interfaces for dependency injection. Maybe.
-			TestSettings = new Settings();
-			TestSettings.TheaterType = TheaterType.Temperate;
-			TestTheater = CreateTheater();
-		}
-		
-		private Theater CreateTheater() {
-			var vfs = new VirtualFileSystem();
-			vfs.Add(VirtualFileSystem.RA2InstallDir);
-			vfs.LoadMixes(EngineType.YurisRevenge);
-			var modConfig = ModConfig.GetDefaultConfig(EngineType.YurisRevenge);
-			var theater = new Theater(TestSettings.TheaterType, modConfig, vfs, vfs.Open<IniFile>("rulesmd.ini"), vfs.Open<IniFile>("artmd.ini"));
-			theater.Initialize();
-			return theater;
-		}
-
-		private GeneratorEngineYR NewTestGeneratorEngineYR(int x, int y) {
-			var newEngine = new GeneratorEngineYR(TestSettings);
+		private GeneratorEngineGeneral NewTestGeneratorEngine(int x, int y) {
+			var newEngine = new GeneratorEngineGeneral(new Settings());
 			newEngine.Width = (ushort)x;
 			newEngine.Height = (ushort)y;
 			newEngine.InitialiseMapLayer(0);
@@ -47,7 +19,7 @@ namespace TestRandomMapGenerator
 
 		[TestMethod]
 		public void TestLevelOutLowTop() {
-			var te = NewTestGeneratorEngineYR(3, 3);
+			var te = NewTestGeneratorEngine(3, 3);
 			int x = 1;
 			int y = 1;
 			te.TileLayer.GridTile(x, y, TileLayer.TileDirection.TopLeft).Z = 1;
@@ -62,7 +34,7 @@ namespace TestRandomMapGenerator
 
 		[TestMethod]
 		public void TestLevelOutHighTop() {
-			var te = NewTestGeneratorEngineYR(3, 3);
+			var te = NewTestGeneratorEngine(3, 3);
 			int x = 1;
 			int y = 1;
 			te.TileLayer.GridTile(x, y, TileLayer.TileDirection.TopLeft).Z = 4;
@@ -77,7 +49,7 @@ namespace TestRandomMapGenerator
 
 		[TestMethod]
 		public void TestLevelOutLowLeft() {
-			var te = NewTestGeneratorEngineYR(3, 3);
+			var te = NewTestGeneratorEngine(3, 3);
 			int x = 1;
 			int y = 1;
 			te.TileLayer.GridTile(x, y, TileLayer.TileDirection.TopLeft).Z = 6;
@@ -92,7 +64,7 @@ namespace TestRandomMapGenerator
 
 		[TestMethod]
 		public void TestLevelOutHighLeft() {
-			var te = NewTestGeneratorEngineYR(3, 3);
+			var te = NewTestGeneratorEngine(3, 3);
 			int x = 1;
 			int y = 1;
 			te.TileLayer.GridTile(x, y, TileLayer.TileDirection.TopLeft).Z = 6;
@@ -108,7 +80,7 @@ namespace TestRandomMapGenerator
 
 		[TestMethod]
 		public void TestLevelOutTopLeftBottomRight() {
-			var te = NewTestGeneratorEngineYR(3, 3);
+			var te = NewTestGeneratorEngine(3, 3);
 			int x = 2;
 			int y = 0;
 			te.TileLayer[0, 0].Z = 1;
@@ -134,7 +106,7 @@ namespace TestRandomMapGenerator
 
 		[TestMethod]
 		public void TestDefineGroundTypeFromHeightLayout() {
-			var te = NewTestGeneratorEngineYR(3, 3);
+			var te = NewTestGeneratorEngine(3, 3);
 			te.HeightLayout = new byte[te.TileLayer.Width * 2 - 1, te.TileLayer.Height];
 			te.TileLayer[0, 0].Z = 0;
 			te.HeightLayout[0, 0] = GeneratorEngineYR.SeaLevel;
@@ -157,7 +129,7 @@ namespace TestRandomMapGenerator
 
 		[TestMethod]
 		public void TestGridDirection() {
-			var te = NewTestGeneratorEngineYR(3, 3);
+			var te = NewTestGeneratorEngine(3, 3);
 			int x = 1;
 			int y = 1;
 			te.TileLayer[0, 0].Z = 1;
@@ -196,7 +168,7 @@ namespace TestRandomMapGenerator
 
 		[TestMethod]
 		public void TestGridInvalidBoundsTopLeft() {
-			var te = NewTestGeneratorEngineYR(3, 3);
+			var te = NewTestGeneratorEngine(3, 3);
 			int x = 0;
 			int	y = 0;
 			te.TileLayer[0, 0].Z = 1;
@@ -226,7 +198,7 @@ namespace TestRandomMapGenerator
 
 		[TestMethod]
 		public void TestGridInvalidBoundsBottomRight() {
-			var te = NewTestGeneratorEngineYR(3, 3);
+			var te = NewTestGeneratorEngine(3, 3);
 			int x = te.Width * 2 - 2;
 			int y = te.Width - 1;
 			te.TileLayer[0, 0].Z = 1;
@@ -256,7 +228,7 @@ namespace TestRandomMapGenerator
 
 		[TestMethod]
 		public void TestCheckPit() {
-			var te = NewTestGeneratorEngineYR(3, 3);
+			var te = NewTestGeneratorEngine(3, 3);
 			int x = 2;
 			int y = 1;
 			te.TileLayer.GridTile(x, y, TileLayer.TileDirection.TopLeft).Z = 1;
@@ -282,7 +254,7 @@ namespace TestRandomMapGenerator
 
 		[TestMethod]
 		public void TestCheckSpike() {
-			var te = NewTestGeneratorEngineYR(3, 3);
+			var te = NewTestGeneratorEngine(3, 3);
 			int x = 2;
 			int y = 1;
 			te.TileLayer.GridTile(x, y, TileLayer.TileDirection.TopLeft).Z = 1;
@@ -309,7 +281,7 @@ namespace TestRandomMapGenerator
 		// Many hills. Requires 3 runs of CheckLevel corrections.
 		[TestMethod]
 		public void TestRepeatCheckLevel() {
-			var te = NewTestGeneratorEngineYR(10, 10);
+			var te = NewTestGeneratorEngine(10, 10);
 			var noise = new PerlinNoise(222);
 			te.GenerateHeightLayout(0.70d, false);	
 			te.DefineZFromHeightLayout();
@@ -345,7 +317,7 @@ namespace TestRandomMapGenerator
 		// Many hills.
 		[TestMethod]
 		public void TestLevelOut() {
-			var te = NewTestGeneratorEngineYR(222, 444);
+			var te = NewTestGeneratorEngine(222, 444);
 			var noise = new PerlinNoise(222);
 			te.GenerateHeightLayout(0.20d, false);
 			te.DefineZFromHeightLayout();
@@ -358,7 +330,7 @@ namespace TestRandomMapGenerator
 			}
 		}
 
-		private void TestNeighborLevel(GeneratorEngineYR te, int x, int y) {
+		private void TestNeighborLevel(GeneratorEngineGeneral te, int x, int y) {
 			var ct = te.TileLayer[x, y];
 			var t = te.TileLayer.GridTile(x, y, TileLayer.TileDirection.TopLeft);
 			Assert.IsFalse(te.CheckTileLevel(ct, t, correctLevel: false), $"Map layout failed on [{x},{y}]. Current Z:{ct.Z}, TopLeft Z:{t.Z}");
@@ -412,7 +384,7 @@ namespace TestRandomMapGenerator
 
 		[TestMethod]
 		public void TestWaterToWaterConnection() {
-			var te = NewTestGeneratorEngineYR(3, 3);
+			var te = NewTestGeneratorEngine(3, 3);
 			int x = 2;
 			int y = 1;
 			te.TileLayer[x, y].Ground = IsoTile.GroundType.Water;
@@ -458,7 +430,7 @@ namespace TestRandomMapGenerator
 
 		[TestMethod]
 		public void TestWaterNextToHighGround() {
-			var te = NewTestGeneratorEngineYR(4, 5);
+			var te = NewTestGeneratorEngine(4, 5);
 			int x = 2;
 			int y = 2;
 			int x2 = 3;	// top right x
