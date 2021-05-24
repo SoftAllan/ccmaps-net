@@ -19,28 +19,8 @@ namespace TestRandomMapGenerator {
 		public Settings TestSettings { get; set; }
 		public Theater TestTheater { get; set; }
 
-		[TestInitialize]
-		public void Setup() {
-			// A test theater is setup for all testing methods as this takes a long time to do.
-			// todo: It is still called for each test method. Maybe use some kind of stub if possible.
-			//		 This would however require that the constructor of Theater can use interfaces for dependency injection. Maybe.
-			TestSettings = new Settings();
-			TestSettings.TheaterType = TheaterType.Temperate;
-			TestTheater = CreateTheater();
-		}
-
-		private Theater CreateTheater() {
-			var vfs = new VirtualFileSystem();
-			vfs.Add(VirtualFileSystem.RA2InstallDir);
-			vfs.LoadMixes(EngineType.YurisRevenge);
-			var modConfig = ModConfig.GetDefaultConfig(EngineType.YurisRevenge);
-			var theater = new Theater(TestSettings.TheaterType, modConfig, vfs, vfs.Open<IniFile>("rulesmd.ini"), vfs.Open<IniFile>("artmd.ini"));
-			theater.Initialize();
-			return theater;
-		}
-
 		private GeneratorEngineYR NewTestGeneratorEngineYR(int x, int y) {
-			var newEngine = new GeneratorEngineYR(TestSettings);
+			var newEngine = new GeneratorEngineYR(new Settings());
 			newEngine.Width = (ushort)x;
 			newEngine.Height = (ushort)y;
 			newEngine.InitialiseMapLayer(0);
