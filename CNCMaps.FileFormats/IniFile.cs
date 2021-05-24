@@ -13,6 +13,8 @@ namespace CNCMaps.FileFormats {
 
 	public class IniFile : VirtualTextFile {
 
+		public List<string> HeaderComments { get; set; }
+
 		public List<IniSection> Sections { get; set; }
 		public IniSection CurrentSection { get; set; }
 
@@ -20,6 +22,7 @@ namespace CNCMaps.FileFormats {
 
 		public IniFile(Stream baseStream, string filename, int baseOffset, long fileSize, bool isBuffered = true)
 			: base(baseStream, filename, baseOffset, fileSize, isBuffered) {
+			HeaderComments = new List<string>();
 			Sections = new List<IniSection>();
 			Parse();
 		}
@@ -67,6 +70,12 @@ namespace CNCMaps.FileFormats {
 		}
 
 		int ProcessLine(string line) {
+			if (line.Length == 0) return 0;
+			if (Sections.Count == 0 && line[0] == ';') {
+				HeaderComments.Add(line.TrimStart(';'));
+				return 0;
+			}
+
 			IniSection.FixLine(ref line);
 			if (line.Length == 0) return 0;
 
@@ -110,6 +119,10 @@ namespace CNCMaps.FileFormats {
 			if (CurrentSection.Name != section)
 				SetCurrentSection(section);
 			return ReadBool(key);
+		}
+
+		public void AddCommentToHeader(string comment) {
+			if (comment != null) HeaderComments.Add(comment);
 		}
 
 		public class IniSection {
@@ -415,6 +428,7 @@ namespace CNCMaps.FileFormats {
 
 		public void Save(string filename) {
 			var sw = new StreamWriter(filename, false, Encoding.Default, 64 * 1024);
+			WriteHeading(sw);
 			foreach (var section in Sections) {
 				if (section.Name == "#include" && section.OrderedEntries.Count == 0)
 					continue;
@@ -424,6 +438,14 @@ namespace CNCMaps.FileFormats {
 			}
 			sw.Flush();
 			sw.Dispose();
+		}
+
+		// Write comments to the start of the IniFile.
+		private void WriteHeading(StreamWriter sw) {
+			foreach (var comment in HeaderComments) {
+				sw.Write(';');
+				sw.WriteLine(comment);
+			}
 		}
 
 		/// <summary>

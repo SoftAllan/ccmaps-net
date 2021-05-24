@@ -48,11 +48,9 @@ namespace CNCMaps.Engine.Generator {
 			using (var mapStream = File.Create(Settings.OutputFile)) {
 				iniFile = new IniFile(mapStream, Settings.OutputFile, 0, 0);
 			}
-			/* todo: Add comments
-			 * ; Map created with Random Map Generator.
-			 * ; Coded by Allan Greis Eriksen.
-			 * ; Time and date for creation.
-			 */
+			iniFile.AddCommentToHeader("Map created with Random Map Generator.");
+			iniFile.AddCommentToHeader("Random Map Generator by Allan Greis Eriksen.");
+			iniFile.AddCommentToHeader($"Created: {System.DateTime.Now}");
 			_logger.Debug("Adding sections to map file.");
 			AddPreviewSection(iniFile);
 			AddPreviewPackSection(iniFile);
