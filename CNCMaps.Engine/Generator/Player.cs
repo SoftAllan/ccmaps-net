@@ -24,8 +24,8 @@ namespace CNCMaps.Engine.Generator {
 
 		public int Number { get => _number; 
 			set {
-				if (value < 0 || value > 9) {
-					// todo: Test < 0
+				if (value < 1 || value > 9) {
+					// todo: Test < 1
 					// todo: Test > 9
 					throw new Exception($"Player number {value} is invalid.");
 				}
@@ -48,14 +48,15 @@ namespace CNCMaps.Engine.Generator {
 			}
 			// Make sure that the random position is not too close to another player.
 			bool posOk;
+			var x = 0;
+			var y = 0;
 			do {
-				var x = _random.Next(BorderOffset, xMax - BorderOffset);
-				var y = _random.Next(BorderOffset, _generatorEngine.Height - BorderOffset);
+				x = _random.Next(BorderOffset, xMax - BorderOffset);
+				y = _random.Next(BorderOffset, _generatorEngine.Height - BorderOffset);
 				// todo: Make sure that it can break out after a number of times without success.
 				posOk = CheckPositionToOtherPlayers();
 			} while (posOk == false);
-
-
+			Position = new PlayerPos() { dx = x, dy = y };
 		}
 
 		private bool CheckPositionToOtherPlayers() {

@@ -312,7 +312,7 @@ namespace CNCMaps.Engine.Generator {
 			} while (changed == true && pass++ < 50);
 			_logger.Debug($"Levelout passes: {pass}");
 			CheckForPitsAndSpikes();
-			CheckForWaterNextToHighGround();	// Check this before water connections.
+			CheckForWaterNextToHighGround();    // Check this before water connections.
 			CheckForWaterConnections();
 		}
 
@@ -378,13 +378,13 @@ namespace CNCMaps.Engine.Generator {
 		public bool CheckValleyLevel(IsoTile current, IsoTile topCorner, IsoTile bottomCorner, bool correctLevel = true) {
 			if (topCorner.TileNum != -1 && bottomCorner.TileNum != -1) {
 				if (topCorner.Z > current.Z)
-					if (bottomCorner.Z > current.Z) { 
-							if (correctLevel) {
-								current.Ground = IsoTile.GroundType.Ground;
-								current.Z = topCorner.Z;
-							}
-							return true;
+					if (bottomCorner.Z > current.Z) {
+						if (correctLevel) {
+							current.Ground = IsoTile.GroundType.Ground;
+							current.Z = topCorner.Z;
 						}
+						return true;
+					}
 			}
 			return false;
 		}
@@ -394,7 +394,7 @@ namespace CNCMaps.Engine.Generator {
 		public bool CheckValleyLevel(IsoTile current, IsoTile topCorner, IsoTile bottom, IsoTile bottomCorner, bool correctLevel) {
 			if (topCorner.TileNum != -1 && bottom.TileNum != -1 && bottomCorner.TileNum != -1) {
 				if (topCorner.Z > current.Z)
-					if (bottom.Z > current.Z) 
+					if (bottom.Z > current.Z)
 						if (bottomCorner.Z <= current.Z) {
 							if (correctLevel) {
 								current.Ground = IsoTile.GroundType.Ground;
@@ -497,7 +497,7 @@ namespace CNCMaps.Engine.Generator {
 		public void GeneratePlayers(int players, Random random) {
 			var list = new List<Player>();
 			for (int i = 0; i < players; i++) {
-				var p = new Player(this, random, i);
+				var p = new Player(this, random, i + 1);
 				list.Add(p);
 			}
 			_players = list.ToArray();
@@ -505,9 +505,14 @@ namespace CNCMaps.Engine.Generator {
 
 		// todo: Test
 		public void SetRandomPositionForAllPlayers() {
-			foreach (var player	in _players) {
+			foreach (var player in _players) {
 				player.SetRandomPosition();
 			}
+		}
+
+		public Player Player(int number) {
+			var p = _players.First(x => x.Number == number);
+			return p;
 		}
 	}
 }
