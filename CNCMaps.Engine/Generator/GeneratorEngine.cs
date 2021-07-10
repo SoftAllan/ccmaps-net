@@ -189,6 +189,7 @@ namespace CNCMaps.Engine.Generator {
 
 		private void AddWaypointsSection(IniFile iniFile) {
 			var waypoints = iniFile.GetOrCreateSection("Waypoints");
+			// todo: set the waypoints from the list of players
 			// Waypoints are stored as ry rx
 			waypoints.SetValue("0", "60055");
 			waypoints.SetValue("1", "63055");
@@ -493,8 +494,8 @@ namespace CNCMaps.Engine.Generator {
 			}
 		}
 
-		// todo: Test
 		public void GeneratePlayers(int players, Random random) {
+			_logger.Debug($"Generating {players} players.");
 			var list = new List<Player>();
 			for (int i = 0; i < players; i++) {
 				var p = new Player(this, random, i + 1);
@@ -504,18 +505,25 @@ namespace CNCMaps.Engine.Generator {
 		}
 
 		public void SetRandomPositionForAllPlayers() {
+			// todo: Test the log
+			_logger.Debug("Setting random position for all players.");
 			int i = 0;
 			int retry = 50;
 			while (i < _players.Length && retry > 0) {
 				var error = _players[i].SetRandomPosition();
 				if (!error) {
+					// todo: Test the log
+					_logger.Debug($"Setting player zone {_players[i].Number}.");
 					_players[i].MakePlayerZone();
 					i++;
 				}
 				else {
+					// todo: Test the log
+					_logger.Error($"Random position for player {_players[i]} failed.");
 					i = 0;
 					TileLayer.ResetPlayerZone();
 					retry--;
+					_logger.Debug($"Number of retries left: {retry}");
 				}
 			}
 			if (retry == 0) {

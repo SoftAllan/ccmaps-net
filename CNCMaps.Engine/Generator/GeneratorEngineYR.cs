@@ -94,13 +94,18 @@ namespace CNCMaps.Engine.Generator {
 
 			ParseMapSize(Settings.MapSize);
 			_logger.Debug($"Map width={Width} and hight={Height}.");
-
+			
+			var random = new Random((int) DateTime.Now.Ticks & 0x0FFFFFFF);
 			InitialiseMapLayer(ClearTile);
 			// 0.04 large hills
 			// 0.20 many hills
-			GenerateHeightLayout(0.04d, debug: false);
+			GenerateHeightLayout(0.15d, debug: false);
 			DefineZFromHeightLayout();
 			LevelOut();
+			GeneratePlayers(2, random);
+			SetRandomPositionForAllPlayers();
+			LevelOut();
+
 			DefineWaterSubtiles();
 			DefineSandTiles();
 			DefineShoreTiles();
