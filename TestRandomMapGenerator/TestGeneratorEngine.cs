@@ -1,4 +1,5 @@
-﻿using CNCMaps.Engine.Generator;
+﻿using System;
+using CNCMaps.Engine.Generator;
 using CNCMaps.Engine.Generator.Map;
 using CNCMaps.Engine.Utility;
 using CNCMaps.Shared.Generator;
@@ -484,6 +485,52 @@ namespace TestRandomMapGenerator {
 			te.CheckSingleWaterNextToHighGround(x, y);
 			Assert.AreEqual(IsoTile.GroundType.Sand, te.TileLayer[x, y].Ground);
 			Assert.AreEqual(IsoTile.GroundType.Water, te.TileLayer[x2, y2].Ground);
+		}
+
+		[TestMethod]
+		public void TestCreatePlayerArea() {
+			var te = NewTestGeneratorEngine(50, 50);
+
+			/*
+			te.GenerateHeightLayout(0.04d, false);
+			te.DefineZFromHeightLayout();
+			te.LevelOut();
+			TestLevel(te);
+			*/
+
+			//te.GeneratePlayers(2);
+
+
+//			testrxry.Z = 10;
+			
+
+
+
+			te.TileLayer.DumpToFile();
+
+		}
+
+		[TestMethod]
+		public void TestPlayerPos() {
+			var random = new Random(1234);
+			var te = NewTestGeneratorEngine(50, 50);
+			var player = new Player(te, random, 0);
+
+			var p1 = te.TileLayer.GetTileR(60, 55);
+			p1.Z = 1;
+			Assert.AreEqual(1, te.TileLayer[54, 32].Z);
+
+			var p2 = te.TileLayer.GetTileR(63, 55);
+			p2.Z = 2;
+			Assert.AreEqual(2, te.TileLayer[57, 33].Z);
+
+			player.Position = new Player.PlayerPos { dx = 54, dy = 64 };
+			Assert.AreEqual(60, player.rx);
+			Assert.AreEqual(55, player.ry);
+			player.Position = new Player.PlayerPos { dx = 57, dy = 67 };
+			Assert.AreEqual(63, player.rx);
+			Assert.AreEqual(55, player.ry);
+
 		}
 
 	}

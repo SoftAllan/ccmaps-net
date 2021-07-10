@@ -41,6 +41,8 @@ namespace CNCMaps.Engine.Generator {
 		public byte[,] HeightLayout { get; set; }
 		private Logger _logger { get; }
 
+		private Player[] _players;
+
 		public virtual bool GenerateMap() {
 			throw new NotImplementedException();
 		}
@@ -187,6 +189,7 @@ namespace CNCMaps.Engine.Generator {
 
 		private void AddWaypointsSection(IniFile iniFile) {
 			var waypoints = iniFile.GetOrCreateSection("Waypoints");
+			// Waypoints are stored as ry rx
 			waypoints.SetValue("0", "60055");
 			waypoints.SetValue("1", "63055");
 			//waypoints.SetValue("2", "67055");
@@ -229,6 +232,13 @@ namespace CNCMaps.Engine.Generator {
 			var nv = 0d;
 			for (int y = 0; y < Height; y++) {
 				for (int x = 0; x < Width * 2 - 2; x++) {
+					// todo: It might be a good idea to have the Z be defines as random or a fixed value.
+					/* The seed number makes it stil unique, but in rare cases you could see a map that has been generated before.
+					 * This is because the seed number would be the same as before.
+					 * If the z-axis is also random even the same seed number would still generate a new random map.
+					 * Also adding a random number to x and y could shift the area from the noise map by an offset.
+					 * However it should still be possible to generate the same map for the unit tests.
+					 */
 					nv = Noise.Noise(x * noiseOffset, y * noiseOffset, 0d) + 1d;
 					HeightLayout[x, y] = (byte)(nv * 128);
 				}
@@ -480,6 +490,23 @@ namespace CNCMaps.Engine.Generator {
 				TileLayer.GridTile(x, y, TileLayer.TileDirection.Bottom).Z - 1 == ct.Z ||
 				TileLayer.GridTile(x, y, TileLayer.TileDirection.BottomRight).Z - 1 == ct.Z) {
 				TileLayer[x, y].Ground = IsoTile.GroundType.Sand;
+			}
+		}
+
+		// todo: Test
+		public void GeneratePlayers(int players, Random random) {
+			var list = new List<Player>();
+			for (int i = 0; i < players; i++) {
+				var p = new Player(this, random, i);
+				list.Add(p);
+			}
+			_players = list.ToArray();
+		}
+
+		// todo: Test
+		public void SetRandomPositionForAllPlayers() {
+			foreach (var player	in _players) {
+				player.SetRandomPosition();
 			}
 		}
 	}
