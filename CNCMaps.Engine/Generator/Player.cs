@@ -53,24 +53,29 @@ namespace CNCMaps.Engine.Generator {
 		public int ry => Position.dy - rx + _generatorEngine.Width + 1;
 
 		// Place the player at a random position within the map size.
-		public void SetRandomPosition() {
-			var xMax = _generatorEngine.Width * 2 - 1;
+		// Returns true if it did not succeed.
+		public bool SetRandomPosition() {
+		    var xMax = _generatorEngine.Width * 2 - 1;
 			if (xMax - BorderOffset < 0) {
 				// todo: Test
 				throw new Exception($"Random position for player {Number} could not be created. Size of map is too small.");
 			}
-			// Make sure that the random position is not too close to another player.
 			var checkError = false;
 			var x = 0;
 			var y = 0;
+			var attempt = 50;
 			do {
+				attempt--;
 				x = _random.Next(BorderOffset, xMax - BorderOffset);
 				y = _random.Next(BorderOffset, _generatorEngine.Height - BorderOffset);
-				// todo: Make sure that it can break out after a number of times without success.
+				Position = new PlayerPos() { dx = x, dy = y };
 				checkError = CheckPositionToWater();
 				if (!checkError) checkError = CheckPositionToOtherPlayers();
-			} while (checkError);
-			Position = new PlayerPos() { dx = x, dy = y };
+			} while (checkError && attempt > 0);
+			if (checkError) {
+				Position = new PlayerPos() { dx = 0, dy = 0 };
+			}
+			return checkError;
 		}
 
 		// Check if the players position is in the water or too close to water.
@@ -98,7 +103,7 @@ namespace CNCMaps.Engine.Generator {
 
 		// Creates a player zone with the specified player number.
 		public void MakePlayerZone() {
-			_generatorEngine.TileLayer.DefineCircle(Position.dx, Position.dx, PlayerZoneRadius, ChangeIsoTilePlayerZone);
+			_generatorEngine.TileLayer.DefineCircle(Position.dx, Position.dy, PlayerZoneRadius, ChangeIsoTilePlayerZone);
 		}
 
 		private void ChangeIsoTilePlayerZone(IsoTile isoTile) {

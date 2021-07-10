@@ -193,6 +193,29 @@ namespace CNCMaps.Engine.Generator.Map {
 			}
 		}
 
+		public void DumpPlayerZoneToFile() {
+			var file = DebugMapFile();
+			logger.Debug($"Dumping Player zone to {file}");
+			var sb = new StringBuilder();
+			sb.Append("   ");
+			for (int x = 0; x < Width * 2 - 1; x++) {
+				sb.Append($"{x,2} ");
+			}
+			sb.AppendLine();
+			for (int y = 0; y < Height; y++) {
+				sb.Append($"{y,3}");
+				for (int x = 0; x < Width * 2 - 1; x++) {
+					var h = $"{isoTiles[x, y].PlayerZone}";
+					sb.Append($"[{h}]");
+				}
+				sb.AppendLine();
+			}
+			using (var writeFile = new StreamWriter(file)) {
+				writeFile.Write(sb);
+			}
+		}
+
+
 		public void DumpToFile() {
 			var file = DebugMapFile();
 			logger.Debug($"Dumping to {file}");
@@ -251,5 +274,12 @@ namespace CNCMaps.Engine.Generator.Map {
 			}
 		}
 
+		public void ResetPlayerZone() {
+			for (int x = 0; x < Width * 2 - 1; x++) {
+				for (int y = 0; y < Height; y++) {
+					this[x, y].PlayerZone = 0;
+				}
+			}
+		}
 	}
 }

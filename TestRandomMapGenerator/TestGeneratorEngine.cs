@@ -600,16 +600,13 @@ namespace TestRandomMapGenerator {
 			var p1 = te.Player(1);
 			var p2 = te.Player(2);
 
-			te.TileLayer[p1.Position.dx, p1.Position.dy].Z = 1;
-			te.TileLayer[p2.Position.dx, p2.Position.dy].Z = 2;
-
+			te.TileLayer.DumpPlayerZoneToFile();
+			
 			Assert.AreEqual(42, p1.Position.dx);
 			Assert.AreEqual(32, p1.Position.dy);
-			Assert.AreEqual(37, p2.Position.dx);
-			Assert.AreEqual(33, p2.Position.dy);
-
-			// te.TileLayer.DumpToFile();
-
+			Assert.AreEqual(70, p2.Position.dx);
+			Assert.AreEqual(25, p2.Position.dy);
+			
 		}
 
 		[TestMethod]

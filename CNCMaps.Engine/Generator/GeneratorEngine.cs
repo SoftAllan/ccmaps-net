@@ -503,10 +503,23 @@ namespace CNCMaps.Engine.Generator {
 			_players = list.ToArray();
 		}
 
-		// todo: Test
 		public void SetRandomPositionForAllPlayers() {
-			foreach (var player in _players) {
-				player.SetRandomPosition();
+			int i = 0;
+			int retry = 50;
+			while (i < _players.Length && retry > 0) {
+				var error = _players[i].SetRandomPosition();
+				if (!error) {
+					_players[i].MakePlayerZone();
+					i++;
+				}
+				else {
+					i = 0;
+					TileLayer.ResetPlayerZone();
+					retry--;
+				}
+			}
+			if (retry == 0) {
+				throw new Exception("Random position for players was not possible.");
 			}
 		}
 
