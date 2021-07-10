@@ -19,6 +19,7 @@ namespace TestRandomMapGenerator {
 			return newEngine;
 		}
 
+		#region Map
 		[TestMethod]
 		public void TestLevelOutLowTop() {
 			var te = NewTestGeneratorEngine(3, 3);
@@ -489,58 +490,10 @@ namespace TestRandomMapGenerator {
 		}
 
 		[TestMethod]
-		public void TestCreatePlayerArea() {
-			var te = NewTestGeneratorEngine(50, 50);
-
-			/*
-			te.GenerateHeightLayout(0.04d, false);
-			te.DefineZFromHeightLayout();
-			te.LevelOut();
-			TestLevel(te);
-			*/
-
-			//te.GeneratePlayers(2);
-
-
-//			testrxry.Z = 10;
-			
-
-
-
-			te.TileLayer.DumpToFile();
-
-		}
-
-		[TestMethod]
-		public void TestPlayerPos() {
-			var random = new Random(1234);
-			var te = NewTestGeneratorEngine(50, 50);
-			var player = new Player(te, random, 0);
-
-			var p1 = te.TileLayer.GetTileR(60, 55);
-			p1.Z = 1;
-			Assert.AreEqual(1, te.TileLayer[54, 32].Z);
-
-			var p2 = te.TileLayer.GetTileR(63, 55);
-			p2.Z = 2;
-			Assert.AreEqual(2, te.TileLayer[57, 33].Z);
-
-			player.Position = new Player.PlayerPos { dx = 54, dy = 64 };
-			Assert.AreEqual(60, player.rx);
-			Assert.AreEqual(55, player.ry);
-			player.Position = new Player.PlayerPos { dx = 57, dy = 67 };
-			Assert.AreEqual(63, player.rx);
-			Assert.AreEqual(55, player.ry);
-
-		}
-
-
-		[TestMethod]
 		public void TestCircle() {
 			var random = new Random(1234);
 			var te = NewTestGeneratorEngine(6, 10);
 			te.TileLayer.DefineCircle(5, 5, 3, ChangeTileTest);
-			te.TileLayer.DumpToFile();
 
 			Assert.AreEqual(GroundType.Ground, te.TileLayer[2, 1].Ground);
 			Assert.AreEqual(GroundType.Ground, te.TileLayer[3, 1].Ground);
@@ -557,7 +510,7 @@ namespace TestRandomMapGenerator {
 			Assert.AreEqual(GroundType.Water, te.TileLayer[6, 2].Ground);
 			Assert.AreEqual(GroundType.Ground, te.TileLayer[7, 2].Ground);
 			Assert.AreEqual(GroundType.Ground, te.TileLayer[8, 2].Ground);
-			
+
 			Assert.AreEqual(GroundType.Ground, te.TileLayer[2, 3].Ground);
 			Assert.AreEqual(GroundType.Water, te.TileLayer[3, 3].Ground);
 			Assert.AreEqual(GroundType.Water, te.TileLayer[4, 3].Ground);
@@ -624,6 +577,94 @@ namespace TestRandomMapGenerator {
 		private void ChangeTileTest(IsoTile isoTile) {
 			isoTile.Ground = GroundType.Water;
 		}
+
+		#endregion
+
+		#region Player
+		[TestMethod]
+		public void TestCreatePlayerArea() {
+			var te = NewTestGeneratorEngine(50, 50);
+
+			/*
+			te.GenerateHeightLayout(0.04d, false);
+			te.DefineZFromHeightLayout();
+			te.LevelOut();
+			TestLevel(te);
+			*/
+
+			// This seed generates player position that is too close to each other and the SetRandomPositionForAllPlayers 
+			// calls for additional random numbers. The Assert checks for this.
+			var random = new Random(1234);
+			te.GeneratePlayers(2, random);
+			te.SetRandomPositionForAllPlayers();
+			var p1 = te.Player(1);
+			var p2 = te.Player(2);
+
+			te.TileLayer[p1.Position.dx, p1.Position.dy].Z = 1;
+			te.TileLayer[p2.Position.dx, p2.Position.dy].Z = 2;
+
+			Assert.AreEqual(42, p1.Position.dx);
+			Assert.AreEqual(32, p1.Position.dy);
+			Assert.AreEqual(37, p2.Position.dx);
+			Assert.AreEqual(33, p2.Position.dy);
+
+			// te.TileLayer.DumpToFile();
+
+		}
+
+		[TestMethod]
+		public void TestPlayerPos() {
+			var random = new Random(1234);
+			var te = NewTestGeneratorEngine(50, 50);
+			var player = new Player(te, random, 0);
+
+			var p1 = te.TileLayer.GetTileR(60, 55);
+			p1.Z = 1;
+			Assert.AreEqual(1, te.TileLayer[54, 32].Z);
+
+			var p2 = te.TileLayer.GetTileR(63, 55);
+			p2.Z = 2;
+			Assert.AreEqual(2, te.TileLayer[57, 33].Z);
+
+			player.Position = new Player.PlayerPos { dx = 54, dy = 64 };
+			Assert.AreEqual(60, player.rx);
+			Assert.AreEqual(55, player.ry);
+			player.Position = new Player.PlayerPos { dx = 57, dy = 67 };
+			Assert.AreEqual(63, player.rx);
+			Assert.AreEqual(55, player.ry);
+
+		}
+
+		[TestMethod]
+		public void TestPlayerNearOrInWater() {
+			var random = new Random(1234);
+			var te = NewTestGeneratorEngine(50, 50);
+			var player = new Player(te, random, 1);
+
+			for (int x = 10; x < 30; x++) {
+				for (int y = 5; y < 15; y++) {
+					te.TileLayer[x, y].Ground = GroundType.Water;
+				}
+			}
+
+			// In water
+			player.Position = new Player.PlayerPos() { dx = 15, dy = 10 };
+			Assert.AreEqual(true, player.CheckPositionToWater());
+			
+			// Far from water
+			player.Position = new Player.PlayerPos() { dx = 75, dy = 10 };
+			Assert.AreEqual(false, player.CheckPositionToWater());
+
+			// Just at the corner
+			player.Position = new Player.PlayerPos() { dx = 8, dy = 17 };
+			Assert.AreEqual(false, player.CheckPositionToWater());
+
+	        // Just an overlap at the corner.
+			player.Position = new Player.PlayerPos() { dx = 8, dy = 16 };
+			Assert.AreEqual(true, player.CheckPositionToWater());
+		}
+		#endregion
+
 
 	}
 }

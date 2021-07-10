@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using CNCMaps.Engine.Generator.Map;
 
 namespace CNCMaps.Engine.Generator {
 	public class Player {
@@ -13,8 +14,17 @@ namespace CNCMaps.Engine.Generator {
 
 		private GeneratorEngine _generatorEngine;
 		private Random _random;
+		
+		// How many positions from the border of the map that the player position may not be placed
 		private const int BorderOffset = 15;
+		
+		// How many positions from a water tile the player position may not be placed.
+		private const int WaterOffset = 3;
+		
 		private int _number;
+
+		// Used by the delegate for define circle to indicate if the current check method has raised a flag.
+		private bool _checkFlag;
 		
 		public Player(GeneratorEngine generatorEngine, Random random, int number) {
 			_generatorEngine = generatorEngine;
@@ -47,20 +57,42 @@ namespace CNCMaps.Engine.Generator {
 				throw new Exception($"Random position for player {Number} could not be created. Size of map is too small.");
 			}
 			// Make sure that the random position is not too close to another player.
-			bool posOk;
+			var checkError = false;
 			var x = 0;
 			var y = 0;
 			do {
 				x = _random.Next(BorderOffset, xMax - BorderOffset);
 				y = _random.Next(BorderOffset, _generatorEngine.Height - BorderOffset);
 				// todo: Make sure that it can break out after a number of times without success.
-				posOk = CheckPositionToOtherPlayers();
-			} while (posOk == false);
+				checkError = CheckPositionToWater();
+				if (!checkError) checkError = CheckPositionToOtherPlayers();
+			} while (checkError);
 			Position = new PlayerPos() { dx = x, dy = y };
 		}
 
-		private bool CheckPositionToOtherPlayers() {
-			return true;
+		// Check if the players position is in the water or too close to water.
+		public bool CheckPositionToWater() {
+			_checkFlag = false;
+			_generatorEngine.TileLayer.DefineCircle(Position.dx, Position.dy, WaterOffset, IsIsoMapWater);
+			return _checkFlag;
+		}
+
+		private void IsIsoMapWater(IsoTile tile) {
+			if (tile.Ground == IsoTile.GroundType.Water) _checkFlag = true;
+			// Todo: TEst
+			tile.Z = 9;	
+		}
+
+		// Check if the players position is too close to another player.
+		// Returns true if it is too close.
+		public bool CheckPositionToOtherPlayers() {
+			// var te = _generatorEngine.TileLayer;
+
+			
+		
+
+
+			return false;
 		}
 
 	}
