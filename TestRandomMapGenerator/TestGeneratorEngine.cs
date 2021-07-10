@@ -585,13 +585,6 @@ namespace TestRandomMapGenerator {
 		public void TestCreatePlayerArea() {
 			var te = NewTestGeneratorEngine(50, 50);
 
-			/*
-			te.GenerateHeightLayout(0.04d, false);
-			te.DefineZFromHeightLayout();
-			te.LevelOut();
-			TestLevel(te);
-			*/
-
 			// This seed generates player position that is too close to each other and the SetRandomPositionForAllPlayers 
 			// calls for additional random numbers. The Assert checks for this.
 			var random = new Random(1234);
@@ -607,6 +600,34 @@ namespace TestRandomMapGenerator {
 			Assert.AreEqual(70, p2.Position.dx);
 			Assert.AreEqual(25, p2.Position.dy);
 			
+		}
+
+		[TestMethod]
+		public void TestCreatePlayerAreaWithHeight() {
+			var te = NewTestGeneratorEngine(50, 50);
+			te.GenerateHeightLayout(0.04d, false);
+			te.DefineZFromHeightLayout();
+			te.LevelOut();
+			TestLevel(te);
+
+			// This seed generates player position that is too close to each other and the SetRandomPositionForAllPlayers 
+			// calls for additional random numbers. The Assert checks for this.
+			var random = new Random(1234);
+			te.GeneratePlayers(2, random);
+			te.SetRandomPositionForAllPlayers();
+			var p1 = te.Player(1);
+			var p2 = te.Player(2);
+
+			te.LevelOut();
+			TestLevel(te);
+
+			te.TileLayer.DumpToFile();
+
+			Assert.AreEqual(42, p1.Position.dx);
+			Assert.AreEqual(32, p1.Position.dy);
+			Assert.AreEqual(70, p2.Position.dx);
+			Assert.AreEqual(25, p2.Position.dy);
+
 		}
 
 		[TestMethod]

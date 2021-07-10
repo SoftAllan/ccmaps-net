@@ -108,6 +108,7 @@ namespace CNCMaps.Engine.Generator {
 
 		private void ChangeIsoTilePlayerZone(IsoTile isoTile) {
 			isoTile.PlayerZone = Number;
+			isoTile.Z = _generatorEngine.TileLayer[Position.dx, Position.dy].Z;
 		}
 
 
