@@ -20,6 +20,9 @@ namespace CNCMaps.Engine.Generator {
 		
 		// How many positions from a water tile the player position may not be placed.
 		private const int WaterOffset = 3;
+
+		// Player zone radius from Position.
+		private const int PlayerZoneRadius = 8;
 		
 		private int _number;
 
@@ -79,21 +82,29 @@ namespace CNCMaps.Engine.Generator {
 
 		private void IsIsoMapWater(IsoTile tile) {
 			if (tile.Ground == IsoTile.GroundType.Water) _checkFlag = true;
-			// Todo: TEst
-			tile.Z = 9;	
 		}
 
 		// Check if the players position is too close to another player.
 		// Returns true if it is too close.
 		public bool CheckPositionToOtherPlayers() {
-			// var te = _generatorEngine.TileLayer;
-
-			
-		
-
-
-			return false;
+			_checkFlag = false;
+			_generatorEngine.TileLayer.DefineCircle(Position.dx, Position.dy, PlayerZoneRadius, IsIsoTilePlayerZoneDifferent);
+			return _checkFlag;
 		}
+
+		private void IsIsoTilePlayerZoneDifferent(IsoTile isoTile) {
+			if (isoTile.PlayerZone != 0 && isoTile.PlayerZone != Number) _checkFlag = true;
+		}
+
+		// Creates a player zone with the specified player number.
+		public void MakePlayerZone() {
+			_generatorEngine.TileLayer.DefineCircle(Position.dx, Position.dx, PlayerZoneRadius, ChangeIsoTilePlayerZone);
+		}
+
+		private void ChangeIsoTilePlayerZone(IsoTile isoTile) {
+			isoTile.PlayerZone = Number;
+		}
+
 
 	}
 }

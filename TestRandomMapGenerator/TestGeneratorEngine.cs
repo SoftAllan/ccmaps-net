@@ -649,19 +649,33 @@ namespace TestRandomMapGenerator {
 
 			// In water
 			player.Position = new Player.PlayerPos() { dx = 15, dy = 10 };
-			Assert.AreEqual(true, player.CheckPositionToWater());
+			Assert.IsTrue(player.CheckPositionToWater());
 			
 			// Far from water
 			player.Position = new Player.PlayerPos() { dx = 75, dy = 10 };
-			Assert.AreEqual(false, player.CheckPositionToWater());
+			Assert.IsFalse(player.CheckPositionToWater());
 
 			// Just at the corner
 			player.Position = new Player.PlayerPos() { dx = 8, dy = 17 };
-			Assert.AreEqual(false, player.CheckPositionToWater());
+			Assert.IsFalse(player.CheckPositionToWater());
 
 	        // Just an overlap at the corner.
 			player.Position = new Player.PlayerPos() { dx = 8, dy = 16 };
-			Assert.AreEqual(true, player.CheckPositionToWater());
+			Assert.IsTrue(player.CheckPositionToWater());
+		}
+
+		[TestMethod]
+		public void TestPlayerNearOtherPlayer() {
+			var random = new Random(1234);
+			var te = NewTestGeneratorEngine(50, 50);
+			var player1 = new Player(te, random, 1);
+			player1.Position = new Player.PlayerPos() { dx = 10, dy = 10 };
+			var player2 = new Player(te, random, 2);
+			player2.Position = new Player.PlayerPos() { dx = 30, dy = 30 };
+			player1.MakePlayerZone();
+			Assert.IsFalse(player2.CheckPositionToOtherPlayers());
+			player2.Position = new Player.PlayerPos() { dx = 22, dy = 20 }; // Just overlapping player 1's play zone.
+			Assert.IsTrue(player2.CheckPositionToOtherPlayers());
 		}
 		#endregion
 
