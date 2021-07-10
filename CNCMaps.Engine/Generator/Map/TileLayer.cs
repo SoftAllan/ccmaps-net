@@ -12,6 +12,9 @@ using CNCMaps.Shared.Utility;
 using NLog;
 
 namespace CNCMaps.Engine.Generator.Map {
+
+	public delegate void IsoTileChange(IsoTile isoTile);
+	
 	public class TileLayer {
 
 		static Logger logger = LogManager.GetCurrentClassLogger();
@@ -223,6 +226,28 @@ namespace CNCMaps.Engine.Generator.Map {
 			}
 			using (var writeFile = new StreamWriter(file)) {
 				writeFile.Write(sb);
+			}
+		}
+
+		// Define a circle and calls the IsoTileChange delegate for each isoTile in the defined circle.
+		public void DefineCircle(int centerX, int centerY, int radius, IsoTileChange isoTileChange) {
+			int xFrom = centerX - radius;
+			if (xFrom < 0) xFrom = 0;
+			int yFrom = centerY - radius;
+			if (yFrom < 0) yFrom = 0;
+			int diameter = (radius * 2) + 1;
+			int xTo = xFrom + diameter;
+			if (xTo > Width * 2 - 1) xTo = Width * 2 - 1;
+			int yTo = yFrom + diameter;
+			if (yTo > Height) yTo = Height;
+			int radiusSq = (diameter * diameter) / 4;
+			for (int y = yFrom; y < yTo; y++) {
+				int yDiff = y - centerY;
+				int threshold = radiusSq - (yDiff * yDiff);
+				for (int x = xFrom; x < xTo; x++) {
+					int d = x - centerX;
+					if ((d * d) <= threshold) isoTileChange(this[x, y]);
+				}
 			}
 		}
 

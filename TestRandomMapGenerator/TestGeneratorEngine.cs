@@ -4,6 +4,7 @@ using CNCMaps.Engine.Generator.Map;
 using CNCMaps.Engine.Utility;
 using CNCMaps.Shared.Generator;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using static CNCMaps.Engine.Generator.Map.IsoTile;
 
 namespace TestRandomMapGenerator {
 	
@@ -531,6 +532,97 @@ namespace TestRandomMapGenerator {
 			Assert.AreEqual(63, player.rx);
 			Assert.AreEqual(55, player.ry);
 
+		}
+
+
+		[TestMethod]
+		public void TestCircle() {
+			var random = new Random(1234);
+			var te = NewTestGeneratorEngine(6, 10);
+			te.TileLayer.DefineCircle(5, 5, 3, ChangeTileTest);
+			te.TileLayer.DumpToFile();
+
+			Assert.AreEqual(GroundType.Ground, te.TileLayer[2, 1].Ground);
+			Assert.AreEqual(GroundType.Ground, te.TileLayer[3, 1].Ground);
+			Assert.AreEqual(GroundType.Ground, te.TileLayer[4, 1].Ground);
+			Assert.AreEqual(GroundType.Ground, te.TileLayer[5, 1].Ground);
+			Assert.AreEqual(GroundType.Ground, te.TileLayer[6, 1].Ground);
+			Assert.AreEqual(GroundType.Ground, te.TileLayer[7, 1].Ground);
+			Assert.AreEqual(GroundType.Ground, te.TileLayer[8, 1].Ground);
+
+			Assert.AreEqual(GroundType.Ground, te.TileLayer[2, 2].Ground);
+			Assert.AreEqual(GroundType.Ground, te.TileLayer[3, 2].Ground);
+			Assert.AreEqual(GroundType.Water, te.TileLayer[4, 2].Ground);
+			Assert.AreEqual(GroundType.Water, te.TileLayer[5, 2].Ground);
+			Assert.AreEqual(GroundType.Water, te.TileLayer[6, 2].Ground);
+			Assert.AreEqual(GroundType.Ground, te.TileLayer[7, 2].Ground);
+			Assert.AreEqual(GroundType.Ground, te.TileLayer[8, 2].Ground);
+			
+			Assert.AreEqual(GroundType.Ground, te.TileLayer[2, 3].Ground);
+			Assert.AreEqual(GroundType.Water, te.TileLayer[3, 3].Ground);
+			Assert.AreEqual(GroundType.Water, te.TileLayer[4, 3].Ground);
+			Assert.AreEqual(GroundType.Water, te.TileLayer[5, 3].Ground);
+			Assert.AreEqual(GroundType.Water, te.TileLayer[6, 3].Ground);
+			Assert.AreEqual(GroundType.Water, te.TileLayer[7, 3].Ground);
+			Assert.AreEqual(GroundType.Ground, te.TileLayer[8, 3].Ground);
+
+			Assert.AreEqual(GroundType.Ground, te.TileLayer[1, 4].Ground);
+			Assert.AreEqual(GroundType.Water, te.TileLayer[2, 4].Ground);
+			Assert.AreEqual(GroundType.Water, te.TileLayer[3, 4].Ground);
+			Assert.AreEqual(GroundType.Water, te.TileLayer[4, 4].Ground);
+			Assert.AreEqual(GroundType.Water, te.TileLayer[5, 4].Ground);
+			Assert.AreEqual(GroundType.Water, te.TileLayer[6, 4].Ground);
+			Assert.AreEqual(GroundType.Water, te.TileLayer[7, 4].Ground);
+			Assert.AreEqual(GroundType.Water, te.TileLayer[8, 4].Ground);
+			Assert.AreEqual(GroundType.Ground, te.TileLayer[9, 4].Ground);
+
+			Assert.AreEqual(GroundType.Ground, te.TileLayer[1, 5].Ground);
+			Assert.AreEqual(GroundType.Water, te.TileLayer[2, 5].Ground);
+			Assert.AreEqual(GroundType.Water, te.TileLayer[3, 5].Ground);
+			Assert.AreEqual(GroundType.Water, te.TileLayer[4, 5].Ground);
+			Assert.AreEqual(GroundType.Water, te.TileLayer[5, 5].Ground);
+			Assert.AreEqual(GroundType.Water, te.TileLayer[6, 5].Ground);
+			Assert.AreEqual(GroundType.Water, te.TileLayer[7, 5].Ground);
+			Assert.AreEqual(GroundType.Water, te.TileLayer[8, 5].Ground);
+			Assert.AreEqual(GroundType.Ground, te.TileLayer[9, 5].Ground);
+
+			Assert.AreEqual(GroundType.Ground, te.TileLayer[1, 6].Ground);
+			Assert.AreEqual(GroundType.Water, te.TileLayer[2, 6].Ground);
+			Assert.AreEqual(GroundType.Water, te.TileLayer[3, 6].Ground);
+			Assert.AreEqual(GroundType.Water, te.TileLayer[4, 6].Ground);
+			Assert.AreEqual(GroundType.Water, te.TileLayer[5, 6].Ground);
+			Assert.AreEqual(GroundType.Water, te.TileLayer[6, 6].Ground);
+			Assert.AreEqual(GroundType.Water, te.TileLayer[7, 6].Ground);
+			Assert.AreEqual(GroundType.Water, te.TileLayer[8, 6].Ground);
+			Assert.AreEqual(GroundType.Ground, te.TileLayer[9, 6].Ground);
+
+			Assert.AreEqual(GroundType.Ground, te.TileLayer[2, 7].Ground);
+			Assert.AreEqual(GroundType.Water, te.TileLayer[3, 7].Ground);
+			Assert.AreEqual(GroundType.Water, te.TileLayer[4, 7].Ground);
+			Assert.AreEqual(GroundType.Water, te.TileLayer[5, 7].Ground);
+			Assert.AreEqual(GroundType.Water, te.TileLayer[6, 7].Ground);
+			Assert.AreEqual(GroundType.Water, te.TileLayer[7, 7].Ground);
+			Assert.AreEqual(GroundType.Ground, te.TileLayer[8, 7].Ground);
+
+			Assert.AreEqual(GroundType.Ground, te.TileLayer[2, 8].Ground);
+			Assert.AreEqual(GroundType.Ground, te.TileLayer[3, 8].Ground);
+			Assert.AreEqual(GroundType.Water, te.TileLayer[4, 8].Ground);
+			Assert.AreEqual(GroundType.Water, te.TileLayer[5, 8].Ground);
+			Assert.AreEqual(GroundType.Water, te.TileLayer[6, 8].Ground);
+			Assert.AreEqual(GroundType.Ground, te.TileLayer[7, 8].Ground);
+			Assert.AreEqual(GroundType.Ground, te.TileLayer[8, 8].Ground);
+
+			Assert.AreEqual(GroundType.Ground, te.TileLayer[2, 9].Ground);
+			Assert.AreEqual(GroundType.Ground, te.TileLayer[3, 9].Ground);
+			Assert.AreEqual(GroundType.Ground, te.TileLayer[4, 9].Ground);
+			Assert.AreEqual(GroundType.Ground, te.TileLayer[5, 9].Ground);
+			Assert.AreEqual(GroundType.Ground, te.TileLayer[6, 9].Ground);
+			Assert.AreEqual(GroundType.Ground, te.TileLayer[7, 9].Ground);
+			Assert.AreEqual(GroundType.Ground, te.TileLayer[8, 9].Ground);
+		}
+
+		private void ChangeTileTest(IsoTile isoTile) {
+			isoTile.Ground = GroundType.Water;
 		}
 
 	}
