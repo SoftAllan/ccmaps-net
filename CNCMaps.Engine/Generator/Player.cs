@@ -7,6 +7,7 @@ using CNCMaps.Engine.Generator.Map;
 namespace CNCMaps.Engine.Generator {
 	public class Player {
 		
+		// todo: Rename to x and y.
 		public struct PlayerPos {
 			public int dx;
 			public int dy;
@@ -48,9 +49,9 @@ namespace CNCMaps.Engine.Generator {
 
 		public PlayerPos Position { get; set; }
 
-		public int rx => (Position.dx + Position.dy) / 2 + 1;
+		public int rx => (int)((double)((Position.dx + 1.0) / 2.0) + Position.dy + 1.0);
 
-		public int ry => Position.dy - rx + _generatorEngine.Width + 1;
+		public int ry => (int)(_generatorEngine.Width - (double)((Position.dx + 1.0) / 2.0) + Position.dy + 1.0);
 
 		// Place the player at a random position within the map size.
 		// Returns true if it did not succeed.
@@ -104,6 +105,7 @@ namespace CNCMaps.Engine.Generator {
 		// Creates a player zone with the specified player number.
 		public void MakePlayerZone() {
 			_generatorEngine.TileLayer.DefineCircle(Position.dx, Position.dy, PlayerZoneRadius, ChangeIsoTilePlayerZone);
+			_generatorEngine.TileLayer[Position.dx, Position.dy].Ground = IsoTile.GroundType.Sand;
 		}
 
 		private void ChangeIsoTilePlayerZone(IsoTile isoTile) {

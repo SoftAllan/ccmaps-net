@@ -189,16 +189,18 @@ namespace CNCMaps.Engine.Generator {
 
 		private void AddWaypointsSection(IniFile iniFile) {
 			var waypoints = iniFile.GetOrCreateSection("Waypoints");
-			// todo: set the waypoints from the list of players
 			// Waypoints are stored as ry rx
-			waypoints.SetValue("0", "60055");
-			waypoints.SetValue("1", "63055");
+			//waypoints.SetValue("0", "60055");
+			//waypoints.SetValue("1", "63055");
 			//waypoints.SetValue("2", "67055");
 			//waypoints.SetValue("3", "68055");
 			//waypoints.SetValue("4", "65056");
 			//waypoints.SetValue("5", "66056");
 			//waypoints.SetValue("6", "67056");
 			//waypoints.SetValue("7", "68056");
+			foreach (var player in _players) {
+				waypoints.SetValue($"{player.Number - 1}", $"{player.ry:#00}{player.rx:000}");
+			}
 		}
 
 		internal void TestPerlin() {
@@ -513,7 +515,8 @@ namespace CNCMaps.Engine.Generator {
 				var error = _players[i].SetRandomPosition();
 				if (!error) {
 					// todo: Test the log
-					_logger.Debug($"Setting player zone {_players[i].Number}.");
+					_logger.Debug($"Setting player zone {_players[i].Number}. x={_players[i].Position.dx}, " +
+						$"y={_players[i].Position.dy}, ry={_players[i].ry}, rx={_players[i].rx}");
 					_players[i].MakePlayerZone();
 					i++;
 				}

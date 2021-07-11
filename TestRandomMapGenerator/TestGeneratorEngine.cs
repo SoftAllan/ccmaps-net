@@ -636,20 +636,19 @@ namespace TestRandomMapGenerator {
 			var te = NewTestGeneratorEngine(50, 50);
 			var player = new Player(te, random, 0);
 
-			var p1 = te.TileLayer.GetTileR(60, 55);
-			p1.Z = 1;
-			Assert.AreEqual(1, te.TileLayer[54, 32].Z);
+			player.Position = new Player.PlayerPos { dx = 67, dy = 34 };
+			Assert.AreEqual(69, player.rx);
+			Assert.AreEqual(51, player.ry);
+			player.Position = new Player.PlayerPos { dx = 18, dy = 32 };
+			Assert.AreEqual(42, player.rx);
+			Assert.AreEqual(73, player.ry);
+			player.Position = new Player.PlayerPos { dx = 35, dy = 29 };
+			Assert.AreEqual(48, player.rx);
+			Assert.AreEqual(62, player.ry);
+			player.Position = new Player.PlayerPos { dx = 62, dy = 18 };
+			Assert.AreEqual(50, player.rx);
+			Assert.AreEqual(37, player.ry);
 
-			var p2 = te.TileLayer.GetTileR(63, 55);
-			p2.Z = 2;
-			Assert.AreEqual(2, te.TileLayer[57, 33].Z);
-
-			player.Position = new Player.PlayerPos { dx = 54, dy = 64 };
-			Assert.AreEqual(60, player.rx);
-			Assert.AreEqual(55, player.ry);
-			player.Position = new Player.PlayerPos { dx = 57, dy = 67 };
-			Assert.AreEqual(63, player.rx);
-			Assert.AreEqual(55, player.ry);
 
 		}
 

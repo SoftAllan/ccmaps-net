@@ -59,21 +59,6 @@ namespace CNCMaps.Engine.Generator.Map {
 			return isoTiles[dx, dy];
 		}
 
-		// Todo: Examine if this is needed.
-		/// <summary>Gets a tile at map coordinates.</summary>
-		/// <param name="rx">The rx.</param>
-		/// <param name="ry">The ry.</param>
-		/// <returns>The tile r.</returns>
-		public IsoTile GetTileR(int rx, int ry) {
-			int dx = (rx - ry + fullSize.Width - 1);
-			int dy = rx + ry - fullSize.Width - 1;
-
-			if (dx < 0 || dy < 0 || dx >= isoTiles.GetLength(0) || (dy / 2) >= isoTiles.GetLength(1))
-				return null;
-			else
-				return GetTile(dx, dy / 2);
-		}
-
 		public enum TileDirection {
 			Top,
 			TopLeft,
