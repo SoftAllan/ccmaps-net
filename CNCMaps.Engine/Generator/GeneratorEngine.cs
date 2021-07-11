@@ -143,7 +143,7 @@ namespace CNCMaps.Engine.Generator {
 			var map = iniFile.GetOrCreateSection("Map");
 			map.SetValue("Size", $"0,0,{Width},{Height}");
 			map.SetValue("Theater", TheaterType(Settings.TheaterType).ToUpper());   // todo: Test if uppercase is needed.
-			map.SetValue("LocalSize", $"2,4,{Width - 4},{Height - 6}"); // todo: Test with medium, large and vlarge values.
+			map.SetValue("LocalSize", $"3,4,{Width - 4},{Height - 8}"); // todo: Test with medium, large and vlarge values.
 		}
 
 		// Todo: Find the relevant values.
@@ -190,14 +190,8 @@ namespace CNCMaps.Engine.Generator {
 		private void AddWaypointsSection(IniFile iniFile) {
 			var waypoints = iniFile.GetOrCreateSection("Waypoints");
 			// Waypoints are stored as ry rx
-			//waypoints.SetValue("0", "60055");
-			//waypoints.SetValue("1", "63055");
-			//waypoints.SetValue("2", "67055");
-			//waypoints.SetValue("3", "68055");
-			//waypoints.SetValue("4", "65056");
-			//waypoints.SetValue("5", "66056");
-			//waypoints.SetValue("6", "67056");
-			//waypoints.SetValue("7", "68056");
+			// todo: Test with ry > 99
+			// todo: Test with ry < 10
 			foreach (var player in _players) {
 				waypoints.SetValue($"{player.Number - 1}", $"{player.ry:#00}{player.rx:000}");
 			}

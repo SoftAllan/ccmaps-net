@@ -17,7 +17,7 @@ namespace CNCMaps.Engine.Generator {
 		private Random _random;
 		
 		// How many positions from the border of the map that the player position may not be placed
-		private const int BorderOffset = 15;
+		private const int BorderOffset = 10;
 		
 		// How many positions from a water tile the player position may not be placed.
 		private const int WaterOffset = 3;

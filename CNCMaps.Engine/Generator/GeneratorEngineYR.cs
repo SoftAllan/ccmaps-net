@@ -99,10 +99,10 @@ namespace CNCMaps.Engine.Generator {
 			InitialiseMapLayer(ClearTile);
 			// 0.04 large hills
 			// 0.20 many hills
-			GenerateHeightLayout(0.15d, debug: false);
+			GenerateHeightLayout(0.04d, debug: false);
 			DefineZFromHeightLayout();
 			LevelOut();
-			GeneratePlayers(2, random);
+			GeneratePlayers(3, random);
 			SetRandomPositionForAllPlayers();
 			LevelOut();
 
