@@ -49,9 +49,9 @@ namespace CNCMaps.Engine.Generator {
 
 		public PlayerPos Position { get; set; }
 
-		public int rx => (int)((double)((Position.dx + 1.0) / 2.0) + Position.dy + 1.0);
+		public int rx => (int)((Position.dx + 1.0) / 2 + Position.dy + 1);
 
-		public int ry => (int)(_generatorEngine.Width - (double)((Position.dx + 1.0) / 2.0) + Position.dy + 1.0);
+		public int ry => (int)(_generatorEngine.Width - (Position.dx + 1.0) / 2 + Position.dy + 1);
 
 		// Place the player at a random position within the map size.
 		// Returns true if it did not succeed.
