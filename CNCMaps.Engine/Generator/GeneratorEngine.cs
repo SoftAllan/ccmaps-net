@@ -143,7 +143,7 @@ namespace CNCMaps.Engine.Generator {
 			var map = iniFile.GetOrCreateSection("Map");
 			map.SetValue("Size", $"0,0,{Width},{Height}");
 			map.SetValue("Theater", TheaterType(Settings.TheaterType).ToUpper());   // todo: Test if uppercase is needed.
-			map.SetValue("LocalSize", $"3,4,{Width - 4},{Height - 8}"); // todo: Test with medium, large and vlarge values.
+			map.SetValue("LocalSize", $"2,4,{Width - 4},{Height - 8}"); // todo: Test with medium, large and vlarge values.
 		}
 
 		// Todo: Find the relevant values.
@@ -158,7 +158,7 @@ namespace CNCMaps.Engine.Generator {
 			basic.SetValue("Official", "no");
 			basic.SetValue("EndOfGame", "no");  // todo: What is this?
 			basic.SetValue("FreeRadar", "no");  // Minimap not visible
-			basic.SetValue("MaxPlayer", "8");   // todo: Change to parameter
+			basic.SetValue("MaxPlayer", NoOfPlayers.ToString());
 			basic.SetValue("MinPlayer", "2");   // No scenario.
 			basic.SetValue("SkipScore", "no");
 			basic.SetValue("TrainCrate", "no");
@@ -531,6 +531,12 @@ namespace CNCMaps.Engine.Generator {
 		public Player Player(int number) {
 			var p = _players.First(x => x.Number == number);
 			return p;
+		}
+
+		public int NoOfPlayers {
+			get {
+				return _players.Length;
+			}
 		}
 	}
 }

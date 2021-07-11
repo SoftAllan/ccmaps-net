@@ -23,7 +23,7 @@ namespace CNCMaps.Engine.Generator {
 		private const int WaterOffset = 3;
 
 		// Player zone radius from Position.
-		private const int PlayerZoneRadius = 8;
+		private const int PlayerZoneRadius = 15;
 		
 		private int _number;
 
