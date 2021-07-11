@@ -648,8 +648,12 @@ namespace TestRandomMapGenerator {
 			player.Position = new Player.PlayerPos { dx = 62, dy = 18 };
 			Assert.AreEqual(50, player.rx);
 			Assert.AreEqual(37, player.ry);
-
-
+			player.Position = new Player.PlayerPos { dx = 29, dy = 31 };
+			Assert.AreEqual(47, player.rx);
+			Assert.AreEqual(67, player.ry);
+			player.Position = new Player.PlayerPos { dx = 63, dy = 31 };
+			Assert.AreEqual(64, player.rx);
+			Assert.AreEqual(50, player.ry);
 		}
 
 		[TestMethod]

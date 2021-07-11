@@ -105,14 +105,12 @@ namespace CNCMaps.Engine.Generator {
 		// Creates a player zone with the specified player number.
 		public void MakePlayerZone() {
 			_generatorEngine.TileLayer.DefineCircle(Position.dx, Position.dy, PlayerZoneRadius, ChangeIsoTilePlayerZone);
-			_generatorEngine.TileLayer[Position.dx, Position.dy].Ground = IsoTile.GroundType.Sand;
 		}
 
 		private void ChangeIsoTilePlayerZone(IsoTile isoTile) {
 			isoTile.PlayerZone = Number;
 			isoTile.Z = _generatorEngine.TileLayer[Position.dx, Position.dy].Z;
 		}
-
 
 	}
 }
